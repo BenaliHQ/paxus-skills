@@ -215,7 +215,7 @@ If a needed icon isn't in Lucide, draw it in the same style: 24×24 viewbox, 1.2
 
 ### Logo usage
 - **Primary lockup:** `assets/paxus-logo-full.png` — rosette + wordmark. Light backgrounds, 48px+ height.
-- **Wordmark only:** `assets/paxus-wordmark.png` — tight horizontal spaces (header, footer).
+- **Wordmark only:** `assets/paxus-wordmark.png` — the PAXUS lettering only, **no rosette**, so it sits cleanly in thin headers/footers without anything clipping at the top edge. For the rosette + wordmark together, use `paxus-logo-full.png` instead.
 - **Mark only:** `assets/paxus-mark.png` / `paxus-mark-real.png` — square contexts (avatar, favicon) and watermarks.
 - **Reverse (on dark):** `assets/paxus-logo-cream.png` (lockup) or `paxus-mark-cream.png` (mark).
 - **Clearspace:** at least the height of the "P" in PAXUS on all sides.
