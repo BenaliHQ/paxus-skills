@@ -1,0 +1,199 @@
+/* =========================================================================
+   Paxus CPA — Colors & Type
+   Burgundy palette (sampled from the Paxus mark) layered onto Wise.com's
+   structural design language: ultra-bold display type, pill CTAs, ring
+   shadows, scale-on-hover micro-interactions, generous radii.
+   ========================================================================= */
+
+/* ----- Web fonts ---------------------------------------------------------- */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Manrope:wght@500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&display=swap");
+
+:root {
+  /* =========================================================================
+     COLOR — BRAND (sampled directly from the Paxus logo)
+     ========================================================================= */
+  --paxus-burgundy:        #681E44;  /* wordmark — primary brand */
+  --paxus-burgundy-deep:   #4A1430;  /* pressed/active state */
+  --paxus-burgundy-ink:    #2A0A1A;  /* near-black with burgundy undertone */
+  --paxus-mauve:           #B080A0;  /* mid rosette */
+  --paxus-mauve-soft:      #C9A8BC;  /* lighter mauve */
+  --paxus-blush:           #E0D0E0;  /* outer rosette petals */
+  --paxus-blush-soft:      #F2E8EE;  /* tinted surface */
+  --paxus-cream:           #FBF7F4;  /* warm off-white canvas */
+  --paxus-pearl:           #FFFFFF;  /* pure white */
+
+  /* =========================================================================
+     COLOR — NEUTRALS (warm, slightly mauve-tinted greys)
+     ========================================================================= */
+  --neutral-ink:           #1A1217;  /* primary text */
+  --neutral-900:           #2A2126;
+  --neutral-700:           #4A4045;  /* secondary text */
+  --neutral-500:           #87797F;  /* muted text */
+  --neutral-300:           #C9BFC4;  /* borders / dividers */
+  --neutral-200:           #E5DDE1;  /* subtle dividers */
+  --neutral-100:           #EFE8EB;  /* tinted surface */
+  --neutral-50:            #F7F2F4;  /* lightest surface */
+
+  /* =========================================================================
+     COLOR — SEMANTIC
+     ========================================================================= */
+  --positive:              #1F6B3A;  /* success — muted forest */
+  --positive-bg:           #E2F2E8;
+  --warning:               #C77A1F;  /* warning — warm amber, harmonizes w/ burgundy */
+  --warning-bg:            #FBEFD9;
+  --danger:                #B0202A;  /* error — close to burgundy family */
+  --danger-bg:             #F8E0E2;
+  --info:                  #2C5A8F;  /* info — muted navy */
+  --info-bg:               #E0EAF4;
+
+  /* =========================================================================
+     COLOR — SEMANTIC ROLES (use these in components, not the raw tokens above)
+     ========================================================================= */
+  --fg-1:                  var(--neutral-ink);    /* primary text */
+  --fg-2:                  var(--neutral-700);    /* secondary text */
+  --fg-3:                  var(--neutral-500);    /* tertiary / captions */
+  --fg-on-brand:           var(--paxus-cream);    /* text on burgundy */
+  --fg-on-blush:           var(--paxus-burgundy); /* text on blush */
+
+  --bg-canvas:             var(--paxus-cream);    /* page background */
+  --bg-surface:            var(--paxus-pearl);    /* cards */
+  --bg-subtle:             var(--neutral-50);     /* sections */
+  --bg-blush:              var(--paxus-blush-soft);
+  --bg-brand:              var(--paxus-burgundy);
+  --bg-brand-deep:         var(--paxus-burgundy-deep);
+  --bg-ink:                var(--paxus-burgundy-ink);
+
+  --border-subtle:         rgba(26, 18, 23, 0.08);
+  --border-default:        rgba(26, 18, 23, 0.12);
+  --border-strong:         rgba(26, 18, 23, 0.20);
+  --border-brand:          var(--paxus-burgundy);
+
+  --accent-rosette:        var(--paxus-mauve);    /* decorative accents only */
+
+  /* =========================================================================
+     TYPE — FAMILIES
+     Display: Manrope (Google Fonts substitute for a proprietary geometric sans).
+              See README — flagged for replacement w/ a true display face if Paxus
+              has one.
+     Body:    Inter
+     ========================================================================= */
+  --font-display: "Manrope", "Inter", system-ui, sans-serif;
+  --font-body:    "Source Serif 4", "Iowan Old Style", "Georgia", serif;
+  --font-ui:      "Inter", "Helvetica Neue", Arial, sans-serif;
+  --font-mono:    ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* =========================================================================
+     TYPE — SCALE (Wise-inspired: heavy display, weight-600 body)
+     ========================================================================= */
+  --t-display-mega-size:   112px;  --t-display-mega-lh: 0.88;  --t-display-mega-tracking: -0.04em;
+  --t-display-hero-size:   88px;   --t-display-hero-lh: 0.92;  --t-display-hero-tracking: -0.035em;
+  --t-display-section-size:60px;   --t-display-section-lh: 0.95; --t-display-section-tracking: -0.03em;
+  --t-display-sub-size:    40px;   --t-display-sub-lh: 1.0;    --t-display-sub-tracking: -0.025em;
+
+  --t-h1-size:             34px;   --t-h1-lh: 1.1;   --t-h1-tracking: -0.02em;
+  --t-h2-size:             26px;   --t-h2-lh: 1.2;   --t-h2-tracking: -0.015em;
+  --t-h3-size:             20px;   --t-h3-lh: 1.3;   --t-h3-tracking: -0.01em;
+
+  --t-body-lg-size:        20px;   --t-body-lg-lh: 1.5;
+  --t-body-size:           17px;   --t-body-lh: 1.55;
+  --t-body-sm-size:        15px;   --t-body-sm-lh: 1.55;
+  --t-caption-size:        13px;   --t-caption-lh: 1.5;
+  --t-eyebrow-size:        12px;   --t-eyebrow-lh: 1.0; --t-eyebrow-tracking: 0.12em;
+
+  /* =========================================================================
+     SPACING — 4px base, geometric-ish progression
+     ========================================================================= */
+  --space-0:   0;
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   20px;
+  --space-6:   24px;
+  --space-8:   32px;
+  --space-10:  40px;
+  --space-12:  48px;
+  --space-16:  64px;
+  --space-20:  80px;
+  --space-24:  96px;
+  --space-32:  128px;
+
+  /* =========================================================================
+     RADIUS (Wise-inspired: subtle on inputs, generous on cards, full pill on CTAs)
+     ========================================================================= */
+  --radius-xs:    4px;   /* checkboxes, tags */
+  --radius-sm:    8px;   /* inputs, small buttons */
+  --radius-md:    14px;  /* secondary cards */
+  --radius-lg:    24px;  /* feature cards */
+  --radius-xl:    32px;  /* hero cards */
+  --radius-2xl:   48px;  /* large surfaces */
+  --radius-pill:  9999px;/* CTAs */
+
+  /* =========================================================================
+     ELEVATION — Ring shadows + a single soft drop for menus
+     ========================================================================= */
+  --ring-1:       inset 0 0 0 1px rgba(26, 18, 23, 0.10);
+  --ring-2:       0 0 0 1px rgba(26, 18, 23, 0.12);
+  --ring-brand:   0 0 0 2px var(--paxus-burgundy);
+  --shadow-pop:   0 10px 30px -12px rgba(26, 18, 23, 0.18),
+                  0 0 0 1px rgba(26, 18, 23, 0.06);
+  --shadow-deep:  0 30px 60px -20px rgba(74, 20, 48, 0.28),
+                  0 0 0 1px rgba(26, 18, 23, 0.06);
+  --focus-ring:   0 0 0 3px rgba(104, 30, 68, 0.30);
+
+  /* =========================================================================
+     MOTION
+     ========================================================================= */
+  --ease-out:     cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast:     120ms;
+  --dur-base:     200ms;
+  --dur-slow:     400ms;
+}
+
+/* ===========================================================================
+   GLOBAL DEFAULTS
+   =========================================================================== */
+html, body {
+  background: var(--bg-canvas);
+  color: var(--fg-1);
+  font-family: var(--font-body);
+  font-size: var(--t-body-size);
+  line-height: var(--t-body-lh);
+  font-weight: 400;
+  font-feature-settings: "calt" 1, "ss01" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* UI elements (buttons, nav, badges, eyebrows) keep the sans for clarity */
+button, input, select, textarea, .t-eyebrow, nav, .pxs-btn { font-family: var(--font-ui); }
+
+/* ===========================================================================
+   SEMANTIC TYPE CLASSES
+   =========================================================================== */
+.t-display-mega    { font-family: var(--font-display); font-size: var(--t-display-mega-size);    line-height: var(--t-display-mega-lh);    letter-spacing: var(--t-display-mega-tracking);    font-weight: 800; }
+.t-display-hero    { font-family: var(--font-display); font-size: var(--t-display-hero-size);    line-height: var(--t-display-hero-lh);    letter-spacing: var(--t-display-hero-tracking);    font-weight: 800; }
+.t-display-section { font-family: var(--font-display); font-size: var(--t-display-section-size); line-height: var(--t-display-section-lh); letter-spacing: var(--t-display-section-tracking); font-weight: 800; }
+.t-display-sub     { font-family: var(--font-display); font-size: var(--t-display-sub-size);     line-height: var(--t-display-sub-lh);     letter-spacing: var(--t-display-sub-tracking);     font-weight: 800; }
+
+.t-h1              { font-family: var(--font-display); font-size: var(--t-h1-size); line-height: var(--t-h1-lh); letter-spacing: var(--t-h1-tracking); font-weight: 700; }
+.t-h2              { font-family: var(--font-display); font-size: var(--t-h2-size); line-height: var(--t-h2-lh); letter-spacing: var(--t-h2-tracking); font-weight: 700; }
+.t-h3              { font-family: var(--font-display); font-size: var(--t-h3-size); line-height: var(--t-h3-lh); letter-spacing: var(--t-h3-tracking); font-weight: 600; }
+
+.t-body-lg         { font-family: var(--font-body); font-size: var(--t-body-lg-size); line-height: var(--t-body-lg-lh); font-weight: 400; }
+.t-body            { font-family: var(--font-body); font-size: var(--t-body-size);    line-height: var(--t-body-lh);    font-weight: 400; }
+.t-body-sm         { font-family: var(--font-body); font-size: var(--t-body-sm-size); line-height: var(--t-body-sm-lh); font-weight: 400; }
+.t-caption         { font-family: var(--font-ui);   font-size: var(--t-caption-size); line-height: var(--t-caption-lh); font-weight: 500; color: var(--fg-3); }
+.t-eyebrow         { font-size: var(--t-eyebrow-size); line-height: var(--t-eyebrow-lh); letter-spacing: var(--t-eyebrow-tracking); font-weight: 700; text-transform: uppercase; color: var(--paxus-burgundy); }
+
+/* base element semantics */
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); margin: 0; color: var(--fg-1); }
+h1 { font-size: var(--t-display-section-size); line-height: var(--t-display-section-lh); letter-spacing: var(--t-display-section-tracking); font-weight: 800; }
+h2 { font-size: var(--t-display-sub-size); line-height: var(--t-display-sub-lh); letter-spacing: var(--t-display-sub-tracking); font-weight: 800; }
+h3 { font-size: var(--t-h2-size); line-height: var(--t-h2-lh); letter-spacing: var(--t-h2-tracking); font-weight: 700; }
+h4 { font-size: var(--t-h3-size); line-height: var(--t-h3-lh); font-weight: 600; }
+p  { margin: 0 0 var(--space-4); }
+small { font-size: var(--t-caption-size); color: var(--fg-3); }
+a { color: var(--paxus-burgundy); text-decoration: underline; text-underline-offset: 0.18em; text-decoration-thickness: 1px; transition: color var(--dur-fast) var(--ease-out); }
+a:hover { color: var(--paxus-burgundy-deep); }

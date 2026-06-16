@@ -1,0 +1,54 @@
+<!doctype html>
+<!-- @dsCard group="UI Kit — Portal" name="Portal — Client dashboard" subtitle="Sidebar, stepper, doc list, messaging" viewport="1280x900" -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Paxus CPA — Client portal</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<style>
+  body { margin: 0; background: #FBF7F4; }
+  .pxs-btn:hover { transform: scale(1.03); }
+  .pxs-btn:active { transform: scale(0.97); }
+  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(104,30,68,0.45); } 50% { box-shadow: 0 0 0 8px rgba(104,30,68,0); } }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="components.jsx"></script>
+<script type="text/babel">
+  const { useState, useEffect } = React;
+  function App() {
+    const [active, setActive] = useState('dashboard');
+    useEffect(() => { lucide.createIcons(); });
+    return (
+      <div style={{ display: 'flex' }}>
+        <PortalSidebar active={active} setActive={setActive} />
+        <main style={{ flex: 1, minWidth: 0 }}>
+          <PortalTopbar title="Hello, June." />
+          <div style={{ padding: '32px', display: 'grid', gap: 20 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+              <StatCard label="Refund estimate" value="$3,420" hint="Based on docs received so far" tone="blush" />
+              <StatCard label="Q1 estimate due" value="$1,840" hint="Apr 15 · we'll remind you" />
+              <StatCard label="Bookkeeping" value="Up to date" hint="Closed through Feb 2026" tone="ink" />
+            </div>
+            <TaxTimeline />
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 20 }}>
+              <DocList />
+              <div style={{ display: 'grid', gap: 20 }}>
+                <NextAppt />
+                <MessageThread />
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

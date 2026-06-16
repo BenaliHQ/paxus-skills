@@ -1,0 +1,24 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Form inputs" subtitle="Fields, errors, checkboxes" viewport="700x340" -->
+<html><head><meta charset="utf-8"><title>Inputs</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px 28px; display:grid; grid-template-columns:1fr 1fr; gap:14px 24px; max-width:680px; }
+  label { display:block; font-size:12px; font-weight:700; color:var(--fg-2); margin-bottom:6px; letter-spacing:0.02em; }
+  .field { display:block; width:100%; box-sizing:border-box; padding:12px 14px; background:#fff; border:0; border-radius:8px; box-shadow: inset 0 0 0 1px rgba(26,18,23,0.18); font-family:var(--font-body); font-size:15px; color:var(--fg-1); transition: box-shadow var(--dur-base) var(--ease-out); }
+  .field:focus { outline:0; box-shadow: inset 0 0 0 1.5px var(--paxus-burgundy), 0 0 0 3px rgba(104,30,68,0.20); }
+  .field.error { box-shadow: inset 0 0 0 1.5px var(--danger), 0 0 0 3px rgba(176,32,42,0.15); }
+  .help { font-size:12px; color:var(--fg-3); margin-top:5px; }
+  .help.err { color:var(--danger); }
+  .check { display:flex; align-items:center; gap:10px; font-size:14px; }
+  .check input { width:18px; height:18px; accent-color:#681E44; }
+</style></head>
+<body>
+  <div><label>Email</label><input class="field" placeholder="you@company.com"><div class="help">We'll never share this.</div></div>
+  <div><label>EIN</label><input class="field" placeholder="XX-XXXXXXX"></div>
+  <div><label>Engagement</label><select class="field"><option>Bookkeeping</option><option>Fractional CFO</option><option>Audit &amp; assurance</option><option>Controller</option></select></div>
+  <div><label>Estimated monthly revenue</label><input class="field error" value="-100"><div class="help err">Must be a positive number.</div></div>
+  <div style="grid-column:span 2"><label>Note for your accountant</label><textarea class="field" rows="2">Switched payroll providers in March — can you reconcile the new feed?…</textarea></div>
+  <label class="check"><input type="checkbox" checked> I agree to the engagement letter</label>
+  <label class="check"><input type="checkbox"> Send me quarterly reminders</label>
+</body></html>

@@ -1,0 +1,46 @@
+<!doctype html>
+<!-- @dsCard group="Brand" name="Iconography" subtitle="Lucide, 1.75px stroke" viewport="700x200" -->
+<html><head><meta charset="utf-8"><title>Iconography</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  body { margin:0; padding:24px 28px; font-family:var(--font-ui); }
+  .grid { display:grid; grid-template-columns:repeat(8,1fr); gap:12px; }
+  .ic {
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    padding:14px 6px; border-radius:9999px;
+    background: radial-gradient(circle at 50% 35%, #FBF1F6 0%, #F2E8EE 70%);
+    box-shadow: var(--ring-2);
+  }
+  .ic.alt { background: radial-gradient(circle at 50% 35%, #FFFFFF 0%, #F7F2F4 70%); }
+  .ic i { color:#681E44; }
+  .name { font-size:10px; color:var(--fg-3); font-family:var(--font-mono); }
+  .note { margin-top:14px; font-size:12px; color:var(--fg-3); line-height:1.55; }
+  .note em { color:var(--paxus-burgundy); font-style:normal; font-weight:700; }
+</style></head>
+<body>
+  <div class="grid">
+    <div class="ic"><i data-lucide="calculator" stroke-width="1.25"></i><div class="name">calculator</div></div>
+    <div class="ic alt"><i data-lucide="receipt" stroke-width="1.25"></i><div class="name">receipt</div></div>
+    <div class="ic"><i data-lucide="file-text" stroke-width="1.25"></i><div class="name">file-text</div></div>
+    <div class="ic alt"><i data-lucide="landmark" stroke-width="1.25"></i><div class="name">landmark</div></div>
+    <div class="ic"><i data-lucide="piggy-bank" stroke-width="1.25"></i><div class="name">piggy-bank</div></div>
+    <div class="ic alt"><i data-lucide="trending-up" stroke-width="1.25"></i><div class="name">trending-up</div></div>
+    <div class="ic"><i data-lucide="wallet" stroke-width="1.25"></i><div class="name">wallet</div></div>
+    <div class="ic alt"><i data-lucide="banknote" stroke-width="1.25"></i><div class="name">banknote</div></div>
+    <div class="ic"><i data-lucide="coins" stroke-width="1.25"></i><div class="name">coins</div></div>
+    <div class="ic alt"><i data-lucide="credit-card" stroke-width="1.25"></i><div class="name">credit-card</div></div>
+    <div class="ic"><i data-lucide="pie-chart" stroke-width="1.25"></i><div class="name">pie-chart</div></div>
+    <div class="ic alt"><i data-lucide="bar-chart-3" stroke-width="1.25"></i><div class="name">bar-chart-3</div></div>
+    <div class="ic"><i data-lucide="scale" stroke-width="1.25"></i><div class="name">scale</div></div>
+    <div class="ic alt"><i data-lucide="shield-check" stroke-width="1.25"></i><div class="name">shield-check</div></div>
+    <div class="ic"><i data-lucide="calendar" stroke-width="1.25"></i><div class="name">calendar</div></div>
+    <div class="ic alt"><i data-lucide="briefcase" stroke-width="1.25"></i><div class="name">briefcase</div></div>
+  </div>
+  <div class="note">
+    Lucide · stroke <em>1.25px</em> (lighter, more delicate) · 24px default · color inherits.
+    Soft blush pill backgrounds with a subtle radial highlight. Financial vocabulary —
+    calculator, receipt, ledger, scale, charts — at a feminine-feeling weight. No filled icons. No emoji.
+  </div>
+  <script>lucide.createIcons();</script>
+</body></html>
