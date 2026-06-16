@@ -15,6 +15,7 @@
       "source": "./",
       "strict": false,
       "skills": [
+        "./skills/manage-skills",
         "./skills/onboard-client",
         "./skills/onboard-project"
       ]
