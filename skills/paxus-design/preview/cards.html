@@ -1,0 +1,21 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Cards" subtitle="Default, blush, dark" viewport="700x200" -->
+<html><head><meta charset="utf-8"><title>Cards</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:20px 24px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+  .c { background:#fff; border-radius:24px; padding:20px; box-shadow:var(--ring-2); transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out); }
+  .c:hover { transform: translateY(-2px); box-shadow: var(--shadow-pop); }
+  .feat { background:#F2E8EE; }
+  .dark { background:#681E44; color:#FBF7F4; }
+  .eyebrow { font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--paxus-burgundy); margin-bottom:10px; }
+  .dark .eyebrow { color:#E0D0E0; }
+  .ttl { font-family:var(--font-display); font-weight:700; font-size:20px; line-height:1.2; letter-spacing:-0.01em; margin-bottom:8px; }
+  .body { font-size:13px; line-height:1.5; color:var(--fg-2); }
+  .dark .body { color:#E0D0E0; }
+</style></head>
+<body>
+  <div class="c"><div class="eyebrow">Bookkeeping</div><div class="ttl">Monthly close</div><div class="body">We reconcile your books by the 10th. You get a one-page summary you can actually read.</div></div>
+  <div class="c feat"><div class="eyebrow">Advisory</div><div class="ttl">Year-round planning</div><div class="body">Quarterly check-ins so you always know where the business stands.</div></div>
+  <div class="c dark"><div class="eyebrow">Advisory</div><div class="ttl">CFO on call</div><div class="body">Senior CPA for board prep, fundraises, M&amp;A. Billed hourly, capped monthly.</div></div>
+</body></html>

@@ -1,0 +1,23 @@
+<!doctype html>
+<!-- @dsCard group="Spacing" name="Radius" subtitle="xs → pill" viewport="700x180" -->
+<html><head><meta charset="utf-8"><title>Radius</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:20px 24px; }
+  .grid { display:grid; grid-template-columns:repeat(7,1fr); gap:14px; }
+  .item { text-align:center; }
+  .box { background:var(--paxus-blush-soft); box-shadow: var(--ring-2); height:80px; display:flex; align-items:center; justify-content:center; color:var(--paxus-burgundy); font-weight:700; font-size:13px; }
+  .name { margin-top:8px; font-size:12px; font-weight:700; }
+  .px { font-size:11px; color:var(--fg-3); font-family:var(--font-mono); }
+</style></head>
+<body>
+<div class="grid">
+  <div class="item"><div class="box" style="border-radius:4px">xs</div><div class="name">xs</div><div class="px">4</div></div>
+  <div class="item"><div class="box" style="border-radius:8px">sm</div><div class="name">sm</div><div class="px">8</div></div>
+  <div class="item"><div class="box" style="border-radius:14px">md</div><div class="name">md</div><div class="px">14</div></div>
+  <div class="item"><div class="box" style="border-radius:24px">lg</div><div class="name">lg</div><div class="px">24</div></div>
+  <div class="item"><div class="box" style="border-radius:32px">xl</div><div class="name">xl</div><div class="px">32</div></div>
+  <div class="item"><div class="box" style="border-radius:48px">2xl</div><div class="name">2xl</div><div class="px">48</div></div>
+  <div class="item"><div class="box" style="border-radius:9999px">pill</div><div class="name">pill</div><div class="px">∞</div></div>
+</div>
+</body></html>

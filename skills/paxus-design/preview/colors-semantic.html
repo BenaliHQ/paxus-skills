@@ -1,0 +1,25 @@
+<!doctype html>
+<!-- @dsCard group="Colors" name="Colors — Semantic" subtitle="Positive, warning, danger, info" viewport="700x280" -->
+<html><head><meta charset="utf-8"><title>Semantic colors</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:20px 24px; }
+  .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  .sw { border-radius:14px; overflow:hidden; box-shadow: var(--ring-2); }
+  .chip { height:54px; display:flex; align-items:center; padding:0 14px; font-weight:600; font-size:13px; }
+  .label { padding:8px 12px; background:var(--bg-surface); }
+  .name { font-size:12px; font-weight:700; color:var(--fg-1); }
+  .hex { font-size:11px; color:var(--fg-3); font-family:var(--font-mono); margin-top:2px; }
+</style></head>
+<body>
+<div class="grid">
+  <div class="sw"><div class="chip" style="background:#1F6B3A;color:#fff">Success</div><div class="label"><div class="name">Positive</div><div class="hex">#1F6B3A</div></div></div>
+  <div class="sw"><div class="chip" style="background:#E2F2E8;color:#1F6B3A">Filed ✓</div><div class="label"><div class="name">Positive bg</div><div class="hex">#E2F2E8</div></div></div>
+  <div class="sw"><div class="chip" style="background:#C77A1F;color:#fff">Warning</div><div class="label"><div class="name">Warning</div><div class="hex">#C77A1F</div></div></div>
+  <div class="sw"><div class="chip" style="background:#FBEFD9;color:#C77A1F">Action needed</div><div class="label"><div class="name">Warning bg</div><div class="hex">#FBEFD9</div></div></div>
+  <div class="sw"><div class="chip" style="background:#B0202A;color:#fff">Error</div><div class="label"><div class="name">Danger</div><div class="hex">#B0202A</div></div></div>
+  <div class="sw"><div class="chip" style="background:#F8E0E2;color:#B0202A">Rejected</div><div class="label"><div class="name">Danger bg</div><div class="hex">#F8E0E2</div></div></div>
+  <div class="sw"><div class="chip" style="background:#2C5A8F;color:#fff">Info</div><div class="label"><div class="name">Info</div><div class="hex">#2C5A8F</div></div></div>
+  <div class="sw"><div class="chip" style="background:#E0EAF4;color:#2C5A8F">Heads up</div><div class="label"><div class="name">Info bg</div><div class="hex">#E0EAF4</div></div></div>
+</div>
+</body></html>

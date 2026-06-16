@@ -1,0 +1,27 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Badges" subtitle="Status pills" viewport="700x120" -->
+<html><head><meta charset="utf-8"><title>Badges</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px 28px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+  .b { display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:9999px; font-size:12px; font-weight:700; letter-spacing:0.01em; }
+  .dot { width:6px; height:6px; border-radius:50%; }
+  .pos { background:#E2F2E8; color:#1F6B3A; }
+  .warn { background:#FBEFD9; color:#C77A1F; }
+  .err { background:#F8E0E2; color:#B0202A; }
+  .info { background:#E0EAF4; color:#2C5A8F; }
+  .brand { background:#F2E8EE; color:#681E44; }
+  .ink { background:#1A1217; color:#FBF7F4; }
+  .neutral { background:#EFE8EB; color:#4A4045; }
+  .outline { background:transparent; color:#681E44; box-shadow: inset 0 0 0 1px rgba(104,30,68,0.4); }
+</style></head>
+<body>
+  <span class="b pos"><span class="dot" style="background:#1F6B3A"></span>Filed</span>
+  <span class="b warn"><span class="dot" style="background:#C77A1F"></span>Action needed</span>
+  <span class="b err"><span class="dot" style="background:#B0202A"></span>Rejected</span>
+  <span class="b info"><span class="dot" style="background:#2C5A8F"></span>In review</span>
+  <span class="b brand">Audit · 2025</span>
+  <span class="b ink">Pro plan</span>
+  <span class="b neutral">Draft</span>
+  <span class="b outline">+ New</span>
+</body></html>

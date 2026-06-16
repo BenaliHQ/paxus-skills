@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 280" width="600" height="280">
+  <title>Paxus — cream on burgundy</title>
+  <rect width="600" height="280" fill="#681E44"></rect>
+  <g transform="translate(200 0)">
+    <ellipse cx="85" cy="70" rx="42" ry="30" fill="#FBF7F4" opacity="0.5" transform="rotate(-25 85 70)"></ellipse>
+    <ellipse cx="125" cy="105" rx="38" ry="28" fill="#FBF7F4" transform="rotate(60 125 105)"></ellipse>
+    <ellipse cx="80" cy="115" rx="38" ry="26" fill="#FBF7F4" opacity="0.75" transform="rotate(-65 80 115)"></ellipse>
+    <circle cx="102" cy="92" r="14" fill="#FBF7F4"></circle>
+  </g>
+  <text x="300" y="245" text-anchor="middle" font-family="Manrope, Inter, sans-serif" font-weight="500" letter-spacing="0.18em" font-size="80" fill="#FBF7F4">PAXUS</text>
+</svg>
