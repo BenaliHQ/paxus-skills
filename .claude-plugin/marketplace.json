@@ -18,7 +18,8 @@
         "./skills/design-pdf",
         "./skills/manage-skills",
         "./skills/onboard-client",
-        "./skills/onboard-project"
+        "./skills/onboard-project",
+        "./skills/paxus-design"
       ]
     }
   ]

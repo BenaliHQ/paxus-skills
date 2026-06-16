@@ -1,0 +1,23 @@
+<!doctype html>
+<!-- @dsCard group="Spacing" name="Elevation" subtitle="Ring shadows + pop + focus" viewport="700x180" -->
+<html><head><meta charset="utf-8"><title>Elevation</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px 28px; }
+  .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+  .ex { background:#fff; border-radius:18px; padding:22px; min-height:90px; display:flex; flex-direction:column; gap:6px; }
+  .lbl { font-size:13px; font-weight:700; }
+  .desc { font-size:11px; color:var(--fg-3); font-family:var(--font-mono); }
+  .ring2 { box-shadow: var(--ring-2); }
+  .pop   { box-shadow: var(--shadow-pop); }
+  .deep  { box-shadow: var(--shadow-deep); }
+  .focus { box-shadow: var(--ring-2), var(--focus-ring); }
+</style></head>
+<body>
+<div class="grid">
+  <div class="ex ring2"><div class="lbl">Ring (cards)</div><div class="desc">--ring-2</div></div>
+  <div class="ex pop"><div class="lbl">Pop (menus)</div><div class="desc">--shadow-pop</div></div>
+  <div class="ex deep"><div class="lbl">Deep (modals)</div><div class="desc">--shadow-deep</div></div>
+  <div class="ex focus"><div class="lbl">Focus ring</div><div class="desc">--focus-ring</div></div>
+</div>
+</body></html>

@@ -1,0 +1,20 @@
+<!doctype html>
+<!-- @dsCard group="Brand" name="Logo lockups" subtitle="Light, blush, reverse" viewport="700x220" -->
+<html><head><meta charset="utf-8"><title>Brand logo</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:0; display:grid; grid-template-columns:1fr 1fr 1fr; gap:0; min-height:220px; }
+  .pane { display:flex; align-items:center; justify-content:center; padding:24px; }
+  .a { background:#FBF7F4; }
+  .b { background:#F2E8EE; }
+  .c { background:#681E44; }
+  img { max-width:80%; max-height:160px; height:auto; object-fit:contain; }
+  .lbl { position:absolute; bottom:8px; left:12px; font-size:10px; font-weight:700; letter-spacing:0.10em; text-transform:uppercase; color:var(--fg-3); font-family:var(--font-ui); }
+  .pane { position:relative; }
+  .c .lbl { color:#E0D0E0; }
+</style></head>
+<body>
+  <div class="pane a"><img src="../assets/paxus-logo-full.png" alt="Paxus on cream"><span class="lbl">On cream</span></div>
+  <div class="pane b"><img src="../assets/paxus-logo-full.png" alt="Paxus on blush"><span class="lbl">On blush</span></div>
+  <div class="pane c"><img src="../assets/paxus-logo-cream.png" alt="Paxus reversed"><span class="lbl">Reversed</span></div>
+</body></html>
