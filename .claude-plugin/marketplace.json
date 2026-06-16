@@ -1,0 +1,23 @@
+{
+  "name": "paxus-skills",
+  "owner": {
+    "name": "Benali (for Paxus CPA)",
+    "email": "khalil@benali.com"
+  },
+  "metadata": {
+    "description": "Org-wide modular skills library for the Paxus CPA team. Synced into Cowork / Claude Code directly from this GitHub repo — the repo is the single source of truth.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "paxus-skills",
+      "description": "Paxus CPA accounting and firm-ops skills. Skills are the engine; client data (SOPs, chart of accounts, client lists) lives in the firm's Google Drive and is never embedded in this repo. See docs/context-model.md.",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/onboard-client",
+        "./skills/onboard-project"
+      ]
+    }
+  ]
+}
