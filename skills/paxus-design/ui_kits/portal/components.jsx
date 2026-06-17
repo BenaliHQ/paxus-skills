@@ -18,7 +18,7 @@ const PortalSidebar = ({ active, setActive }) => {
       display: 'flex', flexDirection: 'column', padding: '20px 16px',
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px 24px' }}>
-        <img src="../../assets/paxus-mark.svg" style={{ width: 28, height: 28 }} />
+        <img src="../../assets/paxus-mark.png" style={{ width: 28, height: 28 }} />
         <span style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 500, fontSize: 18, letterSpacing: '0.16em', color: '#682145' }}>PAXUS</span>
       </div>
       <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -180,7 +180,7 @@ const DocList = () => {
 
 const NextAppt = () => (
   <div style={{ background: '#682145', color: '#FBF7F4', borderRadius: 24, padding: 28, position: 'relative', overflow: 'hidden' }}>
-    <img src="../../assets/paxus-mark.svg" style={{ position: 'absolute', right: -50, top: -30, width: 200, opacity: 0.10 }} />
+    <img src="../../assets/paxus-mark-real.png" style={{ position: 'absolute', right: -50, top: -30, width: 200, opacity: 0.10 }} />
     <div style={{ position: 'relative' }}>
       <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#ECD2E1' }}>Next call</div>
       <div style={{ fontFamily: 'Manrope', fontWeight: 800, fontSize: 28, lineHeight: 1.1, letterSpacing: '-0.02em', marginTop: 12 }}>Quarterly check-in</div>
