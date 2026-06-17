@@ -1,24 +1,24 @@
 /* =========================================================================
    Paxus CPA — Colors & Type
-   Burgundy palette (sampled from the Paxus mark) layered onto Wise.com's
+   Official Paxus palette (per the firm brand standard) layered onto Wise.com's
    structural design language: ultra-bold display type, pill CTAs, ring
    shadows, scale-on-hover micro-interactions, generous radii.
    ========================================================================= */
 
 /* ----- Web fonts ---------------------------------------------------------- */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Manrope:wght@500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Manrope:wght@500;600;700;800&display=swap");
 
 :root {
   /* =========================================================================
-     COLOR — BRAND (sampled directly from the Paxus logo)
+     COLOR — BRAND (official Paxus palette — per the firm brand standard)
      ========================================================================= */
-  --paxus-burgundy:        #681E44;  /* wordmark — primary brand */
-  --paxus-burgundy-deep:   #4A1430;  /* pressed/active state */
+  --paxus-burgundy:        #682145;  /* wordmark — primary brand */
+  --paxus-burgundy-deep:   #491730;  /* pressed/active state */
   --paxus-burgundy-ink:    #2A0A1A;  /* near-black with burgundy undertone */
-  --paxus-mauve:           #B080A0;  /* mid rosette */
+  --paxus-mauve:           #C084A4;  /* mid rosette */
   --paxus-mauve-soft:      #C9A8BC;  /* lighter mauve */
-  --paxus-blush:           #E0D0E0;  /* outer rosette petals */
-  --paxus-blush-soft:      #F2E8EE;  /* tinted surface */
+  --paxus-blush:           #ECD2E1;  /* outer rosette petals */
+  --paxus-blush-soft:      #F7EDF3;  /* tinted surface */
   --paxus-cream:           #FBF7F4;  /* warm off-white canvas */
   --paxus-pearl:           #FFFFFF;  /* pure white */
 
@@ -71,14 +71,15 @@
   --accent-rosette:        var(--paxus-mauve);    /* decorative accents only */
 
   /* =========================================================================
-     TYPE — FAMILIES
-     Display: Manrope (Google Fonts substitute for a proprietary geometric sans).
-              See README — flagged for replacement w/ a true display face if Paxus
-              has one.
-     Body:    Inter
+     TYPE — FAMILIES (web / screen)
+     Display: Manrope 800 (Google Fonts; substitute for a licensed display face)
+     Body:    Inter (sans-serif)
+     UI:      Inter
+     NOTE: Calibri is the official Paxus DOCUMENT font (Word quotes/proposals).
+           This Manrope/Inter stack is for web & screen surfaces only.
      ========================================================================= */
   --font-display: "Manrope", "Inter", system-ui, sans-serif;
-  --font-body:    "Source Serif 4", "Iowan Old Style", "Georgia", serif;
+  --font-body:    "Inter", "Helvetica Neue", Arial, sans-serif;
   --font-ui:      "Inter", "Helvetica Neue", Arial, sans-serif;
   --font-mono:    ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
@@ -139,7 +140,7 @@
                   0 0 0 1px rgba(26, 18, 23, 0.06);
   --shadow-deep:  0 30px 60px -20px rgba(74, 20, 48, 0.28),
                   0 0 0 1px rgba(26, 18, 23, 0.06);
-  --focus-ring:   0 0 0 3px rgba(104, 30, 68, 0.30);
+  --focus-ring:   0 0 0 3px rgba(104, 33, 69, 0.30);
 
   /* =========================================================================
      MOTION

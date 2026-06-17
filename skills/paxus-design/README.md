@@ -2,7 +2,7 @@
 
 > A burgundy-and-blush identity for **Paxus CPA**, structured on the bold, billboard-scale design language of [wise.com](https://wise.com).
 
-This system pairs Paxus's own brand colors — sampled directly from the logo — with the structural confidence of Wise: oversized display typography, pill CTAs, generous radii, ring shadows, and scale-on-hover micro-interactions. The result is a CPA brand that feels modern, deliberate, and unintimidating — the opposite of the navy-and-grey corporate accountancy default.
+This system pairs Paxus's **official brand colors, logo, and type** — per the firm brand standard — with the structural confidence of Wise: oversized display typography, pill CTAs, generous radii, ring shadows, and scale-on-hover micro-interactions. The result is a CPA brand that feels modern, deliberate, and unintimidating — the opposite of the navy-and-grey corporate accountancy default.
 
 This is the firm's brand **fuel**, packaged as an installable skill. Brand-agnostic engines like `/design-pdf` pull their look from a design system like this one; point them here when the deliverable should be Paxus-branded.
 
@@ -10,20 +10,19 @@ This is the firm's brand **fuel**, packaged as an installable skill. Brand-agnos
 
 ## ⚠️ Read this before you build — what the brand actually is
 
-This bundle was iterated in Claude Design. A few decisions landed **late in the conversation** and supersede anything that reads otherwise in older notes. These are the source of truth:
+**Source of truth.** The core visual brand — **colors, logo (with the "CPA GROUP" sub-wordmark), and fonts** — follows the canonical **Paxus brand standard**. This skill *extends* that standard with a full web/UI system: design tokens, iconography, voice, and reference UI kits. Where this file and the brand standard ever disagree on a color, the logo, or a font, **the brand standard wins.**
 
-1. **Paxus does NOT do taxes.** Do not write tax headlines, tax calendars, "tax season" copy, or filing flows. Paxus's actual services are:
+1. **Paxus's services are:**
    - **Bookkeeping** — monthly close, reconciliation
    - **Advisory / Fractional CFO**
-   - **Audit & assurance**
    - **Outsourced controller / Controllership**
 
-   Paxus *refers out* for tax: "We don't prepare tax returns — we partner with firms that do."
-2. **Body copy is a serif — Source Serif 4**, not Inter. Display stays Manrope 800; UI chrome (buttons, nav, eyebrows, captions, inputs) stays Inter. The serif-body / sans-display / sans-UI split is intentional.
+   > **Tax positioning is intentionally deferred.** Do not assert that Paxus does or does not prepare taxes anywhere in copy — leave tax out of headlines and service lists until the operator sets the positioning. (Earlier drafts of this kit asserted "Paxus does not do taxes"; that claim has been removed pending sign-off.)
+2. **Type (web/screen):** Display = **Manrope 800**, body = **Inter**, UI chrome (buttons, nav, eyebrows, captions, inputs) = **Inter**. Body is sans-serif. Separately, **Calibri is the official document font** for Word quotes/proposals — the Manrope/Inter stack is for web and screen only.
 3. **Icons are Lucide at 1.25px stroke** (softened from the original 1.75), set in **soft-blush pill tiles** with a subtle radial highlight. Glyphs stay **functional/financial** (`receipt`, `calculator`, `file-text`, …) — the brief was "softer styling, still financial icons," *not* decorative flower/heart glyphs.
-4. **Sections never use burgundy-ink (`#2A0A1A`) as a large background.** The "case studies / the work" section uses **blush `#E0D0E0`** with white cards; hierarchy comes from a lifted "Featured" middle card (shadow + burgundy pill), not color inversion.
+4. **Sections never use burgundy-ink (`#2A0A1A`) as a large background.** The "case studies / the work" section uses **blush `#ECD2E1`** with white cards; hierarchy comes from a lifted "Featured" middle card (shadow + burgundy pill), not color inversion.
 5. **No pricing tables.** Pricing was replaced with a **case studies / testimonials** section.
-6. **Use the real logo PNGs.** The hand-rolled SVG marks (`paxus-mark.svg`, `paxus-mono-burgundy.svg`, `paxus-mono-cream.svg`) do **not** match the real rosette geometry — they're kept only for reference and should be treated as **deprecated**. Use `paxus-logo-full.png`, `paxus-wordmark.png`, `paxus-mark-real.png`, and the cream variants on dark.
+6. **Use the real logo PNGs** (`paxus-logo-full.png`, `paxus-wordmark.png`, `paxus-mark-real.png`, and the cream variants on dark) — all re-derived from the canonical brand lockup and carrying the **"CPA GROUP"** sub-wordmark. The hand-rolled SVG marks were removed; never recreate the rosette from memory.
 
 ---
 
@@ -37,7 +36,7 @@ This bundle was iterated in Claude Design. A few decisions landed **late in the 
 
 ⚠️ No Paxus codebase or Figma was provided. The UI kits here are **original applications** of Paxus's brand to Wise-style layouts, retargeted to Paxus's real services. Treat them as a launch direction, not a recreation.
 
-⚠️ **No proprietary fonts were provided.** Manrope 800 (display) and Source Serif 4 (body) are free Google Fonts substitutes. If Paxus adopts a licensed display face (Söhne, GT America) or a body serif (Tiempos, GT Sectra, Canela), drop the files into a `fonts/` folder and update `colors_and_type.css`.
+⚠️ **No proprietary display font was provided.** Manrope 800 (display) is a free Google Fonts substitute; Inter covers body and UI. If Paxus adopts a licensed display face (Söhne, GT America), drop the files into a `fonts/` folder and update `colors_and_type.css`. (Calibri remains the document font for Word output and is not loaded here.)
 
 ---
 
@@ -48,16 +47,13 @@ README.md                  ← you are here (brand source of truth)
 SKILL.md                   ← Agent Skills manifest
 colors_and_type.css        ← all design tokens (CSS vars) + semantic classes
 
-assets/                    ← logos, brand imagery
-  paxus-logo-full.png      ← horizontal lockup (rosette + wordmark) — primary
-  paxus-wordmark.png       ← wordmark only
-  paxus-mark.png           ← rosette only (raster)
-  paxus-mark-real.png      ← rosette only, original colors (watermark source)
-  paxus-mark-cream.png     ← rosette only, recolored cream (reverse / on dark)
+assets/                    ← logos, brand imagery (all carry "CPA GROUP")
+  paxus-logo-full.png      ← full lockup (rosette + PAXUS + CPA GROUP) — primary
+  paxus-wordmark.png       ← wordmark only (PAXUS + CPA GROUP)
+  paxus-mark.png           ← rosette only (square — favicon / avatar)
+  paxus-mark-real.png      ← rosette only, full color (watermark source)
+  paxus-mark-cream.png     ← rosette only, cream (reverse / on dark)
   paxus-logo-cream.png     ← full lockup, cream (reverse / on dark)
-  paxus-mark.svg           ← ⚠️ DEPRECATED hand-rolled approximation
-  paxus-mono-burgundy.svg  ← ⚠️ DEPRECATED hand-rolled approximation
-  paxus-mono-cream.svg     ← ⚠️ DEPRECATED hand-rolled approximation
 
 preview/                   ← 16 cards rendering tokens in context (open in a browser)
 ui_kits/
@@ -76,9 +72,9 @@ Short, almost defiant. Sentence-case, no period, no qualifiers.
 
 > **Books that balance themselves.**
 > **Advisory that actually advises.**
-> **Audit-ready, all year.**
+> **Your controller, on call.**
 
-Avoid corporate-accountancy clichés ("trusted partner", "comprehensive solutions", "best-in-class"). Headlines should be readable by a small-business owner who's never met an accountant. **No tax headlines** — Paxus doesn't do tax.
+Avoid corporate-accountancy clichés ("trusted partner", "comprehensive solutions", "best-in-class"). Headlines should be readable by a small-business owner who's never met an accountant. Leave tax out of headlines — tax positioning is deferred (see the source-of-truth note above).
 
 ### 2. Plain, second-person body copy
 Address the reader as "you". Refer to Paxus as "we" or "Paxus", never "the firm" or "our team of professionals". Contractions encouraged.
@@ -102,23 +98,23 @@ Address the reader as "you". Refer to Paxus as "we" or "Paxus", never "the firm"
 - No emoji in product UI. (One careful exception: a 🎉 in a post-action confirmation screen.)
 - No exclamation marks in headlines.
 - No "leveraging", no "synergy", no "solutions".
-- No tax language anywhere — Paxus refers out for tax.
+- No tax claims either way — tax positioning is deferred pending operator sign-off.
 
 ---
 
 ## VISUAL FOUNDATIONS
 
 ### Color
-The palette is **burgundy + blush + warm cream**, sampled from the logo. No greens, no blues — those are reserved exclusively for semantic states (success, info).
+The palette is **plum + mauve + blush on warm cream** — the official Paxus brand colors per the firm standard. No greens, no blues — those are reserved exclusively for semantic states (success, info).
 
 | Role | Token | Hex | Usage |
 |---|---|---|---|
-| Primary brand | `--paxus-burgundy` | `#681E44` | Wordmark, primary buttons, links, active nav |
-| Brand pressed | `--paxus-burgundy-deep` | `#4A1430` | Active/pressed CTA, dark surfaces |
+| Primary brand | `--paxus-burgundy` | `#682145` | Wordmark, primary buttons, links, active nav |
+| Brand pressed | `--paxus-burgundy-deep` | `#491730` | Active/pressed CTA, dark surfaces |
 | Brand ink | `--paxus-burgundy-ink` | `#2A0A1A` | Footer / dark hero blocks only — **never** a large section background |
-| Secondary accent | `--paxus-mauve` | `#B080A0` | Decorative only — never CTAs |
-| Soft accent | `--paxus-blush` | `#E0D0E0` | Badges, selected pills, the "case studies" section background |
-| Surface tint | `--paxus-blush-soft` | `#F2E8EE` | Section backgrounds, highlight cards |
+| Secondary accent | `--paxus-mauve` | `#C084A4` | Decorative only — never CTAs |
+| Soft accent | `--paxus-blush` | `#ECD2E1` | Badges, selected pills, the "case studies" section background |
+| Surface tint | `--paxus-blush-soft` | `#F7EDF3` | Section backgrounds, highlight cards |
 | Canvas | `--paxus-cream` | `#FBF7F4` | Page background — warm, not white |
 | Text primary | `--neutral-ink` | `#1A1217` | Body and headline text |
 
@@ -129,7 +125,7 @@ The palette is **burgundy + blush + warm cream**, sampled from the logo. No gree
 
 ### Typography
 - **Display:** Manrope 800. The weight is the identity — display headlines should feel **stamped**, billboard-scale. The contrast between the slim wordmark and heavy display type is intentional.
-- **Body:** **Source Serif 4** (weight 400). A refined serif body against the heavy sans display reads professional without going law-firm-stuffy.
+- **Body:** **Inter** (weight 400), sans-serif. A clean, modern body against the heavy display reads professional without going law-firm-stuffy. (For Word documents, the official body font is **Calibri** — see the source-of-truth note; this web stack does not load it.)
 - **UI chrome:** Inter — buttons, nav, eyebrows, captions, inputs all force `--font-ui` for crispness.
 - **Display line-height: 0.88–0.95** — tight. Manrope's metrics are taller than Wise Sans, so this is visually equivalent to Wise's 0.85.
 - **OpenType `calt` and `ss01`** enabled globally.
@@ -158,7 +154,7 @@ The palette is **burgundy + blush + warm cream**, sampled from the logo. No gree
 ```
 --ring-2:      0 0 0 1px rgba(26,18,23,0.12);
 --shadow-pop:  0 10px 30px -12px rgba(26,18,23,0.18), 0 0 0 1px rgba(26,18,23,0.06);
---focus-ring:  0 0 0 3px rgba(104,30,68,0.30);
+--focus-ring:  0 0 0 3px rgba(104, 33, 69,0.30);
 ```
 
 ### Backgrounds & imagery
@@ -205,7 +201,7 @@ The palette is **burgundy + blush + warm cream**, sampled from the logo. No gree
 
 **Rules:**
 - **Stroke 1.25px** — delicate, less utilitarian than the default 2px. Pairs with the slim wordmark.
-- **Tile:** soft-blush (`#F2E8EE`) pill background with a subtle radial highlight — reads warm, not techy.
+- **Tile:** soft-blush (`#F7EDF3`) pill background with a subtle radial highlight — reads warm, not techy.
 - **Glyphs stay functional/financial:** `receipt`, `calculator`, `file-text`, `line-chart`, `wallet`, `building-2`, `calendar`, `shield-check`. Soften the *styling*, not the meaning — these are still finance icons, not decorative flowers/hearts.
 - **Color:** inherits from text (`currentColor`).
 - **Size:** 16px (inline), 20px (UI), 24px (emphasis), 32–48px (feature blocks).
@@ -214,12 +210,12 @@ The palette is **burgundy + blush + warm cream**, sampled from the logo. No gree
 If a needed icon isn't in Lucide, draw it in the same style: 24×24 viewbox, 1.25px stroke, round caps/joins, no fills. Document additions in this README.
 
 ### Logo usage
-- **Primary lockup:** `assets/paxus-logo-full.png` — rosette + wordmark. Light backgrounds, 48px+ height.
-- **Wordmark only:** `assets/paxus-wordmark.png` — tight horizontal spaces (header, footer).
+- **Primary lockup:** `assets/paxus-logo-full.png` — rosette + PAXUS + CPA GROUP. Light backgrounds, 48px+ height.
+- **Wordmark only:** `assets/paxus-wordmark.png` — PAXUS + CPA GROUP, for tight horizontal spaces (header, footer).
 - **Mark only:** `assets/paxus-mark.png` / `paxus-mark-real.png` — square contexts (avatar, favicon) and watermarks.
 - **Reverse (on dark):** `assets/paxus-logo-cream.png` (lockup) or `paxus-mark-cream.png` (mark).
 - **Clearspace:** at least the height of the "P" in PAXUS on all sides.
-- **Don't:** recolor the rosette, place the logo on busy photography, add drop shadows, stretch it, or use the deprecated SVG marks.
+- **Don't:** recolor the rosette, drop the "CPA GROUP" line, place the logo on busy photography, add drop shadows, or stretch it.
 
 ---
 
@@ -227,7 +223,7 @@ If a needed icon isn't in Lucide, draw it in the same style: 24×24 viewbox, 1.2
 
 These are real artifacts from the design session, carried forward honestly. Treat them as **layout/structure references**, and apply the brand rules above when building for real.
 
-- **`ui_kits/website/`** — the final `index.html` reflects the correct direction (no tax; 4-card services for bookkeeping/CFO/audit/controller; a **case studies** section on `#E0D0E0`; burgundy footer). However `components.jsx` still contains a stale `PricingTable` and some tax-era copy, and the preview card subtitle mentions "pricing." Build from `index.html`'s final structure, not the leftover pricing component.
-- **`ui_kits/portal/`** — ⚠️ **not updated for the no-tax pivot.** It still renders a `TaxTimeline` stepper and frames document upload around tax filing. This contradicts Paxus's actual services. Use it for component *structure* (sidebar, topbar, stat cards, doc list, next-call card) only — **rebuild its copy and flows around month-end close, advisory deliverables, audit prep, and controller reporting.** Do not ship the tax-filing timeline.
+- **`ui_kits/website/`** — `index.html` reflects the direction: a **3-card services grid** (bookkeeping / fractional CFO / outsourced controller), a **case studies** section on `#ECD2E1`, and a burgundy footer. `components.jsx` may still contain a stale `PricingTable` and earlier copy — build from `index.html`'s structure, not the leftover pricing component.
+- **`ui_kits/portal/`** — ⚠️ a **structural reference only.** It still renders a `TaxTimeline` stepper and frames document upload around tax filing — left in place because tax positioning is deferred, but **do not treat it as endorsed copy.** Use it for component *structure* (sidebar, topbar, stat cards, doc list, next-call card) and rebuild its copy around the real services (month-end close, advisory deliverables, controller reporting) when building for real.
 
 When in doubt, the order of authority is: **this README → `colors_and_type.css` → `preview/*.html` → the kits.**
