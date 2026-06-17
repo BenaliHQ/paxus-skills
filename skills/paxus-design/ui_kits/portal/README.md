@@ -2,7 +2,7 @@
 
 The product side of Paxus: a logged-in dashboard where clients see their books, upload source documents, message their accountant, and see their next call.
 
-> ⚠️ **This kit was not updated for the no-tax pivot.** It still renders a `TaxTimeline` and frames document upload around tax filing — which does **not** match Paxus's actual services (bookkeeping, advisory / fractional CFO, audit & assurance, controllership). **Use this kit for component structure only**, and rebuild its copy and flows around month-end close, advisory deliverables, audit prep, and controller reporting. Do not ship the tax-filing timeline. See the top-level `README.md` → "Known gaps."
+> ⚠️ **Structural reference only.** It still renders a `TaxTimeline` and frames document upload around tax filing — left in place because tax positioning is deferred, but **not endorsed copy.** Paxus's services are bookkeeping, advisory / fractional CFO, and outsourced controllership. **Use this kit for component structure only**, and rebuild its copy and flows around month-end close, advisory deliverables, and controller reporting. See the top-level `README.md` → "Known gaps."
 
 ## Components (in `components.jsx`)
 - `PortalSidebar` — 248px sidebar, nav pills, badge counts, account card at bottom

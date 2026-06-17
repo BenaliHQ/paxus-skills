@@ -19,7 +19,7 @@ const PortalSidebar = ({ active, setActive }) => {
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px 24px' }}>
         <img src="../../assets/paxus-mark.svg" style={{ width: 28, height: 28 }} />
-        <span style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 500, fontSize: 18, letterSpacing: '0.16em', color: '#681E44' }}>PAXUS</span>
+        <span style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 500, fontSize: 18, letterSpacing: '0.16em', color: '#682145' }}>PAXUS</span>
       </div>
       <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {items.map(it => {
@@ -28,15 +28,15 @@ const PortalSidebar = ({ active, setActive }) => {
             <a key={it.id} onClick={() => setActive(it.id)} style={{
               cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 12,
               padding: '10px 12px', borderRadius: 12, fontSize: 14, fontWeight: 600,
-              background: on ? '#F2E8EE' : 'transparent',
-              color: on ? '#681E44' : '#1A1217',
+              background: on ? '#F7EDF3' : 'transparent',
+              color: on ? '#682145' : '#1A1217',
               textDecoration: 'none',
               transition: 'background 200ms',
             }}>
               <i data-lucide={it.icon} style={{ width: 18, height: 18, strokeWidth: 1.75 }}></i>
               <span style={{ flex: 1 }}>{it.label}</span>
               {it.badge && (
-                <span style={{ background: '#681E44', color: '#FBF7F4', fontSize: 11, fontWeight: 700, padding: '1px 7px', borderRadius: 9999 }}>{it.badge}</span>
+                <span style={{ background: '#682145', color: '#FBF7F4', fontSize: 11, fontWeight: 700, padding: '1px 7px', borderRadius: 9999 }}>{it.badge}</span>
               )}
             </a>
           );
@@ -44,7 +44,7 @@ const PortalSidebar = ({ active, setActive }) => {
       </nav>
       <div style={{ marginTop: 'auto', padding: 14, borderRadius: 16, background: '#fff', boxShadow: '0 0 0 1px rgba(26,18,23,0.08)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#681E44', color: '#FBF7F4', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13 }}>JT</div>
+          <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#682145', color: '#FBF7F4', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13 }}>JT</div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1217', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>June Tanaka</div>
             <div style={{ fontSize: 11, color: '#87797F' }}>Solo plan</div>
@@ -64,7 +64,7 @@ const PortalTopbar = ({ title }) => (
     position: 'sticky', top: 0, zIndex: 10,
   }}>
     <div>
-      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#681E44', marginBottom: 4 }}>Welcome back</div>
+      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#682145', marginBottom: 4 }}>Welcome back</div>
       <h1 style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: 30, lineHeight: 1.1, letterSpacing: '-0.02em', margin: 0 }}>{title}</h1>
     </div>
     <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
@@ -73,7 +73,7 @@ const PortalTopbar = ({ title }) => (
         <i data-lucide="bell" style={{ width: 18, height: 18 }}></i>
         <span style={{ position: 'absolute', top: 8, right: 8, width: 7, height: 7, borderRadius: '50%', background: '#B0202A' }}></span>
       </button>
-      <button className="pxs-btn" style={{ background: '#681E44', color: '#FBF7F4', border: 0, fontFamily: 'Inter', fontWeight: 600, fontSize: 14, padding: '10px 18px', borderRadius: 9999, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, transition: 'transform 200ms' }}>
+      <button className="pxs-btn" style={{ background: '#682145', color: '#FBF7F4', border: 0, fontFamily: 'Inter', fontWeight: 600, fontSize: 14, padding: '10px 18px', borderRadius: 9999, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, transition: 'transform 200ms' }}>
         <i data-lucide="upload" style={{ width: 16, height: 16 }}></i> Upload doc
       </button>
     </div>
@@ -81,15 +81,15 @@ const PortalTopbar = ({ title }) => (
 );
 
 const StatCard = ({ label, value, hint, tone = 'default' }) => {
-  const bg = { default: '#fff', blush: '#F2E8EE', ink: '#1A1217' }[tone];
+  const bg = { default: '#fff', blush: '#F7EDF3', ink: '#1A1217' }[tone];
   const fg = tone === 'ink' ? '#FBF7F4' : '#1A1217';
-  const sub = tone === 'ink' ? '#E0D0E0' : '#87797F';
+  const sub = tone === 'ink' ? '#ECD2E1' : '#87797F';
   return (
     <div style={{
       background: bg, color: fg, borderRadius: 24, padding: 24,
       boxShadow: '0 0 0 1px rgba(26,18,23,0.10)',
     }}>
-      <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.10em', textTransform: 'uppercase', color: tone === 'ink' ? '#E0D0E0' : '#681E44' }}>{label}</div>
+      <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.10em', textTransform: 'uppercase', color: tone === 'ink' ? '#ECD2E1' : '#682145' }}>{label}</div>
       <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 800, fontSize: 44, letterSpacing: '-0.025em', lineHeight: 1, marginTop: 14 }}>{value}</div>
       <div style={{ fontSize: 13, color: sub, marginTop: 8 }}>{hint}</div>
     </div>
@@ -108,19 +108,19 @@ const TaxTimeline = () => {
     <div style={{ background: '#fff', borderRadius: 24, padding: 28, boxShadow: '0 0 0 1px rgba(26,18,23,0.10)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 24 }}>
         <div>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#681E44' }}>Your 2025 return</div>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#682145' }}>Your 2025 return</div>
           <div style={{ fontFamily: 'Manrope, sans-serif', fontWeight: 700, fontSize: 22, marginTop: 6 }}>On track for early April filing</div>
         </div>
         <span style={{ fontSize: 11, fontWeight: 700, padding: '5px 12px', borderRadius: 9999, background: '#FBEFD9', color: '#C77A1F' }}>3 of 5</span>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', position: 'relative' }}>
         <div style={{ position: 'absolute', left: 14, right: 14, top: 14, height: 2, background: '#E5DDE1', zIndex: 0 }}></div>
-        <div style={{ position: 'absolute', left: 14, top: 14, height: 2, width: '50%', background: '#681E44', zIndex: 1 }}></div>
+        <div style={{ position: 'absolute', left: 14, top: 14, height: 2, width: '50%', background: '#682145', zIndex: 1 }}></div>
         {steps.map((s, i) => (
           <div key={i} style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', width: 110 }}>
             <div style={{
               width: 28, height: 28, borderRadius: '50%',
-              background: s.state === 'pending' ? '#fff' : '#681E44',
+              background: s.state === 'pending' ? '#fff' : '#682145',
               boxShadow: s.state === 'pending' ? 'inset 0 0 0 2px #C9BFC4' : 'none',
               color: '#FBF7F4', display: 'flex', alignItems: 'center', justifyContent: 'center',
               animation: s.state === 'active' ? 'pulse 1.6s ease-in-out infinite' : 'none',
@@ -151,7 +151,7 @@ const DocList = () => {
     <div style={{ background: '#fff', borderRadius: 24, padding: '8px 8px', boxShadow: '0 0 0 1px rgba(26,18,23,0.10)' }}>
       <div style={{ padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ fontFamily: 'Manrope', fontWeight: 700, fontSize: 18 }}>Your tax documents</div>
-        <a style={{ fontSize: 13, color: '#681E44', fontWeight: 600 }}>View all →</a>
+        <a style={{ fontSize: 13, color: '#682145', fontWeight: 600 }}>View all →</a>
       </div>
       {docs.map((d, i) => (
         <div key={i} style={{
@@ -159,7 +159,7 @@ const DocList = () => {
           alignItems: 'center', padding: '12px 16px', borderRadius: 16,
           background: i % 2 ? '#FBF7F4' : 'transparent',
         }}>
-          <div style={{ width: 36, height: 36, borderRadius: 10, background: '#F2E8EE', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#681E44' }}>
+          <div style={{ width: 36, height: 36, borderRadius: 10, background: '#F7EDF3', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#682145' }}>
             <i data-lucide="file-text" style={{ width: 16, height: 16 }}></i>
           </div>
           <div>
@@ -179,14 +179,14 @@ const DocList = () => {
 };
 
 const NextAppt = () => (
-  <div style={{ background: '#681E44', color: '#FBF7F4', borderRadius: 24, padding: 28, position: 'relative', overflow: 'hidden' }}>
+  <div style={{ background: '#682145', color: '#FBF7F4', borderRadius: 24, padding: 28, position: 'relative', overflow: 'hidden' }}>
     <img src="../../assets/paxus-mark.svg" style={{ position: 'absolute', right: -50, top: -30, width: 200, opacity: 0.10 }} />
     <div style={{ position: 'relative' }}>
-      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#E0D0E0' }}>Next call</div>
+      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#ECD2E1' }}>Next call</div>
       <div style={{ fontFamily: 'Manrope', fontWeight: 800, fontSize: 28, lineHeight: 1.1, letterSpacing: '-0.02em', marginTop: 12 }}>Quarterly check-in</div>
-      <div style={{ fontSize: 14, color: '#E0D0E0', marginTop: 8 }}>Mar 28 · 10:00 AM PT · 30 min</div>
+      <div style={{ fontSize: 14, color: '#ECD2E1', marginTop: 8 }}>Mar 28 · 10:00 AM PT · 30 min</div>
       <div style={{ marginTop: 18, display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#E0D0E0', color: '#681E44', fontWeight: 700, fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>RA</div>
+        <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#ECD2E1', color: '#682145', fontWeight: 700, fontSize: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>RA</div>
         <span style={{ fontSize: 13 }}>with Rosa Aguilar, CPA</span>
       </div>
       <div style={{ marginTop: 24, display: 'flex', gap: 8 }}>
@@ -201,10 +201,10 @@ const MessageThread = () => (
   <div style={{ background: '#fff', borderRadius: 24, padding: 24, boxShadow: '0 0 0 1px rgba(26,18,23,0.10)' }}>
     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
       <div style={{ fontFamily: 'Manrope', fontWeight: 700, fontSize: 18 }}>From your CPA</div>
-      <a style={{ fontSize: 13, color: '#681E44', fontWeight: 600 }}>Open thread →</a>
+      <a style={{ fontSize: 13, color: '#682145', fontWeight: 600 }}>Open thread →</a>
     </div>
     <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-      <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#681E44', color: '#FBF7F4', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}>RA</div>
+      <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#682145', color: '#FBF7F4', fontWeight: 700, fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none' }}>RA</div>
       <div>
         <div style={{ fontSize: 13, fontWeight: 700 }}>Rosa Aguilar <span style={{ color: '#87797F', fontWeight: 500, marginLeft: 6 }}>· 2h ago</span></div>
         <div style={{ fontSize: 14, lineHeight: 1.55, marginTop: 6, color: '#1A1217' }}>
@@ -215,7 +215,7 @@ const MessageThread = () => (
     </div>
     <div style={{ marginTop: 16, display: 'flex', gap: 8, paddingTop: 16, borderTop: '1px solid rgba(26,18,23,0.08)' }}>
       <input placeholder="Reply…" style={{ flex: 1, border: 0, background: '#FBF7F4', padding: '10px 14px', borderRadius: 9999, fontSize: 14, fontFamily: 'Inter', outline: 'none' }} />
-      <button className="pxs-btn" style={{ background: '#681E44', color: '#FBF7F4', border: 0, padding: '10px 18px', borderRadius: 9999, fontWeight: 600, fontSize: 13, cursor: 'pointer' }}>Send</button>
+      <button className="pxs-btn" style={{ background: '#682145', color: '#FBF7F4', border: 0, padding: '10px 18px', borderRadius: 9999, fontWeight: 600, fontSize: 13, cursor: 'pointer' }}>Send</button>
     </div>
   </div>
 );
