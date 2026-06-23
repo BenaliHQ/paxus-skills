@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<!-- ============================================================================
+     MONTHLY DASHBOARD — CLIENT-AGNOSTIC BASE TEMPLATE (house style)
+     This file contains NO client data. It is the single shared starting point
+     for every cold-start build and the canonical source for the look/feel.
+     NEVER start a build from another client's dashboard — copy THIS file, then
+     fill it from the client's own financials + spec file (~/paxus-ai/clients/<slug>/dashboard-spec.md).
+     One Letter page. Navy/teal scheme (same for every client, NP and FP).
+     Sections are modular: keep what the client's confirmed spec uses, delete
+     the rest. The trend block is commented out — enable only for trend clients.
+============================================================================ -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @page { size: letter; margin: 0.45in; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Calibri", "Segoe UI", Arial, sans-serif; color: #333; font-size: 11px; line-height: 1.3; width: 7.5in; margin: 0 auto; }
+
+  .title { color: #1f3a5f; font-size: 22px; font-weight: 700; border-bottom: 3px solid #1f3a5f; padding-bottom: 4px; }
+  .subtitle { color: #777; font-size: 11px; margin: 3px 0 10px; }
+
+  /* dark navy header / snapshot tiles */
+  .head-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .head-tile { flex: 1; background: #1f3a5f; color: #fff; border-radius: 4px; padding: 9px 11px; }
+  .head-tile .lbl { font-size: 9px; letter-spacing: 0.5px; text-transform: uppercase; color: #b9c6da; }
+  .head-tile .val { font-size: 19px; font-weight: 700; margin: 3px 0; }
+  .head-tile .sub { font-size: 9px; color: #cdd8e6; }
+
+  .section-head { color: #1f3a5f; font-size: 13px; font-weight: 700; margin: 2px 0 6px; }
+
+  /* KPI cards with teal left border */
+  .kpi-row { display: flex; gap: 8px; margin-bottom: 14px; }
+  .kpi { flex: 1; background: #f7f8fa; border-left: 3px solid #1f8a8a; border-radius: 3px; padding: 7px 9px; }
+  .kpi .name { font-size: 9px; font-weight: 700; letter-spacing: 0.3px; text-transform: uppercase; color: #555; }
+  .kpi .value { font-size: 26px; font-weight: 700; color: #1f3a5f; margin: 1px 0; }
+  .kpi .bench { font-size: 8.5px; color: #999; }
+  .kpi .stat { font-size: 9px; font-weight: 700; margin-top: 1px; }
+  .amber { color: #c77d0a; }   /* outside band but not alarming */
+  .red { color: #c0392b; }     /* genuine risk */
+  .green { color: #2e8b57; }   /* within / favorable */
+
+  .two-col { display: flex; gap: 22px; margin-bottom: 12px; }
+  .col { flex: 1; }
+
+  /* stacked mix bar (revenue by source / channel) */
+  .mixbar { display: flex; height: 26px; border-radius: 3px; overflow: hidden; margin-bottom: 5px; }
+  .mixbar > div { display: flex; align-items: center; justify-content: center; color: #fff; font-size: 10px; font-weight: 700; white-space: nowrap; }
+  .m1 { background: #1f3a5f; } .m2 { background: #1f8a8a; } .m3 { background: #6bb6b6; } .m4 { background: #c9cdd1; color: #555; }
+  .legend { font-size: 9px; color: #666; margin-bottom: 7px; }
+  .legend .sw { display: inline-block; width: 9px; height: 9px; border-radius: 2px; vertical-align: middle; margin: 0 3px 0 0; }
+
+  table.tbl { width: 100%; border-collapse: collapse; font-size: 10px; }
+  table.tbl th { background: #1f3a5f; color: #fff; text-align: left; padding: 4px 6px; font-size: 9.5px; }
+  table.tbl th.num, table.tbl td.num { text-align: right; }
+  table.tbl td { padding: 3.5px 6px; border-bottom: 1px solid #eee; }
+  table.tbl tr.tot td { font-weight: 700; border-top: 1px solid #ccc; border-bottom: none; }
+  .note { font-size: 9px; color: #777; margin-top: 4px; }
+
+  /* trend bars — only for clients whose spec includes a monthly trend.
+     Loss months anchor below the dashed zero line (.nz, red); positive months
+     above it (.pz, green). Height px = round(abs(month) / largest_abs * 52). */
+  .trend { display: flex; align-items: flex-end; gap: 6px; height: 64px; border-bottom: 1px dashed #bbb; margin: 4px 0 2px; }
+  .trend .bar-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+  .trend .pz { background: #2e8b57; width: 70%; border-radius: 2px 2px 0 0; }
+  .trend .nz { background: #c0392b; width: 70%; }
+  .trend .mlbl { font-size: 8px; color: #777; margin-top: 2px; }
+
+  /* activity / notes callout */
+  .callout { background: #fdf6e3; border-left: 4px solid #d9a441; border-radius: 3px; padding: 8px 10px 8px 24px; margin-top: 2px; }
+  .callout li { font-size: 9.5px; margin-bottom: 3px; line-height: 1.3; }
+  .callout li:last-child { margin-bottom: 0; }
+
+  .footer { text-align: center; font-size: 8px; color: #aaa; font-style: italic; margin-top: 10px; }
+</style>
+</head>
+<body>
+  <!-- TITLE: "<Client> — <Month Year> Dashboard" -->
+  <div class="title">{{Client}} — {{Month Year}} Dashboard</div>
+  <div class="subtitle">{{Period, e.g. YTD through MMM 31, YYYY}}&nbsp; |&nbsp; {{basis}}&nbsp; |&nbsp; Prepared by Paxus CPA</div>
+
+  <!-- HEADER TILES: 3–4 headline figures. Each: label, big value, one sub-line.
+       Confirm per client whether the big value is YTD or current-month. -->
+  <div class="head-row">
+    <div class="head-tile"><div class="lbl">{{Tile 1 label}}</div><div class="val">{{$value}}</div><div class="sub">{{context}}</div></div>
+    <div class="head-tile"><div class="lbl">{{Tile 2 label}}</div><div class="val">{{$value}}</div><div class="sub">{{context}}</div></div>
+    <div class="head-tile"><div class="lbl">{{Tile 3 label}}</div><div class="val">{{$value}}</div><div class="sub">{{context}}</div></div>
+    <div class="head-tile"><div class="lbl">{{Tile 4 label}}</div><div class="val">{{$value}}</div><div class="sub">{{context}}</div></div>
+  </div>
+
+  <!-- KPI CARDS: 3–6 confirmed KPIs. One or two rows of .kpi-row. Each card:
+       name, value, benchmark line (with its source), and a colored status. -->
+  <div class="section-head">Key Performance Indicators</div>
+  <div class="kpi-row">
+    <div class="kpi"><div class="name">{{KPI 1}}</div><div class="value">{{val}}</div><div class="bench">{{Benchmark + source}}</div><div class="stat green">{{status}}</div></div>
+    <div class="kpi"><div class="name">{{KPI 2}}</div><div class="value">{{val}}</div><div class="bench">{{Benchmark + source}}</div><div class="stat amber">{{status}}</div></div>
+    <div class="kpi"><div class="name">{{KPI 3}}</div><div class="value">{{val}}</div><div class="bench">{{Benchmark + source}}</div><div class="stat red">{{status}}</div></div>
+  </div>
+
+  <!-- TWO-COLUMN BLOCK A: e.g. revenue mix (stacked bar + table) | budget vs actual -->
+  <div class="two-col">
+    <div class="col">
+      <div class="section-head">{{Left section, e.g. Revenue Mix}}</div>
+      <div class="mixbar">
+        <div class="m1" style="width:{{%}}%;">{{label}}</div>
+        <div class="m2" style="width:{{%}}%;">{{%}}</div>
+        <div class="m3" style="width:{{%}}%;">{{%}}</div>
+        <div class="m4" style="width:{{%}}%;">{{%}}</div>
+      </div>
+      <div class="legend">
+        <span class="sw" style="background:#1f3a5f;"></span>{{cat}} {{$}}
+        <span class="sw" style="background:#1f8a8a; margin-left:8px;"></span>{{cat}} {{$}}
+        <span class="sw" style="background:#6bb6b6; margin-left:8px;"></span>{{cat}} {{$}}
+        <span class="sw" style="background:#c9cdd1; margin-left:8px;"></span>{{cat}} {{$}}
+      </div>
+      <table class="tbl">
+        <tr><th>{{col}}</th><th class="num">{{col}}</th></tr>
+        <tr><td>{{row}}</td><td class="num">{{$}}</td></tr>
+      </table>
+    </div>
+    <div class="col">
+      <div class="section-head">{{Right section, e.g. Budget vs. Actual}}</div>
+      <table class="tbl">
+        <tr><th>Line</th><th class="num">Actual</th><th class="num">Budget</th><th class="num">Var / %</th></tr>
+        <tr><td>{{line}}</td><td class="num">{{$}}</td><td class="num">{{$}}</td><td class="num green">{{var}}</td></tr>
+        <tr class="tot"><td>{{total}}</td><td class="num">{{$}}</td><td class="num">{{$}}</td><td class="num">{{var}}</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- TWO-COLUMN BLOCK B: e.g. cash / balance-sheet snapshot | A/R aging buckets -->
+  <div class="two-col">
+    <div class="col">
+      <div class="section-head">{{Left section, e.g. Cash / Liquidity}}</div>
+      <table class="tbl">
+        <tr><th>{{col}}</th><th class="num">{{col}}</th></tr>
+        <tr><td>{{row}}</td><td class="num">{{$}}</td></tr>
+        <tr class="tot"><td>{{total}}</td><td class="num">{{$}}</td></tr>
+      </table>
+      <div class="note">{{optional note}}</div>
+    </div>
+    <div class="col">
+      <div class="section-head">{{Right section, e.g. A/R Aging}}</div>
+      <table class="tbl">
+        <tr><th>Bucket</th><th class="num">Amount</th><th class="num">% Total</th></tr>
+        <tr><td>Current</td><td class="num">{{$}}</td><td class="num">{{%}}</td></tr>
+        <tr><td>1–30 days</td><td class="num">{{$}}</td><td class="num">{{%}}</td></tr>
+        <tr><td>31–60 days</td><td class="num">{{$}}</td><td class="num">{{%}}</td></tr>
+        <tr><td>61–90 days</td><td class="num">{{$}}</td><td class="num">{{%}}</td></tr>
+        <tr><td>91+ days</td><td class="num">{{$}}</td><td class="num">{{%}}</td></tr>
+      </table>
+      <div class="note">{{largest aged items / follow-ups}}</div>
+    </div>
+  </div>
+
+  <!-- OPTIONAL TREND BLOCK — enable ONLY for trend clients. Uncomment and fill.
+  <div class="section-head">Monthly Net Income Trend</div>
+  <div class="trend">
+    <div class="bar-item"><div class="pz" style="height:{{px}}px;"></div><div class="mlbl">Jan</div></div>
+    <div class="bar-item"><div class="nz" style="height:{{px}}px;"></div><div class="mlbl">Feb</div></div>
+  </div>
+  -->
+
+  <!-- NOTES CALLOUT: 3–6 bullets. Flag one-time/timing items, risks, follow-ups. -->
+  <div class="section-head">{{Activity & Notes heading}}</div>
+  <div class="callout">
+    <ul>
+      <li><strong>{{lead}}</strong> {{detail}}</li>
+      <li><strong>{{lead}}</strong> {{detail}}</li>
+    </ul>
+  </div>
+
+  <!-- FOOTER: footnotes for any flagged figure + basis + standard disclaimer. -->
+  <div class="footer">{{footnotes}} &nbsp;•&nbsp; {{basis}}. Disclaimer: No opinion, conclusion, or assurance is provided on these financial statements.</div>
+</body>
+</html>
