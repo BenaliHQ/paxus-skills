@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400;6..12,500;6..12,600;6..12,700;6..12,800&family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+<script src="close-data.js"></script>
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{background:#EBE2E7;font-family:'Nunito Sans',sans-serif;-webkit-font-smoothing:antialiased;}
+  .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum";}
+  .tabbtn{appearance:none;background:none;border:none;cursor:pointer;font-family:'Nunito Sans',sans-serif;padding:14px 2px;margin:0;font-size:13.5px;letter-spacing:.04em;transition:color .15s;}
+  .tabbtn:hover{color:#682145 !important;}
+  .trow:hover{background:#FBF4F8 !important;}
+  ::selection{background:#ECD2E1;}
+</style>
+</helmet>
+
+<div style="min-height:100vh;padding:40px 24px 64px;display:flex;justify-content:center;">
+  <div style="width:100%;max-width:1280px;background:#FFFFFF;border-radius:4px;box-shadow:0 1px 2px rgba(74,21,48,.10),0 24px 60px rgba(74,21,48,.10);overflow:hidden;">
+
+    <!-- MASTHEAD -->
+    <div style="padding:26px 44px 0;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #682145;padding-bottom:20px;">
+        <div style="display:flex;align-items:center;gap:18px;">
+          <img src="assets/paxus-logo.png" alt="Paxus CPA Group" style="height:62px;width:auto;display:block;">
+          <div style="border-left:1px solid #E4D5DD;padding-left:18px;">
+            <div style="font-family:'Nunito Sans',sans-serif;font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:#A67C92;font-weight:700;">Month-End Close</div>
+            <div style="font-family:'Spectral',serif;font-size:23px;font-weight:600;color:#4A1530;line-height:1.1;margin-top:2px;">Operations Dashboard</div>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'Spectral',serif;font-size:21px;font-weight:600;font-style:italic;color:#682145;">{{ closeMonth }} close</div>
+          <div style="font-size:12.5px;color:#9C8A93;margin-top:4px;">Report {{ reportDate }}</div>
+          <sc-if value="{{ hasReportNote }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;font-style:italic;color:#B7A3AE;margin-top:2px;">{{ reportNote }}</div></sc-if>
+          <div style="display:inline-block;margin-top:9px;background:#F4E8EF;border:1px solid #E3CEDB;border-radius:100px;padding:5px 13px;"><span class="num" style="font-size:11px;letter-spacing:.05em;font-weight:700;color:#682145;">{{ checkpointLabel }}</span></div>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <div style="display:flex;gap:30px;margin-top:4px;">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="6">
+          <button class="tabbtn" onClick="{{ t.onClick }}" style="text-transform:uppercase;{{ t.style }}">{{ t.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- ===================== SUMMARY ===================== -->
+    <sc-if value="{{ isSummary }}" hint-placeholder-val="{{ true }}">
+    <div data-screen-label="Summary" style="padding:34px 44px 46px;background:#FBF7F9;">
+
+      <!-- lede stats -->
+      <div style="display:flex;margin-bottom:34px;">
+        <div style="flex:1;padding-right:32px;">
+          <div class="num" style="font-family:'Spectral',serif;font-size:56px;font-weight:600;color:#682145;line-height:1;">{{ ledePct }}</div>
+          <div style="font-size:13.5px;color:#6A5560;margin-top:9px;line-height:1.55;"><strong style="color:#4A1530;">{{ ledeReconciledLabel }}</strong> projects reconciled{{ ledePriorComparison }}.</div>
+        </div>
+        <div style="width:1px;background:#ECDDE5;"></div>
+        <div style="flex:1;padding:0 32px;">
+          <div class="num" style="font-family:'Spectral',serif;font-size:56px;font-weight:600;color:#682145;line-height:1;">{{ ledeClosed }}</div>
+          <div style="font-size:13.5px;color:#6A5560;margin-top:9px;line-height:1.55;">projects <strong style="color:#4A1530;">fully closed</strong> — {{ ledeClosedPct }}% of the book{{ ledePriorClosedComparison }}.</div>
+        </div>
+        <div style="width:1px;background:#ECDDE5;"></div>
+        <div style="flex:1;padding-left:32px;">
+          <div class="num" style="font-family:'Spectral',serif;font-size:56px;font-weight:600;color:#C084A4;line-height:1;">{{ ledeStaff }}</div>
+          <div style="font-size:13.5px;color:#6A5560;margin-top:9px;line-height:1.55;">projects <strong style="color:#4A1530;">still with staff</strong>{{ ledeStaffMixSuffix }}.</div>
+        </div>
+      </div>
+
+      <!-- progression -->
+      <div style="margin-bottom:36px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:18px;">
+          <div>
+            <div style="font-family:'Spectral',serif;font-size:21px;font-weight:600;color:#4A1530;">The month so far</div>
+            <div style="font-size:12.5px;color:#9C8A93;margin-top:2px;">Stage distribution at each checkpoint of the {{ closeMonth }} close</div>
+          </div>
+          <div style="display:flex;gap:18px;">
+            <div style="display:flex;align-items:center;gap:6px;"><span style="width:11px;height:11px;border-radius:2px;background:#ECD2E1;"></span><span style="font-size:11.5px;color:#6A5560;">Staff</span></div>
+            <div style="display:flex;align-items:center;gap:6px;"><span style="width:11px;height:11px;border-radius:2px;background:#C084A4;"></span><span style="font-size:11.5px;color:#6A5560;">Lead</span></div>
+            <div style="display:flex;align-items:center;gap:6px;"><span style="width:11px;height:11px;border-radius:2px;background:#8E4068;"></span><span style="font-size:11.5px;color:#6A5560;">Controller</span></div>
+            <div style="display:flex;align-items:center;gap:6px;"><span style="width:11px;height:11px;border-radius:2px;background:#682145;"></span><span style="font-size:11.5px;color:#6A5560;">Closed</span></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:13px;">
+          <sc-for list="{{ progression }}" as="cp" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:18px;">
+              <div style="width:78px;text-align:right;flex:none;">
+                <div style="font-family:'Spectral',serif;font-size:17px;font-weight:600;color:{{ cp.labelColor }};">{{ cp.key }}</div>
+                <div class="num" style="font-size:10.5px;color:#B7A3AE;">{{ cp.dateLabel }}</div>
+              </div>
+              <div style="flex:1;display:flex;border-radius:4px;overflow:hidden;{{ cp.barStyle }}">
+                <sc-for list="{{ cp.segs }}" as="s" hint-placeholder-count="4">
+                  <div class="num" style="font-weight:700;font-size:12.5px;display:flex;align-items:center;justify-content:center;overflow:hidden;height:{{ cp.h }};width:{{ s.w }};background:{{ s.bg }};color:{{ s.fg }};">{{ s.label }}</div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- two columns: split + spotlight -->
+      <div style="display:grid;grid-template-columns:1fr 1.25fr;gap:38px;border-top:1px solid #ECDDE5;padding-top:30px;">
+        <!-- monthly / quarterly -->
+        <div>
+          <div style="font-family:'Spectral',serif;font-size:18px;font-weight:600;color:#4A1530;margin-bottom:18px;">Monthly &amp; quarterly</div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px;"><span style="font-size:13px;color:#5b4a53;font-weight:600;">Monthly · 89 projects</span><span class="num" style="font-size:13px;color:#682145;font-weight:700;">98.9%</span></div>
+          <div style="height:8px;background:#F0E6EC;border-radius:100px;overflow:hidden;margin-bottom:20px;"><div style="width:98.9%;height:100%;background:#682145;border-radius:100px;"></div></div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px;"><span style="font-size:13px;color:#5b4a53;font-weight:600;">Quarterly · 31 projects</span><span class="num" style="font-size:13px;color:#C084A4;font-weight:700;">87.1%</span></div>
+          <div style="height:8px;background:#F0E6EC;border-radius:100px;overflow:hidden;"><div style="width:87.1%;height:100%;background:#C084A4;border-radius:100px;"></div></div>
+          <div style="margin-top:26px;padding-top:20px;border-top:1px solid #ECDDE5;display:flex;gap:26px;">
+            <div><div class="num" style="font-family:'Spectral',serif;font-size:28px;font-weight:600;color:#4A1530;">1</div><div style="font-size:11px;color:#9C8A93;margin-top:2px;">Monthly open</div></div>
+            <div><div class="num" style="font-family:'Spectral',serif;font-size:28px;font-weight:600;color:#4A1530;">4</div><div style="font-size:11px;color:#9C8A93;margin-top:2px;">Quarterly open</div></div>
+            <div><div class="num" style="font-family:'Spectral',serif;font-size:28px;font-weight:600;color:#682145;">102</div><div style="font-size:11px;color:#9C8A93;margin-top:2px;">Fully closed</div></div>
+          </div>
+          <!-- milestones -->
+          <div style="margin-top:26px;padding-top:20px;border-top:1px solid #ECDDE5;">
+            <div style="font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:#A67C92;font-weight:700;margin-bottom:14px;">Milestone timeline</div>
+            <sc-for list="{{ milestones }}" as="m" hint-placeholder-count="6">
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:11px;">
+                <span style="width:9px;height:9px;border-radius:50%;flex:none;background:{{ m.dot }};{{ m.ring }}"></span>
+                <span class="num" style="width:54px;flex:none;font-size:12px;font-weight:700;color:{{ m.dateColor }};">{{ m.date }}</span>
+                <span style="font-size:12.5px;color:{{ m.textColor }};line-height:1.35;">{{ m.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <!-- SPOTLIGHT -->
+        <div style="background:#FFFFFF;border:1px solid #ECDDE5;border-radius:6px;padding:24px 26px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px;">
+            <div style="font-family:'Spectral',serif;font-size:19px;font-weight:600;color:#4A1530;">★ Excellence spotlight</div>
+            <div style="background:#F4E8EF;border:1px solid #E3CEDB;border-radius:100px;padding:4px 11px;flex:none;"><span class="num" style="font-size:9.5px;letter-spacing:.08em;color:#8E4068;font-weight:700;text-transform:uppercase;">{{ spot.badge }}</span></div>
+          </div>
+          <div style="font-size:12.5px;color:#9C8A93;margin-bottom:20px;">{{ spot.sub }}</div>
+
+          <div style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#A67C92;font-weight:700;margin-bottom:13px;">{{ spot.primaryTitle }}</div>
+          <div style="display:flex;flex-direction:column;gap:11px;">
+            <sc-for list="{{ spot.primary }}" as="p" hint-placeholder-count="5">
+              <div style="display:flex;align-items:center;gap:13px;">
+                <span style="width:120px;flex:none;font-size:13px;color:#3a2c33;font-weight:600;">{{ p.name }}</span>
+                <div style="flex:1;height:18px;background:#F4ECF1;border-radius:3px;overflow:hidden;"><div style="width:{{ p.w }};height:100%;background:{{ p.color }};border-radius:3px;"></div></div>
+                <span class="num" style="width:24px;flex:none;text-align:right;font-size:13.5px;font-weight:700;color:#682145;">{{ p.val }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ spot.hasSecondary }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:20px;padding-top:16px;border-top:1px solid #F0E6EC;">
+              <div style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#A67C92;font-weight:700;margin-bottom:12px;">{{ spot.secondaryTitle }}</div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                <sc-for list="{{ spot.secondary }}" as="s2" hint-placeholder-count="5">
+                  <div style="display:flex;align-items:center;gap:7px;background:#FAF3F7;border:1px solid #F0E0EA;border-radius:100px;padding:5px 12px 5px 13px;">
+                    <span style="font-size:12.5px;color:#3a2c33;font-weight:600;">{{ s2.name }}</span>
+                    <span class="num" style="font-size:12.5px;color:#682145;font-weight:800;">{{ s2.val }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ spot.hasNote }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:18px;padding-top:14px;border-top:1px solid #F0E6EC;font-size:11.5px;font-style:italic;color:#A67C92;line-height:1.5;">{{ spot.note }}</div>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ===================== MONTH OVER MONTH ===================== -->
+    <sc-if value="{{ isMom }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Month-over-Month" style="padding:32px 44px 46px;background:#FBF7F9;">
+      <div style="font-family:'Spectral',serif;font-size:22px;font-weight:600;color:#4A1530;">Month-over-month pipeline</div>
+      <div style="font-size:12.5px;color:#9C8A93;margin-top:3px;margin-bottom:8px;">Each checkpoint compared across close months. Close month = the month prior to the report date. The current close is highlighted.</div>
+
+      <sc-for list="{{ momGroups }}" as="g" hint-placeholder-count="5">
+        <div style="margin-top:26px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+            <span style="font-family:'Spectral',serif;font-size:16px;font-weight:600;color:#682145;">{{ g.title }}</span>
+            <span style="flex:1;height:1px;background:#ECDDE5;"></span>
+          </div>
+          <div style="border:1px solid #ECDDE5;border-radius:5px;overflow:hidden;">
+            <div style="display:grid;grid-template-columns:1.3fr 1fr 0.7fr 0.7fr 0.9fr 0.8fr 0.7fr 2fr;background:#F4E8EF;padding:9px 16px;">
+              <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;">Report</span>
+              <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;">Close</span>
+              <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;text-align:right;">Staff</span>
+              <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;text-align:right;">Lead</span>
+              <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;text-align:right;">Ctrl</span>
+              <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;text-align:right;">Closed</span>
+              <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;text-align:right;">Total</span>
+              <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;padding-left:16px;">Distribution</span>
+            </div>
+            <sc-for list="{{ g.rows }}" as="r" hint-placeholder-count="6">
+              <div style="display:grid;grid-template-columns:1.3fr 1fr 0.7fr 0.7fr 0.9fr 0.8fr 0.7fr 2fr;padding:10px 16px;align-items:center;border-top:1px solid #F2E8EE;{{ r.rowStyle }}">
+                <span class="num" style="font-size:13px;color:#3a2c33;font-weight:{{ r.weight }};">{{ r.report }}</span>
+                <span style="font-size:12.5px;color:#8a7680;">{{ r.close }}</span>
+                <span class="num" style="font-size:13px;color:#5b4a53;text-align:right;">{{ r.staff }}</span>
+                <span class="num" style="font-size:13px;color:#5b4a53;text-align:right;">{{ r.lead }}</span>
+                <span class="num" style="font-size:13px;color:#5b4a53;text-align:right;">{{ r.controller }}</span>
+                <span class="num" style="font-size:13px;color:#682145;font-weight:700;text-align:right;">{{ r.closed }}</span>
+                <span class="num" style="font-size:13px;color:#9C8A93;text-align:right;">{{ r.total }}</span>
+                <span style="padding-left:16px;"><span style="display:flex;height:11px;border-radius:2px;overflow:hidden;background:#F4ECF1;">
+                  <sc-for list="{{ r.dist }}" as="d" hint-placeholder-count="4"><span style="width:{{ d.w }};background:{{ d.bg }};"></span></sc-for>
+                </span></span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    </sc-if>
+
+    <!-- ===================== STAFF ===================== -->
+    <sc-if value="{{ isStaff }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Staff" style="padding:32px 44px 46px;background:#FBF7F9;">
+      <div style="display:flex;align-items:baseline;gap:12px;"><div style="font-family:'Spectral',serif;font-size:22px;font-weight:600;color:#4A1530;">Staff — in progress</div><div class="num" style="font-size:13px;color:#9C8A93;">{{ staffRows.length }} accounts reconciling</div></div>
+      <div style="font-size:12.5px;color:#9C8A93;margin-top:3px;margin-bottom:18px;">Awaiting reconciliation before hand-off to leads.</div>
+      <div style="border:1px solid #ECDDE5;border-radius:5px;overflow:hidden;background:#fff;">
+        <div style="display:grid;grid-template-columns:1.6fr 0.7fr 1.2fr 2.2fr;background:#F4E8EF;padding:10px 18px;">
+          <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;">Client</span>
+          <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;">Type</span>
+          <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;">Assignee</span>
+          <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;">Status tags</span>
+        </div>
+        <sc-for list="{{ staffRows }}" as="r" hint-placeholder-count="6">
+          <div class="trow" style="display:grid;grid-template-columns:1.6fr 0.7fr 1.2fr 2.2fr;padding:13px 18px;align-items:center;border-top:1px solid #F2E8EE;">
+            <span style="font-size:13.5px;color:#3a2c33;font-weight:600;">{{ r.client }}</span>
+            <span><span style="display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:100px;background:{{ r.typeBg }};color:{{ r.typeFg }};">{{ r.type }}</span></span>
+            <span style="font-size:12.5px;color:#6A5560;">{{ r.who }}</span>
+            <span style="display:flex;flex-wrap:wrap;gap:5px;">
+              <sc-for list="{{ r.tags }}" as="t" hint-placeholder-count="2"><span style="font-size:11px;color:#7a5f6c;background:#F6EEF2;border:1px solid #EEDDE7;border-radius:4px;padding:2px 8px;">{{ t }}</span></sc-for>
+            </span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ===================== LEAD ===================== -->
+    <sc-if value="{{ isLead }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Lead" style="padding:32px 44px 46px;background:#FBF7F9;">
+      <div style="display:flex;align-items:baseline;gap:12px;"><div style="font-family:'Spectral',serif;font-size:22px;font-weight:600;color:#4A1530;">Lead — in review</div><div class="num" style="font-size:13px;color:#9C8A93;">{{ leadRows.length }} accounts</div></div>
+      <div style="font-size:12.5px;color:#9C8A93;margin-top:3px;margin-bottom:18px;">In lead review before hand-off to controllers.</div>
+      <div style="border:1px solid #ECDDE5;border-radius:5px;overflow:hidden;background:#fff;">
+        <div style="display:grid;grid-template-columns:1.7fr 0.7fr 1.3fr 1.6fr;background:#F4E8EF;padding:10px 18px;">
+          <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;">Client</span>
+          <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;">Type</span>
+          <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;">Lead reviewer</span>
+          <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;">Status</span>
+        </div>
+        <sc-for list="{{ leadRows }}" as="r" hint-placeholder-count="2">
+          <div class="trow" style="display:grid;grid-template-columns:1.7fr 0.7fr 1.3fr 1.6fr;padding:12px 18px;align-items:center;border-top:1px solid #F2E8EE;">
+            <span style="font-size:13.5px;color:#3a2c33;font-weight:600;">{{ r.client }}</span>
+            <span><span style="display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:100px;background:{{ r.typeBg }};color:{{ r.typeFg }};">{{ r.type }}</span></span>
+            <span style="font-size:12.5px;color:#6A5560;">{{ r.who }}</span>
+            <span style="display:flex;flex-wrap:wrap;gap:5px;">
+              <sc-for list="{{ r.tags }}" as="t" hint-placeholder-count="2"><span style="font-size:11px;color:#7a5f6c;background:#F6EEF2;border:1px solid #EEDDE7;border-radius:4px;padding:2px 8px;">{{ t }}</span></sc-for>
+            </span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ===================== CONTROLLER ===================== -->
+    <sc-if value="{{ isController }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Controller" style="padding:32px 44px 46px;background:#FBF7F9;">
+      <div style="display:flex;align-items:baseline;gap:12px;"><div style="font-family:'Spectral',serif;font-size:22px;font-weight:600;color:#4A1530;">Controller — final review</div><div class="num" style="font-size:13px;color:#9C8A93;">{{ controllerRows.length }} accounts</div></div>
+      <div style="font-size:12.5px;color:#9C8A93;margin-top:3px;margin-bottom:18px;">In final review before close. Financials delivered Jun 19.</div>
+      <div style="border:1px solid #ECDDE5;border-radius:5px;overflow:hidden;background:#fff;">
+        <div style="display:grid;grid-template-columns:1.7fr 0.7fr 1.3fr 1.6fr;background:#F4E8EF;padding:10px 18px;">
+          <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;">Client</span>
+          <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;">Type</span>
+          <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;">Controller</span>
+          <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;">Status</span>
+        </div>
+        <sc-for list="{{ controllerRows }}" as="r" hint-placeholder-count="11">
+          <div class="trow" style="display:grid;grid-template-columns:1.7fr 0.7fr 1.3fr 1.6fr;padding:12px 18px;align-items:center;border-top:1px solid #F2E8EE;">
+            <span style="font-size:13.5px;color:#3a2c33;font-weight:600;">{{ r.client }}</span>
+            <span><span style="display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:100px;background:{{ r.typeBg }};color:{{ r.typeFg }};">{{ r.type }}</span></span>
+            <span style="font-size:12.5px;color:#6A5560;">{{ r.who }}</span>
+            <span style="display:flex;flex-wrap:wrap;gap:5px;">
+              <sc-for list="{{ r.tags }}" as="t" hint-placeholder-count="2"><span style="font-size:11px;color:#7a5f6c;background:#F6EEF2;border:1px solid #EEDDE7;border-radius:4px;padding:2px 8px;">{{ t }}</span></sc-for>
+            </span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ===================== CLOSED ===================== -->
+    <sc-if value="{{ isClosed }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Closed" style="padding:32px 44px 46px;background:#FBF7F9;">
+      <div style="display:flex;align-items:baseline;gap:12px;"><div style="font-family:'Spectral',serif;font-size:22px;font-weight:600;color:#4A1530;">Closed</div><div class="num" style="font-size:13px;color:#9C8A93;">{{ closedRows.length }} projects · 75 monthly · 27 quarterly</div></div>
+      <div style="font-size:12.5px;color:#9C8A93;margin-top:3px;margin-bottom:18px;">Fully closed in Financial Cents. Sorted by close date, most recent first.</div>
+      <div style="border:1px solid #ECDDE5;border-radius:5px;overflow:hidden;background:#fff;">
+        <div style="display:grid;grid-template-columns:1.7fr 0.7fr 0.7fr 2.4fr;background:#F4E8EF;padding:10px 18px;">
+          <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;">Client</span>
+          <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;">Type</span>
+          <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;">Closed</span>
+          <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8E4068;font-weight:700;">Team</span>
+        </div>
+        <sc-for list="{{ closedRows }}" as="r" hint-placeholder-count="12">
+          <div class="trow" style="display:grid;grid-template-columns:1.7fr 0.7fr 0.7fr 2.4fr;padding:11px 18px;align-items:center;border-top:1px solid #F2E8EE;">
+            <span style="font-size:13px;color:#3a2c33;font-weight:600;">{{ r.client }}</span>
+            <span><span style="display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:100px;background:{{ r.typeBg }};color:{{ r.typeFg }};">{{ r.type }}</span></span>
+            <span class="num" style="font-size:12.5px;color:#682145;font-weight:700;">{{ r.date }}</span>
+            <span style="display:flex;flex-wrap:wrap;gap:5px;">
+              <sc-for list="{{ r.who }}" as="w" hint-placeholder-count="3"><span style="font-size:11px;color:#7a5f6c;background:#F6EEF2;border:1px solid #EEDDE7;border-radius:4px;padding:2px 8px;">{{ w }}</span></sc-for>
+            </span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- FOOTER -->
+    <div style="padding:16px 44px;background:#fff;border-top:1px solid #ECDDE5;display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:11px;color:#B7A3AE;">Projects must be manually closed in Financial Cents · Completion priority: Wheel of Service → Monthly → Quarterly</span>
+      <span class="num" style="font-size:11px;color:#B7A3AE;">{{ todayLabel }}</span>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:1100}}">
+class Component extends DCLogic {
+  state = { tab: 'summary' };
+
+  componentDidMount() {
+    if (!window.PAXUS_CLOSE) {
+      this._poll = setInterval(() => { if (window.PAXUS_CLOSE) { clearInterval(this._poll); this.forceUpdate(); } }, 30);
+    }
+  }
+  componentWillUnmount() { if (this._poll) clearInterval(this._poll); }
+
+  get D() {
+    return window.PAXUS_CLOSE || {
+      closeMonth: '', reportDate: '', checkpointLabel: '', reportNote: '',
+      checkpoints: [], milestones: [],
+      mom: { '5th': [], '10th': [], '15th': [], '20th': [], '25th': [] },
+      momTitles: { '5th': '', '10th': '', '15th': '', '20th': '', '25th': '' },
+      staff: [], lead: [], controller: [], closed: [],
+    };
+  }
+
+  STAGE = {
+    staff: { bg: '#ECD2E1', fg: '#8a3a63' },
+    lead: { bg: '#C084A4', fg: '#4d1633' },
+    controller: { bg: '#8E4068', fg: '#ffffff' },
+    closed: { bg: '#682145', fg: '#ffffff' },
+  };
+
+  typeChip(t) {
+    if (t === 'Monthly') return { typeBg: '#F4E8EF', typeFg: '#8E4068' };
+    if (t === 'Quarterly') return { typeBg: '#EFE7F2', typeFg: '#6E4A8E' };
+    return { typeBg: '#F0EBE2', typeFg: '#8A6A36' };
+  }
+
+  go(tab) { return () => this.setState({ tab }); }
+  splitWho(s) { return (s || '').split(';').map(x => x.trim()).filter(Boolean); }
+
+  featureKey() {
+    const day = new Date().getDate();
+    if (day <= 10) return 'staff';
+    if (day <= 15) return 'leads';
+    return 'controllerLeads';
+  }
+
+  buildSpotlight() {
+    const D = this.D;
+    const key = this.featureKey();
+    const tally = (arr, who, pool) => {
+      const m = {};
+      arr.forEach(r => { this.splitWho(who(r)).forEach(n => { if (!pool || pool.includes(n)) m[n] = (m[n] || 0) + 1; }); });
+      return Object.entries(m).map(([name, val]) => ({ name, val })).sort((a, b) => b.val - a.val);
+    };
+    const ctrlRank = tally(D.controller, r => r[2]);
+    const revPool = ['Cassie Rigsby', 'Kristie Andrews', 'Becky Humphers', 'Caroline Jeffreys', 'Michelle Mauldin', 'Lisa Dionisio', 'Rachel Hastings', 'Landry Greenhill'];
+    const revRank = tally(D.closed.filter(r => r[1] === 'Monthly'), r => r[3], revPool).slice(0, 5);
+    const staffPool = ['Joyce Ann Maregmen', 'Megan States', 'Consuelo Gervacio', 'Paxus Intern'];
+    const staffRank = tally(D.closed, r => r[3], staffPool).slice(0, 5);
+    const queue = tally(D.lead, r => r[2]);
+
+    const ramp = ['#682145', '#7c2f54', '#8E4068', '#a85a82', '#C084A4'];
+    const bars = arr => { const max = Math.max(1, ...arr.map(x => x.val)); return arr.map((x, i) => ({ ...x, w: Math.round(x.val / max * 100) + '%', color: ramp[Math.min(i, ramp.length - 1)] })); };
+    const qNote = queue.length ? ('\u26A0 Still in lead queue: ' + queue.map(q => q.name + ' (' + q.val + ')').join(', ')) : '';
+
+    if (key === 'staff') {
+      return { badge: 'AUTO · STAFF (THRU 10TH)', sub: 'Staff accountants closing out the cycle', primaryTitle: 'Projects closed — credited to preparer', primary: bars(staffRank), hasSecondary: false, hasNote: false };
+    }
+    if (key === 'leads') {
+      return { badge: 'AUTO · LEADS (10TH–15TH)', sub: 'Reviews completed this cycle', primaryTitle: 'Reviews completed — credited to reviewer', primary: bars(revRank), hasSecondary: false, hasNote: !!qNote, note: qNote };
+    }
+    return {
+      badge: 'AUTO · CONTROLLERS + LEADS (15TH–20TH)', sub: 'Final reviews underway · reviews completed this cycle',
+      primaryTitle: 'In final review — by controller', primary: bars(ctrlRank),
+      hasSecondary: true, secondaryTitle: 'Reviews completed — credited', secondary: revRank,
+      hasNote: !!qNote, note: qNote,
+    };
+  }
+
+  renderVals() {
+    const D = this.D;
+    const tab = this.state.tab;
+    const tabDefs = [['summary', 'Summary'], ['mom', 'Month-over-Month'], ['staff', 'Staff'], ['lead', 'Lead'], ['controller', 'Controller'], ['closed', 'Closed']];
+    const tabs = tabDefs.map(([key, label]) => ({
+      label, onClick: this.go(key),
+      style: key === tab ? 'color:#682145;font-weight:800;border-bottom:2px solid #682145;' : 'color:#A98C9A;font-weight:700;border-bottom:2px solid transparent;',
+    }));
+
+    const progression = (D.checkpoints || []).map(cp => {
+      const sum = cp.staff + cp.lead + cp.controller + cp.closed || 1;
+      const pct = n => (n / sum * 100);
+      const segs = [
+        { count: cp.staff, key: 'staff' }, { count: cp.lead, key: 'lead' },
+        { count: cp.controller, key: 'controller' }, { count: cp.closed, key: 'closed' },
+      ].map(s => ({ label: s.count > 0 ? String(s.count) : '', w: pct(s.count).toFixed(1) + '%', bg: this.STAGE[s.key].bg, fg: this.STAGE[s.key].fg }));
+      const cur = cp.status === 'current';
+      return { key: cp.key, dateLabel: cur ? cp.date + ' \u25C4' : cp.date, labelColor: cur ? '#682145' : '#4A1530', h: cur ? '46px' : '40px', barStyle: cur ? 'box-shadow:0 0 0 2px #C084A4;' : '', segs };
+    });
+
+    const milestones = (D.milestones || []).map(m => {
+      if (m.status === 'today') return { ...m, dot: '#B58A4A', ring: 'box-shadow:0 0 0 4px rgba(181,138,74,.22);', dateColor: '#B58A4A', textColor: '#3a2c33' };
+      if (m.status === 'past') return { ...m, dot: '#C084A4', ring: '', dateColor: '#8E4068', textColor: '#6A5560' };
+      return { ...m, dot: 'transparent;border:1.5px solid #C9B2BF', ring: '', dateColor: '#B7A3AE', textColor: '#A98C9A' };
+    });
+
+    const momGroups = ['5th', '10th', '15th', '20th', '25th'].map(k => ({
+      title: D.momTitles[k],
+      rows: (D.mom[k] || []).map(row => {
+        const [report, close, staff, lead, controller, closed, total] = row;
+        const isCurrent = report.indexOf('Jun') === 0;
+        const sum = staff + lead + controller + closed || 1;
+        const pct = n => (n / sum * 100).toFixed(1) + '%';
+        return {
+          report: isCurrent ? report + '  \u25C4' : report, close, staff, lead, controller, closed, total,
+          weight: isCurrent ? '800' : '600', rowStyle: isCurrent ? 'background:#F8EDF3;' : '',
+          dist: [
+            { w: pct(staff), bg: this.STAGE.staff.bg }, { w: pct(lead), bg: this.STAGE.lead.bg },
+            { w: pct(controller), bg: this.STAGE.controller.bg }, { w: pct(closed), bg: this.STAGE.closed.bg },
+          ],
+        };
+      }),
+    }));
+
+    const mkRows = arr => arr.map(r => ({ client: r[0], type: r[1], who: r[2], tags: this.splitWho(r[3]), ...this.typeChip(r[1]) }));
+    const closedRows = (D.closed || []).map(r => ({ client: r[0], type: r[1], date: r[2], who: this.splitWho(r[3]), ...this.typeChip(r[1]) }));
+
+    const now = new Date();
+    const todayLabel = 'Viewed ' + now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+    // === Lede stats — derive from the current (or most recent past) checkpoint ===
+    const cps = D.checkpoints || [];
+    const currentCp = cps.find(c => c.status === 'current')
+      || cps.slice().reverse().find(c => c.status === 'past')
+      || cps[cps.length - 1]
+      || { key: '', staff: 0, lead: 0, controller: 0, closed: 0 };
+    const cpStaff = currentCp.staff || 0;
+    const cpLead = currentCp.lead || 0;
+    const cpController = currentCp.controller || 0;
+    const cpClosed = currentCp.closed || 0;
+    const cpTotal = cpStaff + cpLead + cpController + cpClosed;
+    const cpReconciled = cpTotal - cpStaff;
+    const ledePct = cpTotal ? (cpReconciled / cpTotal * 100).toFixed(1) + '%' : '—';
+    const ledeClosedPct = cpTotal ? Math.round(cpClosed / cpTotal * 100) : 0;
+    const ledeReconciledLabel = cpReconciled + ' of ' + cpTotal;
+
+    const momRows = (D.mom && currentCp.key && D.mom[currentCp.key]) || [];
+    const closeAbbr = (D.closeMonth || '').slice(0, 3);
+    let priorRow = null;
+    for (let i = momRows.length - 1; i >= 0; i--) {
+      const period = momRows[i][1] || '';
+      if (closeAbbr && !period.startsWith(closeAbbr)) { priorRow = momRows[i]; break; }
+    }
+    let ledePriorComparison = '';
+    let ledePriorClosedComparison = '';
+    if (priorRow) {
+      const pStaff = priorRow[2] || 0, pClosed = priorRow[5] || 0, pTotal = priorRow[6] || 0;
+      if (pTotal) {
+        const pMonth = (priorRow[1] || '').split(' ')[0];
+        const pPct = ((pTotal - pStaff) / pTotal * 100).toFixed(1) + '%';
+        ledePriorComparison = ' — ' + pMonth + ' was at ' + pPct + ' at this checkpoint';
+        ledePriorClosedComparison = ', vs ' + pMonth + '’s ' + pClosed + ' at this checkpoint';
+      }
+    }
+
+    const NUM_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+    const toWord = n => (n < NUM_WORDS.length ? NUM_WORDS[n] : String(n));
+    const freqCount = {};
+    (D.staff || []).forEach(r => { const f = r[1] || 'Monthly'; freqCount[f] = (freqCount[f] || 0) + 1; });
+    let ledeStaffMixSuffix = '';
+    if ((D.staff || []).length > 0) {
+      const orderedFreqs = ['Quarterly', 'Monthly'].concat(
+        Object.keys(freqCount).filter(f => f !== 'Quarterly' && f !== 'Monthly')
+      );
+      const presentFreqs = orderedFreqs.filter(f => freqCount[f]);
+      if (presentFreqs.length === 1) {
+        ledeStaffMixSuffix = ' — all ' + presentFreqs[0].toLowerCase();
+      } else {
+        ledeStaffMixSuffix = ' — ' + presentFreqs.map(f => toWord(freqCount[f]) + ' ' + f.toLowerCase()).join(', ');
+      }
+    }
+
+    return {
+      closeMonth: D.closeMonth, reportDate: D.reportDate, checkpointLabel: D.checkpointLabel,
+      reportNote: D.reportNote || '', hasReportNote: !!(D.reportNote && D.reportNote.length),
+      tabs,
+      isSummary: tab === 'summary', isMom: tab === 'mom', isStaff: tab === 'staff',
+      isLead: tab === 'lead', isController: tab === 'controller', isClosed: tab === 'closed',
+      progression, milestones, momGroups,
+      spot: this.buildSpotlight(),
+      staffRows: mkRows(D.staff), leadRows: mkRows(D.lead), controllerRows: mkRows(D.controller), closedRows,
+      todayLabel,
+      ledePct, ledeReconciledLabel, ledeClosed: cpClosed, ledeClosedPct, ledeStaff: cpStaff,
+      ledePriorComparison, ledePriorClosedComparison, ledeStaffMixSuffix,
+    };
+  }
+}
+</script>
+</body>
+</html>

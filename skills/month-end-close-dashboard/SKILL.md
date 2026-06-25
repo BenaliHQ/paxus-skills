@@ -16,18 +16,27 @@ with `/monthly-dashboard` (client board / for-profit dashboards).
 
 ## What the system does
 
-Two products on one cadence:
+Three products on one cadence:
 
 1. **The close dashboard** (`project/dashboard.html`) — an HTML page that shows
    close-progress for the prior month's books across all ~121 Paxus clients,
    sourced from Financial Cents. It's snapshotted at five checkpoints during
-   the work month so trend lines persist across the close.
-2. **The close-timeline email** — a draft `.txt` on Jennifer's Desktop, drafted
-   on the 25th of each month, that previews the *next* close's W1/W2/W3 deadlines
-   for the team. Jennifer reviews, pastes into Gmail, sends.
+   the work month so trend lines persist across the close. The same UI source
+   lives in `project/Paxus Close Dashboard.dc.html` and is hosted at
+   `claude.ai/design` for the team (see "Hosted dashboard" below).
+2. **The checkpoint status email** — a `.txt` draft generated at each
+   checkpoint (cp5/cp10/cp15/cp20/cp25) by `assets/compose_checkpoint_email.py`.
+   Each draft includes the hosted dashboard link, a per-checkpoint narrative
+   (top reconcilers / top reviewers / lead-queue stragglers, depending on
+   which checkpoint), the Pipeline Breakdown table, and an open-items list.
+   Saved to Downloads, opened automatically in Notepad for review.
+3. **The close-timeline email** — a separate `.txt` draft generated once a
+   month on the 25th by `assets/compose_close_email.py`. Previews the *next*
+   close's W1/W2/W3 deadlines for the team. Jennifer reviews, pastes into
+   Gmail, sends.
 
-Both share the same federal-holiday + business-day-shifting logic, which lives
-in `assets/schedule_checkpoints.py`.
+All three share the same federal-holiday + business-day-shifting logic, which
+lives in `assets/schedule_checkpoints.py`.
 
 ## The five checkpoints (cp5 / cp10 / cp15 / cp20 / cp25)
 
@@ -71,17 +80,47 @@ Friday; Sunday holidays observe to the following Monday.
    the Desktop.
 3. The `.bat` invokes `assets/run_today.py`, which:
    - Computes today's expected actions (shifted checkpoint match, and the
-     25th-of-the-month email check) and runs each one.
-   - For a dashboard refresh: calls `build_dashboard.py --period <prior-month>
-     --checkpoint N --record` and opens `project/dashboard.html` in the browser.
-   - For an email draft: calls `compose_close_email.py --close <this-month>`
-     which writes `Close Timeline Email - <Month> <Year>.txt` to the Desktop,
-     and opens it in Notepad.
+     25th-of-the-month timeline email check) and runs each in order.
+   - **Dashboard refresh** (on every checkpoint date): calls
+     `build_dashboard.py --period <prior-month> --checkpoint N --record` and
+     opens `project/dashboard.html` in the browser.
+   - **Checkpoint status email** (on every checkpoint date): calls
+     `compose_checkpoint_email.py --checkpoint N` which writes
+     `Checkpoint Email cp<N> - <Month>_<Year>.txt` to Downloads and opens
+     it in Notepad.
+   - **Close-timeline email** (only on the 25th): calls `compose_close_email.py
+     --close <this-month>` which writes `Close Timeline Email - <Month> <Year>.txt`
+     to the Desktop and opens it in Notepad.
    - If nothing matches today, prints the next 6 upcoming events.
 
-A single click handles all today's work — including the 25th, when **both** a
-cp25 dashboard refresh (for the prior month's close) AND a fresh email draft
-(for the current month's close) run.
+A single click handles all today's work — including the 25th, when **three**
+drafts run together: the cp25 dashboard refresh (for the prior month's close),
+the cp25 status email, and the timeline email for the next close.
+
+## Hosted dashboard
+
+The dashboard is hosted on **Claude Design** at
+`https://claude.ai/design/p/c9f5e7a2-8e99-42eb-b911-a399f0dd7284?file=Paxus+Close+Dashboard.dc.html`
+so the Paxus team can view it from any browser without needing the local files.
+
+The Claude Design project mirrors `project/Paxus Close Dashboard.dc.html` (UI
+source) + `project/close-data.js` (live data). The hosted version does NOT
+auto-refresh — at each checkpoint, after running `Paxus Close.bat`, the
+operator manually updates the hosted project so the team sees current numbers:
+
+1. Open the Claude Design URL in a browser.
+2. Replace `close-data.js` in the project with the freshly-written copy from
+   `paxus-ai\internal\month-end-close-dashboard\project\close-data.js`.
+3. If `dashboard.html` or `Paxus Close Dashboard.dc.html` changed (rare —
+   only when the UI itself is modified), replace those too.
+4. Verify the hosted preview renders the new numbers, then send the
+   checkpoint email — the link in the email will be live.
+
+If Claude Design does not support in-place file replacement in a future
+release, fall back to the inline Pipeline Breakdown table in the checkpoint
+email (the email always contains current numbers regardless of the link), and
+plan to migrate hosting to a static host (GitHub Pages, Google Drive
+publish-to-web, internal Paxus share).
 
 ## Why this is NOT a Windows Task Scheduler job
 
@@ -228,8 +267,24 @@ python compose_close_email.py --close 2026-07 --stdout
 
 ## Where the live files run
 
-The skill ships **canonical copies** of the operational scripts in
-`assets/`. The active *deployment* on Jennifer's machine lives at
+The skill ships **canonical copies** of the operational scripts AND the
+dashboard UI templates in `assets/`:
+
+- Python scripts: `assets/*.py` (build, compose, schedule, launch, generate).
+- Dashboard template: `assets/project/dashboard.html` and
+  `assets/project/Paxus Close Dashboard.dc.html` (Claude Design source).
+- Runtime + brand assets: `assets/project/support.js`,
+  `assets/project/assets/paxus-logo.*`.
+
+What's NOT in the skill (deliberately):
+
+- `project/close-data.js` — regenerated every checkpoint, contains client
+  names from FC. Stays per-deployment, never committed.
+- `project/uploads/*.csv` — Financial Cents exports with client data. Stays
+  per-deployment, never committed.
+- `.cache_projects.json` — cached FC pull. Stays per-deployment.
+
+The active *deployment* on Jennifer's machine lives at
 `C:\Users\paxus\paxus-ai\internal\month-end-close-dashboard\` — her Desktop
 `.bat` points at that copy. When changes flow into this skill via the PR-review
 process, the operator manually pulls the updated `assets/` files into their

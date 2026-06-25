@@ -31,6 +31,7 @@ from schedule_checkpoints import (  # noqa: E402
 PYTHON_EXE = Path(sys.executable)
 BUILD_SCRIPT = SCRIPT_DIR / "build_dashboard.py"
 EMAIL_SCRIPT = SCRIPT_DIR / "compose_close_email.py"
+CHECKPOINT_EMAIL_SCRIPT = SCRIPT_DIR / "compose_checkpoint_email.py"
 DASHBOARD_HTML = SCRIPT_DIR / "project" / "dashboard.html"
 EMAIL_DRAFT_DAY = 25
 
@@ -61,6 +62,12 @@ def actions_for(d: date) -> list[dict]:
                         "--period", period, "--checkpoint", str(cp_day), "--record"],
                 "post": open_dashboard,
             })
+            actions.append({
+                "label": f"Checkpoint status email draft — cp{cp_day}",
+                "cmd": [str(PYTHON_EXE), str(CHECKPOINT_EMAIL_SCRIPT),
+                        "--checkpoint", str(cp_day)],
+                "post": open_checkpoint_email_draft,
+            })
 
     if d.day == EMAIL_DRAFT_DAY:
         close_period = f"{d.year:04d}-{d.month:02d}"
@@ -79,13 +86,33 @@ def open_dashboard() -> None:
         print(f"  → opened {DASHBOARD_HTML.name} in browser")
 
 
+def _candidate_dirs() -> list[Path]:
+    home = Path.home()
+    return [home / "Downloads", home / "OneDrive" / "Desktop", home / "Desktop"]
+
+
 def open_email_draft() -> None:
-    desktop = Path.home() / "Desktop"
-    drafts = sorted(desktop.glob("Close Timeline Email - *.txt"),
-                    key=lambda p: p.stat().st_mtime, reverse=True)
-    if drafts:
-        os.startfile(str(drafts[0]))
-        print(f"  → opened {drafts[0].name}")
+    for d in _candidate_dirs():
+        if not d.is_dir():
+            continue
+        drafts = sorted(d.glob("Close Timeline Email - *.txt"),
+                        key=lambda p: p.stat().st_mtime, reverse=True)
+        if drafts:
+            os.startfile(str(drafts[0]))
+            print(f"  → opened {drafts[0].name}")
+            return
+
+
+def open_checkpoint_email_draft() -> None:
+    for d in _candidate_dirs():
+        if not d.is_dir():
+            continue
+        drafts = sorted(d.glob("Checkpoint Email cp*.txt"),
+                        key=lambda p: p.stat().st_mtime, reverse=True)
+        if drafts:
+            os.startfile(str(drafts[0]))
+            print(f"  → opened {drafts[0].name}")
+            return
 
 
 def upcoming(start: date, count: int = 6) -> list[tuple[date, str]]:
