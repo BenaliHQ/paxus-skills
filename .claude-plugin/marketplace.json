@@ -19,6 +19,7 @@
         "./skills/manage-skills",
         "./skills/monthly-dashboard",
         "./skills/onboard-client",
+        "./skills/onboard-client-admin",
         "./skills/onboard-project",
         "./skills/paxus-design"
       ]
