@@ -1,6 +1,6 @@
 ---
 name: onboard-client
-description: Build (or upgrade) a client's context bundle — the .agents folder in their shared drive that gives every AI skill its client-specific fuel. Run when onboarding a new client, when bringing an existing client into the AI workflow, or when a kickoff/intake transcript or client questionnaire needs to be turned into structured client context. Accepts transcripts, form submissions, and documents; identifies gaps and asks targeted follow-ups.
+description: Build (or upgrade) a client's context bundle — the .agents folder in their shared drive that gives every AI skill its client-specific fuel. Run when onboarding a new client, when bringing an existing client into the AI workflow, or when a kickoff/intake transcript or client questionnaire needs to be turned into structured client context. Researches the client's Drive folder and Financial Cents on its own first, prefills the bundle from what it finds, and asks only the questions research can't answer — the team reviews and clarifies instead of gathering.
 ---
 
 # /onboard-client — Build the Client Context Bundle
@@ -51,77 +51,124 @@ workstation project folders are `/onboard-project`'s job and are unchanged.)
   history with its citation. Otherwise record BOTH positions with
   attribution, leave the file `partial`, and add the discrepancy to the gap
   report. Never silently pick one.
+- **Research is read-only.** During recon you may read the client's Drive
+  folder and the firm's Financial Cents records; you may not move, rename,
+  edit, or delete anything you find. This skill's writes are limited to
+  exactly four gated targets: the `.agents/` bundle (plus its update-mode
+  backups), the optional workstation pointer folder (Phase 7), the firm
+  client-map row when the operator provides its location (Phase 7), and
+  this skill's de-identified `learnings.md` (Phase 8). Nothing else, ever.
+- **Never authenticate to a new system on your own.** Use only connections
+  already set up on this workstation (the local Drive mount, the firm's FC
+  connection, an approved read-only QBO CLI connection). If a source
+  mentions a portal or credential, that is a pointer to record, never an
+  invitation to log in.
 - **If `templates/bundle/` or `scripts/validate_bundle.py` is missing, stop**
   and tell the operator the skill install is corrupted — re-sync the skills
   library. Do not reconstruct them from memory.
 
 ## Inputs this skill accepts (any combination)
 
+Provided by the operator:
+
 - An intake or kickoff **transcript** (the richest source — the intake
   question set in `references/intake-questions.md` is designed to be
   answered in one recorded working session)
 - A **client overview questionnaire** / form submission
-- **Documents**: engagement letter, accepted quote, client intro / training
-  guide, welcome packet, financial policy
-- **System exports**: QBO chart of accounts, trial balance, recurring
-  transactions, bank rules; Financial Cents records
-- **Live answers** from the operator, asked one at a time
+- **Documents** and **system exports** handed over directly
+- **Live answers**, asked in short batches
+
+Found by the skill itself (Phase 2 — this is the default path):
+
+- The client's **Drive folder**: engagement letter, accepted quote, client
+  intro / training guide, welcome packet, financial policy, budgets, prior
+  exports, kickoff notes, SOPs
+- The firm's **Financial Cents** record: contacts, portal users, team
+  assignments, recurring projects, checklists, budgeted hours,
+  profitability as-of, delivery archive
+- An approved read-only **QBO connection** (the firm's qbo CLI), where the
+  operator has one set up — for the COA / trial balance / recurring
+  transactions exports
 
 ## Workflow
 
-### Phase 1 — Route (batched questions)
+### Phase 1 — Locate the client (minimal questions)
 
-Ask, in one message, whichever of these the sources don't already answer:
+Ask only what's needed to start researching — in one short message:
 
 1. Which client? Exact legal name (must match the Drive folder name).
-2. **Entity manifest** — for EACH entity in the engagement: legal name,
-   slug, entity type, nonprofit yes/no, QBO company ID (if known). Nonprofit
-   and entity-type switches apply **per entity**, not per engagement — a
-   mixed engagement gets each entity's own rules.
-3. Which services are in scope? Run the service-scope checklist (intake set,
-   B3) — **scope gates which blocks apply**, not the tier name. Record the
-   tier as named (provisional if the ladder is unsettled), but never skip a
-   question block by inferring from tier alone; skip only what the confirmed
-   scope excludes.
-4. Where is the client's shared drive folder? Get the folder and the Drive
+2. Where is the client's shared drive folder? Get the folder and the Drive
    ID — agents navigate by ID.
-5. **Access check:** confirm the client folder is firm-internal (the client
-   has no Drive access to it). The bundle contains internal economics and
-   access routing. If the client can see the folder, STOP and ask the
-   operator where the bundle should live instead.
+3. Anything you already have for me? (transcript, documents, exports —
+   optional; research covers the rest)
 
-Then check the destination:
+Then, before researching:
 
-- **New bundle:** `.agents/` doesn't exist → full build (Phase 3).
-- **Existing bundle:** `.agents/` exists → **update mode** (see Edge cases;
-  staging + diff + approval, never in-place).
-- **No Drive access from this machine:** build in a local staging folder,
-  tell the operator exactly where, and that it must be moved to `.agents/`
-  in the client's shared drive.
+- **Access check:** confirm the client folder is firm-internal (the client
+  has no Drive access to it). The bundle contains internal economics and
+  access routing. If the client can see the folder, STOP and ask the
+  operator where the bundle should live instead.
+- Check the destination: no `.agents/` → full build. Existing `.agents/` →
+  **update mode** (see Edge cases; staging + diff + approval, never
+  in-place). No Drive access from this machine → build in a local staging
+  folder and say exactly where.
+- Derive the client slug (lowercase; strip punctuation; non-alphanumerics
+  to single dashes; collapse dashes; confirm before creating folders).
 
-Derive the client slug (lowercase; strip punctuation; non-alphanumerics to
-single dashes; collapse dashes; confirm with the operator before creating
-folders).
+### Phase 2 — Autonomous research (the skill gathers; the team doesn't)
 
-### Phase 2 — Gather sources and build the source manifest
+Do the research BEFORE asking any substantive intake questions (Phase 1's
+locating questions are the only exception). Work through
+`references/research-map.md`, which maps every researchable property to
+where it lives. Everything here is read-only.
 
-1. Ask for everything the operator has (transcript, docs, exports). Read all
-   of it before writing anything.
-2. For each source, record a **manifest row**: what it is, who provided it,
-   its date, and which client/entity it names. **If a source names a
-   different client or entity than the one being onboarded, quarantine it**
-   — tell the operator and exclude it until they confirm. The manifest rows
-   become the citation entries and the `log.md` sources list.
-3. Name the exports worth requesting if not provided — chart of accounts,
-   trial balance, recurring transactions, QBO bank rules, signed engagement
-   letter, any client intro/training doc. Don't block: missing items become
-   gap-report entries.
-4. Where the answer is "it's in Financial Cents," capture the **pointer**.
-   FC remains the system of record for contact details, checklists,
-   recurring projects, and delivery archives — don't copy datasets out of
-   it.
+1. **Drive recon.** Inventory the client's folder (listing first — read
+   selectively, not everything). Read the documents that answer intake
+   items: engagement letter, accepted quote, client intro / training guide,
+   welcome packet, financial policy, budgets, kickoff notes, SOPs, and any
+   exports already sitting there (COA, trial balance, recurring
+   transactions, bank rules).
+2. **Financial Cents recon.** If this workstation has the firm's FC
+   connection, pull the client's record read-only: contacts and roles,
+   portal users, team assignments, recurring projects and cadence,
+   checklist states, budgeted hours and profitability as-of, delivery
+   archive pointers, e-sign engagement link. These answer most
+   CONFIRM-mode items. No FC access → those items become quick operator
+   confirmations instead.
+3. **QBO reads.** If exports aren't in Drive and the workstation has the
+   firm's approved read-only QBO CLI connection for this client, pull the
+   COA / trial balance / recurring-transactions data. CLI-pulled data is
+   cited as a QBO pointer (realm/company, report, as-of date) — this skill
+   does not persist raw QBO data as new files; link only pre-existing
+   export files. Never authenticate to QBO, a bank, or any portal yourself;
+   without a connection, exports go on the request list.
+4. **Read anything the operator provided** (transcript, docs) alongside the
+   research.
+5. **Source manifest.** Every source read — found or provided — gets a
+   manifest row: what it is, where it came from, its date, which
+   client/entity it names. **Quarantine anything naming a different client
+   or entity** — tell the operator and exclude it until they confirm.
+   Manifest rows become the citation entries and the `log.md` sources list.
+6. Where a fact's system of record is FC, capture the **pointer**, not a
+   copied dataset.
 
-### Phase 3 — Fill the bundle
+### Phase 3 — Present findings; confirm the picture
+
+Show the operator a compact review — findings first, questions second:
+
+1. **What research established** (grouped by bundle group, each fact with
+   its source): the entity manifest as discovered (legal names, entity
+   types, nonprofit flags, QBO company IDs), the service scope as read from
+   the engagement letter and FC, tier as named (provisional if the ladder
+   is unsettled), and the headline facts per group.
+2. Ask for **confirm / correct** on that picture — especially the entity
+   manifest and service scope, because **confirmed scope gates which blocks
+   apply** (never the tier name), and nonprofit/entity-type switches apply
+   per entity.
+3. The team's job here is reviewing and clarifying, not gathering. Keep it
+   to one pass; corrections become sources ("per {name}, {date}").
+
+### Phase 4 — Fill the bundle
 
 Copy `templates/bundle/` to the destination. Replace `{{CLIENT_NAME}}` and
 fill `log.md`'s initialization tokens (`{{ONBOARDING_DATE}}`,
@@ -150,8 +197,10 @@ property's **capture mode**:
 - **CONFIRM** — current value plus the pointer to where it lives.
 - **DOCUMENT** — extracted from a provided document; the extraction cites
   the document, and the bundle links the document rather than copying it.
-- **EXPORT** — summarize the export's structure and link it in the client
-  folder; don't paste hundreds of rows into a bundle file.
+- **EXPORT** — summarize the export's structure; link a pre-existing
+  export file where one exists, or cite the QBO pointer (realm, report,
+  as-of date) for CLI-pulled data. Don't paste hundreds of rows into a
+  bundle file, and don't write raw data files into the client folder.
 - **SCAFFOLD** — keep the empty structure (seed only from a real artifact,
   e.g. an actual kickoff recap; never date an entry to the onboarding run).
 - **RUNTIME** — never stored (pointer to the system of record at most).
@@ -177,7 +226,7 @@ Rules while filling:
   `client-critical-rules.md` (2 to 4 rules, chosen from what the sources
   emphasize most) — not prose in the index.
 
-### Phase 4 — Gap report and follow-ups
+### Phase 5 — Gap report and follow-ups
 
 Produce the **gap report**: every unresolved ASK / CONFIRM / DOCUMENT /
 EXPORT item (everything except RUNTIME and untouched SCAFFOLD), each phrased
@@ -190,7 +239,7 @@ answers and unresolved conflicts go here too, with both readings shown.
   open items, AND is given to the operator formatted to send (email or FC
   task).
 
-### Phase 5 — Verify before done
+### Phase 6 — Verify before done
 
 Run the deterministic validator. Both paths resolve relative to THIS
 skill's installed folder (the directory containing this SKILL.md), not the
@@ -220,7 +269,7 @@ Then check the two things the validator can't:
 Show the operator: the folder tree, `client-critical-rules.md`, and the gap
 report.
 
-### Phase 6 — Register and wrap
+### Phase 7 — Register and wrap
 
 1. If the firm keeps a **client map** (the registry mapping client → shared
    drive ID), and the operator provides its location, add/update this
@@ -244,7 +293,7 @@ report.
 4. End with one line: "Context bundle for {client} at {location}: N active,
    N partial, N scaffold. Gap report: N open questions."
 
-### Phase 7 — Learnings capture (mandatory, de-identified)
+### Phase 8 — Learnings capture (mandatory, de-identified)
 
 Ask: (1) What was confusing or wrong in this onboarding? (2) What should
 change for the next run? Append feedback to this skill's `learnings.md`
@@ -295,5 +344,5 @@ CONTRIBUTING.md — offer to draft the de-identified proposal.
 - **Provisional tier ladder.** Record the tier as named, mark provisional,
   add "confirm against the canonical ladder" to the gap report — and gate
   everything by confirmed scope, not the tier name.
-- **Operator wants to skip Phase 5.** Don't. The validator is what makes the
+- **Operator wants to skip Phase 6 (verify).** Don't. The validator is what makes the
   bundle trustworthy to every downstream skill.
