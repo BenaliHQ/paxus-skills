@@ -88,14 +88,19 @@
     <div class="head-tile"><div class="lbl">{{Tile 4 label}}</div><div class="val">{{$value}}</div><div class="sub">{{context}}</div></div>
   </div>
 
-  <!-- KPI CARDS: 3–6 confirmed KPIs. One or two rows of .kpi-row. Each card:
-       name, value, benchmark line (with its source), and a colored status. -->
+  <!-- KPI CARDS — OPTIONAL BLOCK. 3–6 confirmed KPIs. One or two rows of .kpi-row. Each card:
+       name, value, benchmark line (with its source), and a colored status.
+       If the client has NO confirmed KPIs (e.g. bookkeeping-only / Full Service engagements),
+       DELETE this whole block — section head and .kpi-row — and reflow the space into the sections
+       below. Never leave empty cards, placeholder benchmarks, or invented metrics on the page. -->
+  <!-- KPI BLOCK START -->
   <div class="section-head">Key Performance Indicators</div>
   <div class="kpi-row">
     <div class="kpi"><div class="name">{{KPI 1}}</div><div class="value">{{val}}</div><div class="bench">{{Benchmark + source}}</div><div class="stat green">{{status}}</div></div>
     <div class="kpi"><div class="name">{{KPI 2}}</div><div class="value">{{val}}</div><div class="bench">{{Benchmark + source}}</div><div class="stat amber">{{status}}</div></div>
     <div class="kpi"><div class="name">{{KPI 3}}</div><div class="value">{{val}}</div><div class="bench">{{Benchmark + source}}</div><div class="stat red">{{status}}</div></div>
   </div>
+  <!-- KPI BLOCK END -->
 
   <!-- TWO-COLUMN BLOCK A: e.g. revenue mix (stacked bar + table) | budget vs actual -->
   <div class="two-col">

@@ -21,7 +21,7 @@ description: >
 Produces the one-page **monthly financial dashboard** for a Paxus client. For a **non-profit** it fronts
 the monthly board financials package (audience: the board); for a **for-profit** client it is the
 client's own monthly dashboard (audience: the owner/management). Either way it summarizes the month at a
-glance against the client's KPIs — on a single printed Letter page.
+glance — against the client's KPIs where the client has them — on a single printed Letter page.
 
 **Two axes drive every build: client type (non-profit / for-profit) and history (repeat / cold-start).
 Layout, KPIs, benchmarks, methods, audience, and delivery mode are all client-specific.** For repeat
@@ -34,16 +34,20 @@ Grants, Budget-vs-Actual, cash-by-account, A/R buckets, activity callout) — wh
 and delivery differ on every axis. Two real non-profit clients, two different dashboards: proof the spec is
 per-client, not one canonical template.
 
-> [!warning] For-profit path is PROVISIONAL
-> The for-profit branch's structure was exercised on a **practice cold-start (not delivered)** and a
-> fabricated-data repeat test — it has **not produced a real delivered for-profit dashboard**. Validate it on
-> one real for-profit client before relying on it firm-wide, and tell the operator it's provisional whenever
-> the first real FP build runs.
+The **for-profit path is validated on a real for-profit client** (July 2026) — it is no longer provisional.
+Build with it directly, no caveat to the operator. The same discipline applies on either path: that client's
+own prior dashboard plus its `dashboard-spec.md` are the spec for its next month.
 
 KPIs are always a confirmed input, never invented. On repeat runs, recover them (plus benchmark bands,
 formulas, header methods, and color/label conventions) from the client's prior dashboard PDF and confirm
 only unresolved conflicts. On cold starts, confirm the metric list, formulas, benchmark sources, layout,
 and delivery mode before building.
+
+**Some clients have no KPIs at all, and that is a normal outcome — not a gap to fill.** Bookkeeping-only /
+Full Service (books + notes) engagements typically carry no KPI tracking or benchmarks; KPIs are a CFO /
+advisory / Wheel of Service deliverable. **If no KPIs are provided, say so plainly, confirm it once, and
+build the dashboard with no KPI section.** Never substitute a proposed, derived, or "reasonable" metric set
+for a confirmed one. A dashboard with no KPI cards is a complete dashboard.
 
 **Visual scheme is the same for every client — non-profit and for-profit alike: the neutral navy/teal
 board scheme** (see Step 4). This is intentionally NOT the official Paxus plum/mauve brand
@@ -79,7 +83,9 @@ cold start. Then search for the client's **prior delivered dashboard PDF** (Step
 layout, KPI set, benchmark bands, formulas, header-tile methods, color/label conventions, delivery
 mode, and naming pattern. Ask the operator only for what neither the spec nor the prior dashboard can
 establish. If the spec and the prior PDF conflict, treat the latest delivered PDF as authoritative unless
-the operator says it was wrong or the spec has changed.
+the operator says it was wrong or the spec has changed. **A prior dashboard with no KPI cards — or a spec
+recording `kpis: none` — establishes that this client has no KPIs.** That's the confirmed spec: rebuild the
+no-KPI layout and don't reintroduce a KPI section unless the operator asks for one.
 
 **Cold-start path:** If no prior dashboard exists, do not improvise from another client's dashboard. Use this
 path for any client that needs a monthly financial dashboard, non-profit or for-profit. Establish:
@@ -94,8 +100,18 @@ path for any client that needs a monthly financial dashboard, non-profit or for-
    the confirmed KPI set and available statements. Add monthly trend bars only if the operator explicitly
    asks and monthly P&L data is available.
 3. **KPI metric list:** bespoke each time, always operator-confirmed. Ask the operator for the metrics
-   and formulas, or propose a short candidate list from the financials as a discussion draft; never treat
-   proposed metrics as confirmed. Propose from the client type's typical palette:
+   and formulas. **"None" is a valid and complete answer.**
+
+   **If the operator doesn't provide KPIs, do not fill the gap.** State it plainly and confirm once —
+   *"I don't have KPIs for this client. Should I build this dashboard with no KPI section?"* On a yes, build
+   the **no-KPI layout** (Step 4), skip the KPI math (Step 3), and record `kpis: none — confirmed <date>` in
+   the spec so next month doesn't re-ask. Engagement tier is the usual reason: bookkeeping-only / Full
+   Service (books + notes) clients typically have no KPI tracking or benchmarks — that's a CFO / advisory /
+   Wheel of Service deliverable.
+
+   Only if the operator asks for candidates, propose a short list from the financials as an explicit
+   discussion draft — and **never treat proposed metrics as confirmed** or let them reach the delivered
+   dashboard on silence. Propose from the client type's typical palette:
    - **Non-profit:** Operating Margin, Revenue Growth (YTD), Program Efficiency (program ÷ total expenses
      from P&L by Class), Revenue Diversification (grants share — concentration flag), A/R Aging 91+ (flag).
    - **For-profit:** Gross Margin %, Net (Operating) Margin %, Revenue Growth (YoY or YTD), A/R days and
@@ -125,7 +141,9 @@ Do not begin until ALL of the following are confirmed (recovered from Step 0 whe
 2. **Month + period** — the reporting month and the YTD range (e.g., "May 2026, Jan–May").
 3. **KPIs and benchmarks** — the specific KPIs this client tracks, each formula, each benchmark band or
    risk threshold, and the source for each benchmark. **Client-specific — recover from the prior dashboard
-   on repeat runs; confirm bespoke inputs on cold starts. Never invent.** Illustrative non-profit sets (the
+   on repeat runs; confirm bespoke inputs on cold starts. Never invent.** **A confirmed "this client has no
+   KPIs" satisfies this input** — the dashboard then ships with no KPI section (Step 0 item 3, Step 4). What
+   is never acceptable is proceeding with a KPI set the operator didn't confirm. Illustrative non-profit sets (the
    actual list/bands are per client): e.g. Operating Margin (−5% to +5%), Revenue Growth YTD (3%–8%), Program
    Efficiency (75%–85%); or Operating Margin (0–10%), Program Efficiency (65–85%), Revenue Diversification
    (grants share — concentration flag), A/R Aging 91+ (risk flag). Formulas and header-tile methods can also
@@ -205,7 +223,14 @@ grant front-loading Q1 makes the YTD surplus a timing artifact, not a run-rate.)
 
 **KPI formulas are per-client — use the ones the prior dashboard establishes or the cold-start intake
 confirms — and the exact formula + day-count convention MUST be written into the client's `dashboard-spec.md`
-so every later month computes it identically.** Standard formulas by client type:
+so every later month computes it identically.**
+
+**No-KPI clients: skip the KPI math entirely.** Compute only the headline snapshot figures the client's
+layout actually shows, then go to Step 4's no-KPI layout. Do not compute metrics "just in case," and do not
+slip a derived ratio onto the page as a stand-in for a KPI — a ratio with a benchmark next to it *is* a KPI,
+whatever it's labeled.
+
+Standard formulas by client type:
 
 **Non-profit:**
 - **Operating Margin** = Net Operating Income ÷ Total Revenue. (e.g. bands like −5%–+5% or 0–10%, per client.)
@@ -276,6 +301,12 @@ never in the skill.
   folder) plus its `dashboard-spec.md` are the spec. Reconstruct the HTML from `dashboard-base.html` following
   the spec and matching the prior PDF exactly, with the new month's actuals. (A teammate may keep a convenience
   HTML copy of the prior in the client's own folder — never in this skill.)
+- **No-KPI clients:** delete the KPI block from the template outright — the `Key Performance Indicators`
+  section head and its `.kpi-row`. Don't leave empty cards, placeholder benchmarks, or "n/a" status chips on
+  the page. Reflow the freed vertical space into the sections the client *does* get (headline tiles, cash,
+  revenue mix, budget vs actual, A/R, activity notes) so it still reads as a deliberate, full one-pager. The
+  dashboard is then a **financial-position snapshot rather than a scorecard**: keep the observations
+  descriptive — what changed, what to watch — with no pass/fail, benchmark, or status-color language.
 
 - **Bar widths (revenue by source / stacked mix):** `width% = round(value ÷ total_or_largest × 100)`.
   For tiny bars or "n/a" prior-year values, use the `.bar-wrap` + `.bar-out` pattern so labels aren't clipped.
@@ -296,7 +327,8 @@ into context as an image is expensive. Do **not** render or read back a PDF unti
 
 1. **Show the operator the HTML.** Write the dashboard to `<client>-dashboard.html` and hand them the
    absolute path to open in a browser (`open "<abs-path>/dashboard.html"` opens it for them). Tell them what
-   to check: the KPI values, benchmark colors, observations wording, and that it reads as one page.
+   to check: the KPI values and benchmark colors (if the client has KPIs), the snapshot figures, the
+   observations wording, and that it reads as one page.
 2. **Iterate in HTML.** Apply requested changes as text edits to the HTML and re-show. Stay in HTML for all
    content/layout/number corrections — never round-trip through PDF to make an edit.
 3. **Only after the operator approves the HTML, render to PDF (one shot):**
@@ -365,7 +397,9 @@ client's spec changes. Record:
   included.
 - KPI list, **exact formulas and day-count conventions**, benchmark bands or risk thresholds, and the source
   for each benchmark (operator, board/owner target, budget, covenant/grant requirement, policy, or cited
-  industry norm — name the industry for FP).
+  industry norm — name the industry for FP). **If the client has no KPIs, record `kpis: none (confirmed
+  <date>)`** — an explicit record, not an omitted field, so next month builds the no-KPI layout without
+  re-asking and no future run mistakes the blank for an oversight.
 - Known data caveats: unavailable statements, class-coding dependencies, one-time/timing items, and any
   monitor-only metrics with no defensible benchmark.
 
@@ -392,6 +426,10 @@ client's spec changes. Record:
   class-derived metric (program efficiency for NP, segment margin for FP) rather than approximating.
 
 **Metrics & benchmarks**
+- **No KPIs provided:** confirm that explicitly, then build with no KPI section and record `kpis: none` in
+  the spec. Never invent a KPI set, never promote a candidate list into the delivered dashboard because the
+  operator didn't answer, and never treat a missing KPI list as a blocker — it's a layout decision, not a
+  gap. Bookkeeping-only / Full Service clients are the common case.
 - If no benchmark source exists, do not make up a band. Use monitor-only, directional language, or a risk
   flag until the operator approves a benchmark source.
 - If a confirmed KPI depends on unavailable data (no class P&L, no budget, no A/R aging, no prior-year
@@ -422,6 +460,9 @@ Quick cheat-sheet; the steps above are authoritative.
 - **Client type first** (NP vs FP) — it sets audience, KPI palette, statements, terminology. Never mix the two.
 - **Confirm, never invent.** KPIs, formulas, and benchmarks are client-specific and operator-confirmed.
   Recover them from the prior dashboard + `dashboard-spec.md` on repeats; establish + record them on cold starts.
+- **No KPIs = no KPI section.** If KPIs aren't provided, confirm that once and build the dashboard without
+  them — never make some up, and never let a proposed candidate list stand in for a confirmed one. Record
+  `kpis: none` in the spec.
 - **Round dollars to the nearest hundred;** never estimate or fabricate a figure. Tie every number to the
   statements before building.
 - **Same method every month** for any class/ratio metric (NP Program Efficiency; FP margins/DSO/DPO) — the
@@ -446,5 +487,5 @@ Two kinds of state, two homes:
 **Self-contained:** this skill must not depend on any one operator's private notes or vault rules — a
 teammate running it from the firm repo won't have those. State principles inline rather than linking them.
 
-**Status:** the non-profit path is validated on two real non-profit clients. The **for-profit path is
-provisional** until it produces one real delivered for-profit dashboard — say so on the first real FP run.
+**Status:** validated on real clients on both paths — two non-profit clients and one for-profit client
+(July 2026). Neither path is provisional; build with either directly.
