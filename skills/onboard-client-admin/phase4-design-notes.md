@@ -1,12 +1,12 @@
 ---
-title: Phase 4 design notes (Onboarding Dossier + Team handoff email)
-status: HTML-dossier flow live as of 2026-07-06 (supersedes the xlsx cell-map flow used 6/26–7/01)
-last_updated: 2026-07-07
+title: Phase 4 design notes (Onboarding Dossier prep notes + Team handoff email)
+status: Read-oriented prep-notes flow live as of 2026-08-05 (the claude.ai Onboarding Dossier dashboard was retired; the prep-notes file in Perm File is now the record). Supersedes the HTML-dossier paste flow (7/06–8/05) and the xlsx cell-map flow (6/26–7/01).
+last_updated: 2026-08-05
 ---
 
 # /onboard-client-admin — Phase 4 design notes
 
-Phase 4 = populate the per-client **Client Onboarding Dossier** (Claude Design HTML template) from what we already know (engagement / consultation / memo), and draft the team handoff email. Sends Lead and Controller into the kick-off call with everything Jennifer's already learned.
+Phase 4 = produce the per-client **Onboarding Dossier prep-notes file** in the client's Perm File from what we already know (engagement / consultation / memo), and draft the team handoff email. Sends Lead and Controller into the kick-off call with everything Jennifer's already learned. The file is read by the Lead's kickoff-prep skill — it is not pasted into any dashboard.
 
 The Service Fee Template already exists in the client's folder before Phase 4 runs — it's created before the quote is prepared. Phase 4 only *reads* budgeted hours from it; it does not stamp a starter copy.
 
@@ -16,9 +16,9 @@ The Service Fee Template already exists in the client's folder before Phase 4 ru
 
 ## Deliverables (two files)
 
-1. **Populated Dossier fill-in block** (markdown) — Jennifer pastes each section into the shared Claude Design dossier.
+1. **Onboarding Dossier prep-notes file** (markdown) — a read-oriented handoff the Lead's kickoff-prep skill reads. Not pasted anywhere.
    Save to `G:\Shared drives\{Client Legal Name}\Perm File\Onboarding Dossier - {Client Legal Name} - fill-in.md`.
-   (The fill-in lives with the client, not in the skill's handoffs folder, so Lead can find it inside the client's own Drive.)
+   (Keep this exact filename — the Lead's kickoff-prep skill reads this path. The file lives with the client, not in the skill's handoffs folder, so Lead can find it inside the client's own Drive.)
 2. **Team handoff email** — drafted as markdown; Jennifer pastes into Gmail.
    Save to `~/.claude/skills/onboard-client-admin/handoffs/{slug}-{date}-team-handoff-email.md`
    (email drafts stay in the skill's handoffs folder — they're internal to Jennifer's workflow, not a client artifact).
@@ -41,25 +41,29 @@ If the engagement is in `Perm File\` as well as Active Clients, prefer the Perm 
 
 ---
 
-## Client Onboarding Dossier (the HTML template)
+## Onboarding Dossier prep notes (structure)
 
-- **Live template URL:** https://claude.ai/design/p/5e8d4de8-c45b-4e17-9d3c-df01ff490fcf?file=Sales+Onboarding+Service.dc.html&via=share
-- **FC resource pointer:** The New Client Onboarding project template's "Sales Onboarding Service" resource points at this URL — same URL for every client.
-- **File title inside Claude Design:** `Sales Onboarding Service.dc.html` (renders as "Client Onboarding Dossier").
-- **Per-client persistence:** the doc auto-saves per client. Jennifer picks the client via the switcher at the top, then types into the fields.
-- **Skill's job:** produce a markdown fill-in that Jennifer pastes/types into the template. The skill does NOT edit the HTML directly.
+- **Dashboard retired.** The claude.ai Onboarding Dossier dashboard (`Sales Onboarding Service.dc.html`) is no longer used — no template URL to paste into, no per-client dashboard entry. The prep-notes file in the client's Perm File is the record. The "Sales Onboarding Service" resource has been removed from the New Client Onboarding template (one-time; the client's Shared Drive is already surfaced by the Phase 2F "Google Drive" FC resource).
+- **Skill's job:** produce a read-oriented markdown prep-notes file the Lead's kickoff-prep skill reads. Every field is filled in or marked `TBD — ask on call` — never silently blank, since a blank is ambiguous to the reading skill.
 
-### Structure and fields
+### Structure and fields (order in the file)
 
-**Sidebar (client identity + team)**
-- Client name (title)
-- LEAD — name of the Lead accountant
-- KICKOFF — date or `TBD`
+**Client identity + team**
+- Client name
+- LEAD — name of the Lead
+- KICKOFF — date or `TBD — ask on call`
 - DEADLINE — target onboarding-complete date (typically month-end of first monthly close, e.g., `08/31/2026`)
-- TEAM OF 3 — LEAD / ACCOUNTANT / REVIEWER (first names)
-- KICKOFF READINESS — % (auto-fills as Lead ticks items in Section 02)
+- TEAM OF 3 — STAFF / LEAD / CONTROLLER (first names)
 
-**Section 01 — Discovery** (Firm Admin fills, from the sales call)
+**Budgeted hours** — (unchanged) Staff / Lead / Controller + total; see the Service Fee Template section below. Name who refines after kickoff (the Lead).
+
+**Billing** (from the **engagement**, not the quote — the engagement often consolidates line items) — monthly amount, first monthly draft date, onboarding fee (note if paid), cleanup deposit, cleanup balance. Anything not in the engagement → `TBD — ask on call`.
+
+**Cleanup scope** — one consolidated block: period being cleaned, what's in scope (recs, COA rebuild, catch-up months, prior-year adjustments), known exclusions.
+
+**Volumes & complexity** — one consolidated block: bank/CC accounts (count + list), monthly transaction volume, 1099 count, Dext (in scope?), payroll flag + vendor, entities in scope. Transaction volume and 1099 count are usually missing → `TBD — ask on call`.
+
+**Section 01 — Discovery**
 - HOW THEY HEARD ABOUT US
 - ENTITY TYPE
 - # PARTNERS / TEAM
@@ -68,32 +72,35 @@ If the engagement is in `Perm File\` as well as Active Clients, prefer the Perm 
 - PAYROLL COMPANY
 - CURRENT CPA
 - SERVICES REQUESTED
-- PAIN POINTS & PRIORITIES DURING ONBOARDING — long-form textarea: bank/coding narrative + numbered priorities.
+- PAIN POINTS & PRIORITIES DURING ONBOARDING — bank/coding narrative + numbered priorities.
 
-**Section 02 — Pre-Kickoff Readiness** (Lead ticks as access is confirmed)
+**Section 02 — Pre-Kickoff Readiness** (skill records the known state for each item so the Lead knows where things stand going in)
 - ACCOUNTING · QBO: (1) Do they have a QBO file? (2) Do we have access? (3) COA reviewed — needs cleanup? (4) Client OK cleaning up the COA? (5) Bank & card feeds connected? (6) How caught up is the file?
 - TAX: (7) Prior-year returns — which years? (8) EIN on file. (9) Tax returns current?
 - PAYROLL: (10) Are we running payroll? (11) If not, how do we gain access?
 - SALES TAX & PORTAL: (12) Sales tax handled? (13) Current services confirmed. (14) Portal access — who is authorized? (2FA). (15) Next steps assigned.
 
-Skill pre-populates the **known state as short notes next to each item** (e.g., "No — existing QuickBooks file, but no access yet"). Lead confirms and ticks during pre-kickoff prep.
+Skill records the **known state as a short note next to each item** (e.g., "No — existing QuickBooks file, but no access yet"), or `TBD — ask on call` where unknown.
 
-**Section 03 — Kickoff Call** (Lead fills live during the call — skill provides reference notes, not answers)
+**Section 03 — Kickoff Call reference notes** (the Lead works through these live on the call — skill provides reference notes, not answers)
 11 items: 01 Welcome · 02 Client intro · 03 Meet your Team of 3 · 04 Timeline & clean-up · 05 Communication · 06 Gather information · 07 Monthly workflow · 08 Two questions · 09 Tools & training · 10 Questions · 11 90-day call.
 
-Skill drops the client-specific reminders next to each agenda item (e.g., item 06 "Gather information" — list the EIN / 990 preparer / credit card statements / payroll JE attachments we're actively chasing).
+Skill drops client-specific reminders next to item 06 "Gather information" only (the EIN / 990 preparer / credit card statements / payroll JE attachments we're actively chasing). Items 01/02/03/04/05/07/08/09/10/11 = "Lead fills live during the call."
 
-### Fill-in format
+### Prep-notes file format
 
-Deliver as a markdown file at `G:\Shared drives\{Client Legal Name}\Perm File\Onboarding Dossier - {Client Legal Name} - fill-in.md` with these sections in order:
+Deliver as a markdown file at `G:\Shared drives\{Client Legal Name}\Perm File\Onboarding Dossier - {Client Legal Name} - fill-in.md` (keep this exact filename — the Lead's kickoff-prep skill reads it) with these sections in order:
 
-1. **Instructions preamble** — one-paragraph "open the Paxus Onboarding Dossier at [URL], switch to {Client} in the client switcher, paste each section below." Note that Section 03 checkboxes stay unchecked until Lead runs the kickoff.
-2. **Sidebar / header table** — two-column: Dashboard field → Fill-in value. Fields: Client name, Lead, Kickoff, Deadline, Team of 3 — Lead / Accountant / Reviewer.
-3. **Budgeted hours** — bulleted list of the client's actual budgeted hours from their Service Fee Template (Accountant / Lead / Reviewer + total). **Never use tier defaults — every client has their own values.** Note that Lead refines after kickoff.
-4. **Section 01 — Discovery** — one subheading per field (bolded), value below in prose.
-5. **Section 02 — Pre-Kickoff Readiness** — group by category (ACCOUNTING · QBO / TAX / PAYROLL / SALES TAX & PORTAL). For each item: current state note plus explicit "tick" or "leave unchecked" guidance for Lead.
-6. **Section 03 — Kickoff Call** — pre-load only item 06 "Gather information" with client-specific bullets. Explicitly state "Do NOT pre-check any of the checkboxes." Items 01/02/03/04/05/07/08/09/10/11 = "Lead fills live during the call."
-7. **Reference files** — bulleted list of paths to engagement, quote, Service Fee Template, PNCR(s), Welcome Packet, and Welcome Email (draft).
+1. **Header line** — "Onboarding prep notes for {Client} — for the Lead's kickoff-prep. Every field is filled in or marked `TBD — ask on call`." No dashboard URL, no paste instructions.
+2. **Client identity + team table** — Client name, Lead, Kickoff, Deadline, Team of 3 — Staff / Lead / Controller.
+3. **Budgeted hours** — (unchanged) Staff / Lead / Controller + total, from the client's Service Fee Template (or tier defaults with a note that the Service Fee template block wasn't populated). Note that the Lead refines after kickoff.
+4. **Billing** — table, from the engagement.
+5. **Cleanup scope** — consolidated block.
+6. **Volumes & complexity** — consolidated block.
+7. **Section 01 — Discovery** — one subheading per field, value below in prose.
+8. **Section 02 — Pre-Kickoff Readiness** — group by category (ACCOUNTING · QBO / TAX / PAYROLL / SALES TAX & PORTAL). For each item: current known state or `TBD — ask on call`. No tick/uncheck language.
+9. **Section 03 — Kickoff Call reference notes** — pre-load only item 06 with client-specific bullets. Items 01/02/03/04/05/07/08/09/10/11 = "Lead fills live during the call."
+10. **Reference files** — bulleted list of paths to engagement, quote, Service Fee Template, PNCR(s), Welcome Packet, and Welcome Email (draft).
 
 ---
 
@@ -132,7 +139,7 @@ Replaces Jennifer's previous "Good morning, friends!" template with the same inf
   3. **Billing** — onboarding paid, cleanup deposit/balance amounts, monthly draft amount and start date.
   4. **Scope** — tier, what's in/out, cleanup window, first monthly month, software-transition notes.
   5. **Your team and budgeted hours** — Controller / Lead / Staff with hours **read from the client's Service Fee Template** (never tier defaults); flag that Staff stays TBD client-facing.
-  6. **Action items** — Lead schedules kick-off, where the dossier and Service Fee sheet live, what to confirm on the call.
+  6. **Action items** — Lead schedules kick-off; point to the client's Perm File, where the prep-notes file (`Onboarding Dossier - {Client Legal Name} - fill-in.md`) and Service Fee sheet live; what to confirm on the call.
   7. **Things to know going in** — pain points, complex transactions, system quirks, access gaps, FC checklist status, tax-return status.
   8. One-line close: "Let me know if anything is unclear — happy to chase down any of the TBDs."
 
@@ -157,7 +164,8 @@ Replaces Jennifer's previous "Good morning, friends!" template with the same inf
 - **2026-06-26** — first Phase 4 run (xlsx-workbook flow, pre-dossier).
 - **2026-06-30** — Mu Alpha Theta — xlsx-workbook flow. Dossier fill-in produced retroactively on 2026-07-06; xlsx workbook + duplicate team-handoff-email removed from Perm File.
 - **2026-07-01** — xlsx-workbook flow.
-- **2026-07-06** — Dossier flow adopted as the standard.
+- **2026-07-06** — Dossier (dashboard paste) flow adopted as the standard.
+- **2026-08-05** — Dashboard retired. Phase 4 now produces a read-oriented prep-notes file in Perm File for the Lead's kickoff-prep skill; Phase 6 (dossier PDF archive) removed; role labels simplified to Staff / Lead / Controller; Billing / Cleanup scope / Volumes & complexity added as their own blocks.
 
 ---
 
@@ -169,7 +177,7 @@ Replaces Jennifer's previous "Good morning, friends!" template with the same inf
 
 ## Safety notes (Phase 4 specific)
 
-- **Never edit the shared Claude Design template directly.** Deliver a fill-in for Jennifer to paste — she owns the per-client save inside Design.
+- **No dashboard to edit.** The claude.ai Onboarding Dossier dashboard is retired — deliver the read-oriented prep-notes file into the client's Perm File; it's the record, not a paste-source.
 - **When parsing PDFs/DOCX/gdocs, surface uncertainty** rather than guessing — TBD is fine; fabricated values are not.
 - **Re-read the engagement letter on every Phase 4 run** — don't trust the Phase 1 handoff for final billing numbers.
 - **Service Fee Template is read-only in Phase 4.** It's created during quoting; Phase 4 never stamps, copies, or edits it. If it's missing, stop and ask Jennifer.
