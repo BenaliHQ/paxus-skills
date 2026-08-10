@@ -109,7 +109,7 @@ tagged:
 | D15 | credit_card_accounts | ASK | Same shape. Note card-platform transitions and legacy cards in history. |
 | D16 | bank_feed_recovery_notes | ASK | Chronically flaky feeds? Where reconnect credentials live? (Live status stays in QBO.) |
 | D17 | document_intake_configuration | CONFIRM | Which document tool(s), on/off, and why? Mid-transition: record both states with dates. |
-| D18 | source_document_attachment_policy | ASK | Attachments required (audit)? Client willingness? Formal financial policy doc to link? |
+| D18 | source_document_attachment_policy | ASK | Attachments required (audit)? Client willingness? Formal financial policy doc to link? — CONDITIONAL: a formal financial policy is expected only for nonprofit and CFO/advisory-tier entities. For small owner-operator clients, don't raise it as a gap; record "Not applicable" with the operator's sign-off. |
 | D19 | point_of_sale_systems | ASK | POS / payment / donor platforms? Access method per platform? |
 | D20 | pos_report_specification | ASK | Per platform: which report, period, delivery path, destination. |
 | D21 | sales_deposit_reconciliation_rules | ASK | How do gross sales tie to deposits? Fees netted where? (Some platforms have no fees — payout ties exactly; say so.) |
@@ -126,7 +126,7 @@ tagged:
 |---|---|---|---|
 | E1 | credential_locations | ASK | Per portal: where does the credential live and who is assigned? Note any systems accessed with the CLIENT's own logins. |
 | E2 | client_system_access_assignments | ASK | Which role/person has what access, per system? Note pending grants. |
-| E3 | authentication_requirements | ASK | Which systems demand 2FA codes, and where do codes route (codes email, firm Google Voice)? Gates automation. |
+| E3 | authentication_requirements | ASK | Per system: how OFTEN does 2FA challenge (every login / new device / periodic / rare), how COMPLEX is the challenge (SMS/email code, push approval to whose device, security questions), and where do codes route (codes email, firm Google Voice, a person's phone)? Frequency + complexity decide whether pulls can be automated or need a human — "has 2FA" alone answers nothing. |
 
 ## F. Annual: cleanup & year-end
 

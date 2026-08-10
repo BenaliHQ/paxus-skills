@@ -25,7 +25,7 @@ These gates override vendor confidence markers in
 Nonprofit: source documents required regardless of amount. TBD whether this
 client is affected.
 
-Thresholds can change over time; log changes in [log.md](/log.md).
+Thresholds can change over time; log changes in [log.md](/0-core/log.md).
 
 # Citations
 

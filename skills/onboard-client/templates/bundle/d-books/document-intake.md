@@ -20,7 +20,7 @@ status: scaffold
 |---|---|
 | Attachments required? | TBD (nonprofit audit requirement) |
 | Client willingness | TBD |
-| Formal financial policy doc | TBD (pointer, if one exists) |
+| Formal financial policy doc | TBD (pointer, if one exists — CONDITIONAL: expected only for nonprofit and CFO/advisory-tier clients; for a small owner-operator, record "Not applicable per {name}, {date}" instead of leaving a gap) |
 
 # Citations
 

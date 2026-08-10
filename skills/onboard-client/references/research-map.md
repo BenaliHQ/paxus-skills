@@ -3,7 +3,7 @@
 Phase 2 works through this map before any substantive intake question is asked. Property IDs
 reference `intake-questions.md`. Everything here is read-only; anything not
 findable through these sources lands in the findings review (Phase 3) or the
-gap report (Phase 5) as a question.
+gap interview (Phase 5) as a question.
 
 ## Financial Cents (the firm's FC connection, read-only)
 
@@ -39,6 +39,23 @@ gap report (Phase 5) as a question.
 
 ## Client Drive folder (inventory first, read selectively)
 
+**Check the `perm` folder first.** Each client's Drive folder has a `perm`
+(permanent documents) folder, and it is the firm-standard landing spot for
+QuickBooks exports pulled for onboarding (firm decision, 2026-08-04). Before
+putting any export on the request list, inventory `perm` — the exports the
+skill wants are, increasingly, already sitting there:
+
+| Export in `perm` | Feeds |
+|---|---|
+| Chart of accounts | D4 |
+| Bank-feed rules (QBO bank rules export) | D6 |
+| Class list | D5 |
+| Trial balance | D14/D15 account enumeration |
+| Recurring transactions | D9 |
+
+(The firm is still finalizing the full export list; treat any other QBO
+export found in `perm` as fair game and cite it like the rest.)
+
 | Property | Which document |
 |---|---|
 | B4 accepted_quote | Quote PDF |
@@ -49,9 +66,9 @@ gap report (Phase 5) as a question.
 | D5/D6 classification + coding workflow | Client intro / training guide |
 | D11 budget_configuration | Budget files |
 | D2 accounting_method | Client overview questionnaire / engagement letter |
-| D18 attachment policy | Financial policy document |
+| D18 attachment policy | Financial policy document (expected only for nonprofit / CFO-tier clients — its absence is a gap only there) |
 | F2 tax_return_baseline | Most recent filed return PDF, where saved |
-| D4/D6/D9/D14 exports | Any COA / bank-rules / recurring-transactions / trial-balance exports already saved |
+| D4/D5/D6/D9/D14 exports | The `perm` folder (see above), then anywhere else in the client folder |
 | G4 known_challenges (draft) | Client intro "recurring issues" sections — confirm with operator |
 | Entity manifest (draft) | Engagement letter + questionnaire — confirm with operator |
 
@@ -63,6 +80,8 @@ gap report (Phase 5) as a question.
 | D2 accounting_method | Company settings, where readable |
 | D27 client_workspace_locations | Assembled from Phase 1 (Drive ID) + FC record + QBO company ID |
 | D4 chart_of_accounts | COA export |
+| D5 classification_tracking (enumeration) | Class list |
+| D6 vendor_coding_rules (existing-rules part) | Bank rules export |
 | D9 recurring_journal_entries | Recurring-transactions list |
 | D14/D15 bank + card accounts (enumeration) | Trial balance / account list |
 

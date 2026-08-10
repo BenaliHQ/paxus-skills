@@ -12,8 +12,7 @@ pointers to where they live.
 # Bundle map
 
 * [Agent contract](AGENTS.md) - how to work in this bundle. Read before making any change.
-* [Client-critical rules](client-critical-rules.md) - the few rules no task may violate for this client
-* [Workspace locations](workspace-locations.md) - how an agent finds everything else: Drive ID, FC links, workbooks
+* [0. Core](0-core/) - client-critical rules, workspace locations, and the update log; read the rules first
 * [A. Identity & relationship](a-identity/) - who the client is; durable, set once
 * [B. Engagement & commercial](b-engagement/) - what we do for them and on what terms
 * [C. Staffing & capacity](c-staffing/) - who serves them and how the work is scheduled
@@ -24,4 +23,4 @@ pointers to where they live.
 
 # History
 
-* [Update log](log.md) - who changed what, when
+* [Update log](0-core/log.md) - who changed what, when

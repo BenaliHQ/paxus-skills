@@ -1,3 +1,7 @@
+## 2026-08-10 — Khalil
+
+- [PROMOTED] Both 2026-07-28 entries below were promoted into SKILL.md (gap-close protocol): the gap interview is now a required phase with per-gap dispositions (closed / not-applicable / blocked / deferred), non-closed dispositions require operator sign-off with name+date, and the wrap is gated on every gap having a disposition. The quote-holds-the-tier-ladder and ownership-claim-re-read notes moved to references/bundle-mechanics.md (edge cases). Same PR: bundle top level reorganized into 0-core/ (template 1.1.0), 2FA frequency/complexity columns, conditional financial-policy item, perm-folder research path.
+
 ## 2026-07-28 — Cassie
 
 - [LEARNING] Phase 5 says "if the operator is live, offer to work through gaps now, one at a time." The run skipped that offer entirely and jumped from filling the bundle to verify/wrap, delivering the gap report as a document. The operator had to ask "we didn't go through any kind of interview process?" — correctly. Research answered the CONFIRM/DOCUMENT/EXPORT items well, which made it easy to forget that the ASK residue is exactly what research cannot cover, and that the live operator is the cheapest source for it. Research success masked the interview gap.

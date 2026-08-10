@@ -2,6 +2,7 @@
 type: Client Rules
 title: Client-critical rules
 description: "The two-to-four rules specific to THIS client that no task may violate. Chosen at onboarding from what the sources emphasize most."
+schema_properties: [client_critical_rules]
 status: scaffold
 ---
 
