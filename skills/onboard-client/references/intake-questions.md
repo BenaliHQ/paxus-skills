@@ -23,7 +23,12 @@ tagged:
 - **RUNTIME** — live state, queried from the system of record; never stored,
   never asked.
 
-## 0. Routing questions (ask first; they gate everything below)
+## 0. Routing items (establish first; they gate everything below)
+
+Per SKILL.md, these are established from the Phase 1 locating answers and
+Phase 2 research, then confirmed with the operator in the Phase 3 findings
+review — asked directly only where research can't answer them. "First"
+means before the substantive blocks below are filled, not before research.
 
 1. Which client? Exact legal name, as it appears on the Drive folder.
 2. **Entity manifest** — for each entity: legal name, slug, entity type,
@@ -109,7 +114,7 @@ tagged:
 | D15 | credit_card_accounts | ASK | Same shape. Note card-platform transitions and legacy cards in history. |
 | D16 | bank_feed_recovery_notes | ASK | Chronically flaky feeds? Where reconnect credentials live? (Live status stays in QBO.) |
 | D17 | document_intake_configuration | CONFIRM | Which document tool(s), on/off, and why? Mid-transition: record both states with dates. |
-| D18 | source_document_attachment_policy | ASK | Attachments required (audit)? Client willingness? Formal financial policy doc to link? — CONDITIONAL: a formal financial policy is expected only for nonprofit and CFO/advisory-tier entities. For small owner-operator clients, don't raise it as a gap; record "Not applicable" with the operator's sign-off. |
+| D18 | source_document_attachment_policy | ASK | Attachments required (audit)? Client willingness? Formal financial policy doc to link? — CONDITIONAL: a formal financial policy is expected only for nonprofit entities and engagements with confirmed CFO/advisory scope (scope, never the tier name). For small owner-operator clients, don't raise it as a gap; record "Not applicable" with the operator's sign-off. |
 | D19 | point_of_sale_systems | ASK | POS / payment / donor platforms? Access method per platform? |
 | D20 | pos_report_specification | ASK | Per platform: which report, period, delivery path, destination. |
 | D21 | sales_deposit_reconciliation_rules | ASK | How do gross sales tie to deposits? Fees netted where? (Some platforms have no fees — payout ties exactly; say so.) |

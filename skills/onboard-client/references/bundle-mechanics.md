@@ -8,8 +8,8 @@ SKILL.md carries the workflow and the rules; this file carries the mechanics.
 Copy `templates/bundle/` to the destination. Replace `{{CLIENT_NAME}}` and
 fill `0-core/log.md`'s initialization tokens (`{{ONBOARDING_DATE}}`,
 `{{SOURCES_LIST}}` from the manifest, status counts,
-`{{GAP_DISPOSITIONS}}` and `{{OPEN_ITEMS}}` from the gap interview) **at
-the end of Phase 5**, when the real values exist.
+`{{GAP_DISPOSITIONS}}` and the `{{GAP_LEDGER_ROWS}}` table from the gap
+interview) **at the end of Phase 5**, when the real values exist.
 
 ## Multi-entity transformation (apply mechanically)
 
@@ -32,11 +32,18 @@ multi-entity bundle.
 - **ASK** — answered from transcript/interview content.
 - **CONFIRM** — current value plus the pointer to where it lives.
 - **DOCUMENT** — extracted from a provided document; the extraction cites
-  the document, and the bundle links the document rather than copying it.
-- **EXPORT** — summarize the export's structure; link a pre-existing
+  the document, and the bundle points at the document rather than copying it.
+- **EXPORT** — summarize the export's structure; point at a pre-existing
   export file where one exists, or cite the QBO pointer (realm, report,
   as-of date) for CLI-pulled data. Don't paste hundreds of rows into a
   bundle file, and don't write raw data files into the client folder.
+
+**How to point at files outside the bundle** (engagement letters, quotes,
+perm-folder exports): use a full `https://` Drive URL, or a plain-text
+pointer ("perm/chart-of-accounts.csv in the client Drive folder, as of
+{date}"). NEVER a relative markdown link — the validator (E4) treats every
+non-http link as bundle-internal and will reject links that point outside
+`.agents/`. Markdown links inside the bundle are for bundle files only.
 - **SCAFFOLD** — keep the empty structure (seed only from a real artifact,
   e.g. an actual kickoff recap; never date an entry to the onboarding run).
 - **RUNTIME** — never stored (pointer to the system of record at most).
@@ -86,10 +93,20 @@ Never edit the live bundle in place.
 **Template version drift.** If the existing bundle's AGENTS.md
 `template_version` differs from this skill's template, flag it to the
 operator before merging. Don't silently upgrade firm-standard files during
-a content update; note the migration as its own follow-up. (Bundles built
-before template 1.1.0 have `log.md`, `client-critical-rules.md`, and
-`workspace-locations.md` loose at the root instead of in `0-core/` — that
-layout move is part of the 1.0.x → 1.1.0 migration, never a silent fix.)
+a content update; note the migration as its own follow-up.
+
+**Pre-1.1.0 layout during update mode.** Bundles built before template
+1.1.0 have `log.md`, `client-critical-rules.md`, and `workspace-locations.md`
+loose at the root instead of in `0-core/`, and the validator reports that as
+E2 + E8 errors. During an update, ask the operator to approve the layout
+migration as part of the update (it is mechanical: move the three files into
+`0-core/`, add `0-core/index.md`, update the links, bump AGENTS.md — show it
+in the diff like everything else). If the operator declines, record the
+migration as an open follow-up in the log entry and treat exactly those
+layout errors (E2 root-log, E8 for the three known files, and their E3/E4
+fallout) as acknowledged-pending-migration — every other validator error
+must still be fixed. Never migrate silently; never wave off any other error
+under this exception.
 
 ## Edge cases
 

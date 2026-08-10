@@ -156,7 +156,12 @@ operator's 10-15 minutes go.
 
 1. Assemble every unresolved ASK / CONFIRM / DOCUMENT / EXPORT item
    (everything except RUNTIME and untouched SCAFFOLD), plus ambiguous
-   answers and unresolved conflicts.
+   answers and unresolved conflicts — as an **enumerated worklist, one row
+   per question**, keyed by intake ID (split multi-part items: D6 is three
+   gaps — existing rules, owner-expense pattern, memory-coded vendors — not
+   one). Scope-excluded blocks are NOT gaps: the Phase 3 scope confirmation
+   is their sign-off, and their files already say "not in scope for this
+   engagement."
 2. Sort: **items that gate agent autonomy first** — materiality thresholds
    (D7), vendor coding rules (D6), 2FA behavior (E3) — an unset materiality
    threshold means no autonomous coding authority at all. Then batch by
@@ -179,17 +184,26 @@ operator's 10-15 minutes go.
    one quotes the operator's actual call with their name and date. You may
    NEVER assign these yourself — a gap you didn't ask about stays open, and
    an open gap blocks the wrap.
-5. If gaps remain after the batches, ask explicitly: "N gaps remain — keep
-   going, or park the rest?" Parking requires the operator's answer; the
-   parked items become deferred/blocked per their call.
-6. The surviving blocked/deferred items land in `0-core/log.md`'s
-   initialization entry AND are handed to the operator formatted to send
-   (email or FC task), grouped by who unblocks each one.
+5. If gaps remain after the batches, SHOW the operator the remaining items
+   as an enumerated list (ID + one-line question each) and ask: "keep
+   going, or park these?" Parking still dispositions **item by item**: each
+   listed item gets its own ledger row (deferred, or blocked with its
+   dependency, per the operator's call), signed with the operator's name
+   and date. Never record an anonymous total ("9 further items parked") —
+   if it isn't itemized, it isn't dispositioned.
+6. Every disposition is a row in the **gap disposition ledger** in
+   `0-core/log.md`'s initialization entry (gap ID | file | disposition |
+   per | date | dependency or reason). The blocked/deferred rows are also
+   handed to the operator formatted to send (email or FC task), grouped by
+   who unblocks each one.
 
 If the operator is genuinely not present (e.g., processing a transcript
-solo), skip the live interview, mark every remaining gap "open — interview
-not yet run", and say so in the completion line. Never imply gaps were
-dispositioned when nobody was asked.
+solo), skip the live interview and leave the gaps undispositioned — the run
+then ends as **"staged — interview pending"**, with its own closing line:
+"Bundle STAGED for {client} at {location}: N active, N partial, N scaffold.
+Gap interview pending: N open items." A staged run never gets the Phase 7
+completion line, and never implies gaps were dispositioned when nobody was
+asked.
 
 ### Phase 6 — Verify before done
 
@@ -213,9 +227,11 @@ the gap dispositions.
 
 ### Phase 7 — Register and wrap
 
-**Wrap gate: do not start this phase while any gap lacks a disposition**
+**Wrap gate: do not start this phase while any gap lacks a ledger row**
 (Phase 5.4). If you can't fill the disposition counts in the completion
-line below, you aren't done — go back.
+line below from the ledger, you aren't done — go back (or, if the operator
+was never present, end as "staged — interview pending" per Phase 5; that
+path never reaches this phase).
 
 1. If the firm keeps a **client map** and the operator provides its
    location, add/update this client's row (the map is never this repo). If

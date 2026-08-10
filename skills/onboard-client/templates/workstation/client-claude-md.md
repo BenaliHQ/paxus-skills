@@ -4,7 +4,8 @@ This is a local working folder. **The source of truth for everything about
 this client is the context bundle** in the firm's shared drive:
 
 - Context bundle: `{{DRIVE_CLIENT_FOLDER}}/.agents/` (Drive ID: {{DRIVE_ID}})
-- Start with the bundle's `index.md`, then `client-critical-rules.md`, and
+- Start with the bundle's `index.md`, then `0-core/client-critical-rules.md`
+  (bundles built before template 1.1.0 have it at the bundle root), and
   load only the files your task needs, per the bundle's `AGENTS.md`.
 - Contact details, checklists, recurring projects, and delivery archives
   live in Financial Cents — query them there, don't copy them here.
