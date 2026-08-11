@@ -3,8 +3,8 @@ type: Agent Contract
 title: Agent contract
 description: The operating contract for any AI agent working in this client context bundle. Firm-standard; identical across all Paxus client bundles.
 status: active
-template_version: "1.0.0"
-timestamp: 2026-07-24T00:00:00-05:00
+template_version: "1.1.0"
+timestamp: 2026-08-10T00:00:00-05:00
 ---
 
 This folder is a Paxus CPA client context bundle in the Open Knowledge Format
@@ -15,16 +15,16 @@ client-specific lives in the bundle's other files.
 # How to traverse
 
 1. Start at [/index.md](/index.md): it lists what exists. Then read
-   [/client-critical-rules.md](/client-critical-rules.md) — the few rules no
-   task may violate for this client — before touching books or
+   [/0-core/client-critical-rules.md](/0-core/client-critical-rules.md) — the
+   few rules no task may violate for this client — before touching books or
    communications. Each folder has its own `index.md` listing.
 2. Load only the files your task requires. The per-file `description` and
    `schema_properties` frontmatter tell you what each file covers. When you
    are coding transactions, that means the `d-books/` coding files, not the
    whole bundle.
-3. [/workspace-locations.md](/workspace-locations.md) holds the IDs and links
-   (QBO company, Financial Cents, Drive) that anchor everything else.
-   Navigate by ID, never by search.
+3. [/0-core/workspace-locations.md](/0-core/workspace-locations.md) holds the
+   IDs and links (QBO company, Financial Cents, Drive) that anchor everything
+   else. Navigate by ID, never by search.
 4. A client drive with no bundle folder is not a managed context: do not
    create one on your own. Bundles are scaffolded from the firm template
    during onboarding.
@@ -52,9 +52,9 @@ account nicknames and last-four digits only.
   `# Citations` section. (Scope: per-client concept documents. This
   firm-standard contract and the reserved `index.md`/`log.md` files carry no
   citations.)
-- Every meaningful change also gets a dated entry in [/log.md](/log.md),
-  newest first (`## YYYY-MM-DD`, bold change-type lead like **Update** /
-  **Creation** / **Deprecation**).
+- Every meaningful change also gets a dated entry in
+  [/0-core/log.md](/0-core/log.md), newest first (`## YYYY-MM-DD`, bold
+  change-type lead like **Update** / **Creation** / **Deprecation**).
 - Maintain frontmatter: keep `type` (required by OKF), refresh `timestamp` on
   meaningful change, and move `status` along `scaffold → partial → active` as
   content firms up. Preserve keys you do not understand.

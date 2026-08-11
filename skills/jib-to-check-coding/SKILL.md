@@ -26,7 +26,7 @@ Before coding anything, read from the client's `.agents/` context bundle (built 
 
 | Read this | For |
 |---|---|
-| `/client-critical-rules.md` | The client's hard constraints. Read first, always. |
+| `/0-core/client-critical-rules.md` | The client's hard constraints. Read first, always. (Bundles built before template 1.1.0 have this file at the bundle root.) |
 | `/d-books/chart-of-accounts.md` | **The client's actual QBO account names** for the three categories. Do not assume the names in this skill's reference — a client's capitalizing account may sit under fixed assets while the expensed ones sit under COGS, and the exact colon-qualified strings differ per client. |
 | `/d-books/classification-tracking.md` | Whether the client tracks by **class**, **location**, or both, the rule for which applies, and the **live list of values**. This is the authority — never a list hard-coded in a skill. |
 | `/d-books/vendor-coding-rules.md` | Known operators, owner-expense patterns, confidence markers. |

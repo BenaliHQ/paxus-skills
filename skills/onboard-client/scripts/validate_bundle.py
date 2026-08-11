@@ -8,7 +8,8 @@ Checks (ERRORS fail the run; WARNINGS are listed for human judgment):
   E1  Every non-reserved .md has YAML frontmatter that parses, with a
       non-empty `type` and a `status` in {scaffold, partial, active}.
   E2  index.md files carry no frontmatter (root index may carry okf_version
-      only). log.md exists at the root.
+      only). log.md exists at 0-core/log.md; a root-level log.md is the
+      pre-1.1.0 layout and must be migrated.
   E3  Every folder's index.md links every .md file in that folder (except
       itself), and links no file that doesn't exist.
   E4  Internal links resolve: /path.md (bundle-relative), relative links,
@@ -18,6 +19,9 @@ Checks (ERRORS fail the run; WARNINGS are listed for human judgment):
       same template_version (version drift is W4, not an error).
   E7  Multi-entity bundles: links to /d-books/<file>.md without an entity
       subfolder are errors.
+  E8  The bundle root contains no loose .md files other than AGENTS.md and
+      index.md; cross-cutting files belong in 0-core/ and others in their
+      group folder.
   W1  Possible credential values: password/token/secret assignments, or
       unbroken digit runs of 9+ (bank/routing shape) outside allowlisted
       ID fields.
@@ -70,8 +74,15 @@ def main():
                 rel = os.path.relpath(os.path.join(dp, fn), root).replace(os.sep, "/")
                 all_md[rel] = open(os.path.join(dp, fn)).read()
 
-    if "log.md" not in all_md:
-        errors.append("E2 | log.md missing at bundle root")
+    if "0-core/log.md" not in all_md:
+        if "log.md" in all_md:
+            errors.append("E2 | root-level log.md is the pre-1.1.0 layout; it belongs at 0-core/log.md")
+        else:
+            errors.append("E2 | 0-core/log.md missing")
+
+    for rel in sorted(all_md):
+        if "/" not in rel and rel not in {"AGENTS.md", "index.md"}:
+            errors.append(f"E8 | {rel} | loose root-level .md belongs in 0-core/ (cross-cutting) or its group folder")
 
     for rel, text in sorted(all_md.items()):
         base = os.path.basename(rel)
