@@ -1,6 +1,6 @@
 ---
 name: paxus-quote
-description: Build the firm's standard client service proposal — a four-page branded PDF (cover, service levels, add-ons, getting started) plus the cover email that carries it. Starts from the firm's standard Basic / Full Service / Premium ladder and its standard service elements, takes the fees the operator supplies, and turns them into a finished, brand-correct, page-verified quote. Run when someone says they need to build a quote, put together a proposal, send pricing to a prospect, or update an existing quote's numbers. This skill does not decide pricing — bring the fees with you.
+description: Build the firm's standard client service proposal — a four-page branded PDF (cover, service levels, add-ons or how-it-works, getting started) plus the cover email that carries it. Starts from the firm's standard Basic / Full Service / Premium ladder, its standard service elements and its standard tier wording, takes the fees and budgeted hours the operator supplies, and turns them into a finished, brand-correct, page-verified quote. Run when someone says they need to build a quote, put together a proposal, send pricing to a prospect, or update an existing quote's numbers. This skill does not decide pricing — bring the fees with you.
 ---
 
 # /paxus-quote — Client Service Proposal
@@ -14,7 +14,9 @@ You are building a Paxus service proposal: a **four-page PDF** and the **email t
 ## Important rules for this skill
 
 - **No fabrication.** If the operator hasn't given you a fee, a date, a contact name, or a scope line, leave the `[bracketed placeholder]` in place and tell them what's missing. Never invent a number or a service inclusion.
-- **This skill does not set prices.** It formats decisions already made. Ask for whatever fees are missing and use exactly what you're given. Never derive, estimate, or suggest a fee to fill a gap — if the operator doesn't have a number yet, leave the placeholder in and tell them which one is outstanding.
+- **This skill does not set prices.** It formats decisions already made. Ask for whatever fees are missing and use exactly what you're given. Never derive, estimate, or suggest a fee to fill a gap — if the operator doesn't have a number yet, leave the placeholder in and tell them which one is outstanding. *(Pricing will move into this skill eventually. It is not there yet: the firm has settled billing rates per role but not how budgeted hours are calculated, and without that half the skill cannot price anything honestly.)*
+- **Budgeted hours come from the operator too.** Ask for them, don't derive them. They never reach the client, but they do get filed for the firm administrator (Phase 4).
+- **Never put hours, rates, margin, or markup in anything the client sees.** They belong in the buildup, the internal rationale, and the partner email. Not the quote, not the cover email.
 - **Skills are the engine; client data is the fuel.** Nothing client-specific belongs in this skill or its template. Client scope, prior quotes, and engagement history live in the client's Google Drive folder (see `docs/context-model.md`).
 - **Never send email.** The skill writes the email; a human sends it. Don't add SMTP or Gmail-API send paths — the manual step is the safeguard, and some operators also have a mechanical send-guard on top of it.
 - **Don't rebuild the print CSS.** `templates/proposal.html` holds a page engine that is already correct and already hard-won. Fill the content; leave the `@media print` block alone.
@@ -26,7 +28,7 @@ You are building a Paxus service proposal: a **four-page PDF** and the **email t
 |---|---|
 | 1 — Cover | Logo, client name, one-line positioning, prepared-for block, 30-day validity |
 | 2 — Choose your level | Price cards + the service comparison table, ending in a Monthly fee row |
-| 3 — Optional add-ons | Add-on hero boxes; any separately-quoted service and its timing constraint |
+| 3 — Optional add-ons **or** How this works | Add-on hero boxes and any separately-quoted service with its timing constraint — **or**, when there are no real add-ons, a plain-language walkthrough of the mechanism the client is actually buying |
 | 4 — Getting started | One-time fees, total due at signing, next steps, one "Good to know" callout |
 
 **Never put in a quote:** terms and conditions · assumptions lists · exclusions lists · signature or acceptance blocks · volume statistics · hours or rates · margin math. Terms belong in the engagement letter. Explanation belongs in the cover email. A quote that needs a page of caveats is a quote that hasn't been decided yet.
@@ -54,8 +56,21 @@ Unless the operator says otherwise, a Paxus quote offers three levels with the s
 | KPI tracking & benchmarking | — | — | ✓ |
 | Budget / forecast | — | — | ✓ |
 | Workers' comp audit support † | — | — | ✓ |
+| General liability audit support | — | — | ✓ |
 
-† **Only when the client runs payroll.** Drop the row entirely if they don't — it reads as padding.
+† **Ask whether the client runs payroll, and pull this row if they don't.** See the note below — this is the one audit row that comes out.
+
+> [!warning]
+> **Workers' comp / GL audit support and annual audit support are two different offerings. Do not merge them, and do not treat either as belonging only to one client type.**
+>
+> - **Workers' comp and general liability audit support** — available to **all client types**, for-profit and non-profit alike, and they sit in **Premium** in both. These are the insurance audits that actually show up for an operating business.
+> - **Annual audit support** — the **non-profit** line, for a financial statement audit. It appears in the non-profit table below as its own Premium row, never in place of the two rows above.
+>
+> This has gone wrong in both directions: audit support drifting to "non-profit only," and the annual audit being written as though it were the workers' comp row. A for-profit Premium keeps workers' comp and GL. A non-profit Premium keeps those **and** adds annual audit support.
+
+**No payroll → pull the workers' comp row.** A workers' comp audit is driven by payroll, so a client without payroll will never have one. Leaving the row on the page makes them feel they're paying for something they don't need, which is the opposite of what a Premium row is for. Confirm with the operator, then delete the row rather than marking it `—`.
+
+General liability audit support stays either way — GL exposure isn't payroll-dependent.
 
 ### Non-profit clients — add these rows
 
@@ -67,6 +82,7 @@ Everything above still applies. A non-profit quote adds:
 | Grant tracking | ✓ | ✓ | ✓ |
 | Restricted vs unrestricted fund tracking (net assets) | ✓ | ✓ | ✓ |
 | Board reporting package | — | ✓ | ✓ |
+| Annual audit support | — | — | ✓ |
 
 Non-profits have no tax preparer in the usual sense — reword that row to name the **990 preparer**.
 
@@ -84,6 +100,7 @@ Never write a line like *"we keep your programs, grants, and restricted funds tr
 - **Dropping to two levels is normal.** Delete the third card and column.
 - **Adding a row is normal** when the engagement has a real element the default doesn't cover.
 - **Silently removing a default row is not.** If a standard element is coming out, say so and confirm — an omission the operator didn't intend becomes a scope gap in a signed engagement.
+- **The default table and the card wording are locked.** Render every row above, and use the standard card copy, unless the operator explicitly says otherwise. Do not condense two rows into one, reword a row into something narrower, or drop a row because it felt redundant — *"Monthly performance & KPI call"* in place of separate *KPI tracking* and *Budget / forecast* rows is a silent scope reduction, not a tidier table. **The deviation has to come from the operator, never from your own judgment about what this client needs.** Before Phase 2, count the rows against the default and name any difference out loud. The whole point is that nobody has to proofread the table on every quote to check whether something fell off.
 - **A level where the client keeps their own bookkeeper** marks the coding and month-end rows as *Your team*, not as excluded. That distinction matters: it says who does the work, not whether it happens. This is a **deviation** from the default, not the default itself.
 
 ### What actually separates the three levels
@@ -96,16 +113,39 @@ Never write a line like *"we keep your programs, grants, and restricted funds tr
 | **Full Service** | Notes and analysis on the statements · 1099 preparation · collaboration with the tax or 990 preparer · board reporting package *(non-profit)* |
 | **Premium** | A monthly advisory call · KPI tracking · budget and forecast support · workers' comp audit support *(when they run payroll)* |
 
-**Write each price card's description to name what's new at that level** — not to restate what the level below already does. If two cards read almost the same, the tiering isn't being communicated.
+### The card wording is a default too — use it verbatim
+
+The three price cards have **standard names and standard descriptions.** They are not rewritten per client. Use these exactly as written:
+
+| Card name | Description |
+|---|---|
+| **Basic Service** | Your complete monthly accounting through close, with financial statements delivered each month. |
+| **Full Service** | Adds notes and analysis on your statements, 1099 preparation, and collaboration with your tax preparer. |
+| **Premium Service** | Adds a monthly advisory call with your controller, KPI tracking, budget and forecast, and workers' comp and general liability audit support. |
+
+On a **non-profit** quote, swap *tax preparer* → *990 preparer* in Full Service, and add the board reporting package and annual audit support to the relevant cards. Those are the only routine substitutions.
+
+**Do not reword these to describe this particular client's engagement.** A card that opens *"Full bookkeeping through monthly close, with job and phase costing…"* has quietly become client-specific, and the next quote inherits a different sentence. The table carries what's specific; the cards carry the firm's standard framing of the decision.
+
+Change the copy only when the operator explicitly asks — and if a change is worth keeping, bring it back here so every future quote gets it.
 
 ### One-time fees — how the firm structures them
 
-Two standard one-time items, billed on different schedules. Getting this wrong on page 4 misstates what the client owes up front.
+Up to three one-time items, billed on different schedules. Getting this wrong on page 4 misstates what the client owes up front.
 
 | Item | How it's priced | When it's billed |
 |---|---|---|
 | **Onboarding** | A single figure | **Due at signing** — holds their place in the queue |
 | **Cleanup** | A **floor-to-ceiling range**, never a blanket figure | **50% of the floor at the kickoff call**, balance at the end of the cleanup |
+| **Setup / build** *(only when there's structural work)* | A **range**, for the same reason | **Alongside the cleanup** |
+
+The third item covers structural build work that isn't cleanup — standing up projects and phases, mapping cost codes, building a retainage receivable, converting payroll. Add it only when the engagement genuinely has that work; a quote with a setup line that's really just cleanup under another name reads as fee-padding. **Ask whether it should be folded into the cleanup range instead** — two ranges billed at the same moment often read better as one.
+
+**Watch the total, not just the lines.** Cleanup plus setup can quietly approach half a year of monthly fee. When it does, say so before it goes out: a client who does the arithmetic and flinches is worse than one you got ahead of.
+
+**Show both bars when money is due at two moments.** A single "Total due at signing" understates what's coming if the kickoff call carries a second payment. Show *Due at signing* and *Due at your kickoff call* as separate bars, and let the client see the shape of it.
+
+**The onboarding date is required on page 4.** Name the specific onboarding date and the first close month in the next steps — "We begin onboarding on September 20th," not "in September." This is a required element, not a nicety: it is the single most-forgotten line on the page, it is how the firm plans onboarding capacity, and without it nobody can reconstruct afterward what the client was told. A quote missing it is not finished.
 
 - Quote cleanup as a range (`$2,000–$3,000`) because the work depends on what's actually in the books. A single number becomes a cap you'll regret.
 - The first cleanup payment is **50% of the floor**, not 50% of the midpoint or the ceiling. On a $2,000–$3,000 cleanup that's $1,000 at kickoff.
@@ -133,12 +173,12 @@ Then ask for everything else in a single message:
 
 1. **Client and contact** — legal name for the cover, and who it's addressed to.
 2. **One-line positioning** — what this engagement is, in a phrase ("Monthly bookkeeping, financial reporting & advisory").
-3. **The fees** — one per level. Names default to Basic / Full Service / Premium; ask whether this quote renames or drops any.
+3. **The fees** — one per level. Names default to Basic Service / Full Service / Premium Service; ask whether this quote renames or drops any.
 4. **Deviations from the default table** — show it and ask what's different for this client. Rows to add, rows that don't apply, anything the client's own team keeps.
 5. **Add-ons** — name, fee, one-line scope, and **which levels each one attaches to**. Gating is per add-on, not one blanket rule: some attach to Full Service and Premium, others to Premium only. There is deliberately no standing list — add-ons come out of the discovery call, so they're specific to what surfaced with this client. Outsourced CFO, invoicing, bill pay, and payroll are all common, but none is assumed.
 6. **Separately-quoted services** — anything with its own timing (payroll conversions, cleanups), plus the constraint that drives the date.
 7. **One-time fees** — onboarding, cleanup, and anything else. See § One-time fees below for how each is structured and billed; they are not all due at the same time.
-8. **Start timing** — onboarding window and first close month.
+8. **Onboarding date — REQUIRED, and the quote does not ship without it.** A specific date, not a month ("September 20th," not "September"). Also ask for the first close month. If the operator doesn't have a date yet, say so plainly and hold the quote — do not fill a placeholder and move on, and do not soften it to a month to get past the question. The firm sets its onboarding capacity off these dates, and once a quote goes out without one nobody can reconstruct what the client was told.
 9. **Scope boundaries** — what's expressly out, or quoted later. This is the "Good to know" callout, and it should be short.
 
 Two judgment calls to raise if the operator hasn't:
@@ -164,6 +204,17 @@ Embedding the logo keeps the file self-contained, so it opens anywhere and email
 
 3. Replace every bracketed placeholder. Delete unused `OPTIONAL` blocks and any third tier card/column on a two-level quote.
 4. Keep the brand exact — `#682145` plum, `#C084A4` mauve, `#ECD2E1` blush, `#F7EDF3` tint, Calibri throughout, logo centered. Pull from `/paxus-design` if you need more. **`#660033` is not a Paxus color** — if you see it in an older quote or tool, it's wrong; use `#682145`.
+
+### House wording — settled, don't re-litigate
+
+These came out of a line-by-line review of two independently-built quotes for the same client. Use them as written.
+
+- **The levels intro leads with what's the same, then names what changes.** Open by stating that every level covers the full accounting function — coding, reconciliation of every balance-sheet account, monthly statements, controller review — all staffed by the same team of three. Then: *what changes between them is how much analysis and advisory sits on top.* Do **not** open by selling one level's features; the client's decision is about the layer on top, and the intro should frame exactly that.
+- **Page 4 is titled "Getting you set up."** Not "getting you clean," not "getting you on a clean footing" — those describe a problem the client is being charged for. This one describes an outcome.
+- **Never name a third party in the document.** Write *your tax preparer*, *your 990 preparer*, *your payroll provider* — never the person's name. They may not hold that role for the life of the engagement, and a misspelled name in a proposal is its own small disaster.
+- **The onboarding description earns the onboarding fee.** A generic line — set up your file, introduce your team, establish workflows — invites the client to ask what they're paying for. Name the specific work: the app audit, the integrations being connected, the opening balances being validated. Whatever is actually being done, say it.
+- **The `Recommended` badge is real but not automatic.** Ask every time. Use it when the firm genuinely steers toward one level; leave it off when all three are legitimate choices.
+- **Keep the big fee figures in proportion.** A price set in oversized type directly after a page of body copy reads as shouting. Scale it to sit inside the page's rhythm — this has drawn direct operator complaint on a past proposal.
 
 ## Phase 3 — Export and verify (do not skip)
 
@@ -260,6 +311,13 @@ Save the **HTML alongside it** — that's the editable source when the numbers c
 
 When the client signs, `/onboard-client-admin` moves the whole folder to `Active Clients`. Nothing to do here for that.
 
+### Also file these two — the firm administrator needs them
+
+Both go in the same prospective-client folder. Neither reaches the client.
+
+- **`{Client Name} Hours Budget.md`** — the quoted monthly fee per level, and the **budgeted hours per role per level** the operator gave you, with the date. Keep it to that: the fees and the hours are the *only* things the firm administrator needs out of pricing. No rates, no margin, no buildup. The old service-fee template existed to carry the hours across and isn't needed once this file exists. Without it the budget gets rebuilt from memory or guessed.
+- **The meeting minutes or a short call summary** from the discovery call. Working from the minutes in a terminal session and never saving them down is the common failure — the notes do the operator's job and then vanish before the team can use them. Save them.
+
 ## Phase 5 — Write the cover email
 
 The quote is deliberately thin, so the email carries everything the client needs to *understand* — while still being short.
@@ -294,9 +352,18 @@ Two things worth offering the operator:
 - [ ] No off-palette colors; no `#660033`
 - [ ] No bracketed placeholders left anywhere
 - [ ] No terms, assumptions, exclusions, or signature block in the document
+- [ ] **Comparison table row count matches the default** — every row present, none condensed or reworded narrower
+- [ ] Premium carries **workers' comp and general liability** audit support — both client types
+- [ ] Workers' comp row **deleted** (not marked `—`) if the client has no payroll
+- [ ] Non-profit Premium also carries **annual audit support** as its own row
 - [ ] "Total due at signing" reflects only at-signing items — cleanup is not rolled in
+- [ ] A separate **due at kickoff** bar appears whenever money is due at kickoff
 - [ ] Cleanup shown as a floor-to-ceiling range with its billing schedule
+- [ ] **A specific onboarding date** and the first close month stated in the next steps — blocking, not optional
+- [ ] Card names and descriptions match the standard wording, unless the operator asked for a change
+- [ ] No third party named — "your tax preparer," never the person
 - [ ] No hours, rates, or margin figures in the client-facing file or email
+- [ ] Hours budget and call minutes filed in the prospective-client folder
 - [ ] Cover email written to a `.txt` file for the operator to paste — nothing sent
 - [ ] Recipient address verified before the operator sends, not copied from an old note
 - [ ] PDF and HTML filed in the client's Prospective Clients folder, named `{Client Name} Quote.pdf` / `.html`
@@ -317,7 +384,7 @@ Recurring corrections belong in this SKILL.md; run `/manage-skills` to propose t
 - **Two levels instead of three.** Delete the third card and the third column. The cards flex to fill.
 - **A long comparison table** (14+ rows — common on a non-profit Premium quote). Switch the table and cards to `compact`; see Phase 3.
 - **The operator is on Windows.** The manual Chrome export in Phase 3 is the path — don't hand them a macOS-only command.
-- **No add-ons.** Delete page 3 entirely and renumber the footer. A three-page quote is fine.
+- **No add-ons.** Two options, and the better one is usually the second. Delete page 3 and ship three pages — or replace it with a **"How this works"** page explaining the mechanism the client came to you for: how it gets set up, what depends on a decision they still have to make, and what they'll see each month. On an engagement bought for one specific capability, that page does more work than an add-ons page ever would. **Never pad page 3 with an add-on the client doesn't need** — an unnecessary add-on on the page is worse than no page.
 - **Updating an existing quote's numbers.** Edit the saved HTML, re-render, re-verify. Never hand-edit a PDF.
 - **The operator wants terms in the document.** Push back once: terms live in the engagement letter, and a quote that carries them stops being scannable. If they still want them, that's their call — put them on a fifth page rather than crowding page 4.
 - **A count the operator isn't sure of.** Leave it out. An unverified number in a client document is worse than no number.
