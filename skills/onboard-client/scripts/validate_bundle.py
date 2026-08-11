@@ -22,6 +22,12 @@ Checks (ERRORS fail the run; WARNINGS are listed for human judgment):
   E8  The bundle root contains no loose .md files other than AGENTS.md and
       index.md; cross-cutting files belong in 0-core/ and others in their
       group folder.
+  E9  With --template: every template .md exists in the bundle, accounting
+      for per-entity copies of d-books files in multi-entity bundles.
+  E10 Active files contain no standalone TBD markers.
+  E11 Active concept files have a Citations section with a non-TBD entry.
+  E12 Gap disposition ledger rows have the required six-cell shape and
+      valid, attributable dispositions.
   W1  Possible credential values: password/token/secret assignments, or
       unbroken digit runs of 9+ (bank/routing shape) outside allowlisted
       ID fields.
@@ -30,6 +36,8 @@ Checks (ERRORS fail the run; WARNINGS are listed for human judgment):
       open_uncategorized_items).
   W3  Concept files missing schema_properties (informational).
   W4  AGENTS.md template_version drift vs. the skill template.
+  W5  The most recent status counts in 0-core/log.md differ from reality.
+  W6  The bundle contains a non-Markdown file.
 
 Requires PyYAML. `status` is required on every concept file.
 
@@ -67,12 +75,19 @@ def main():
     errors, warnings = [], []
     counts = {"scaffold": 0, "partial": 0, "active": 0}
     all_md = {}
+    non_md = []
     for dp, dns, fns in os.walk(root):
         dns[:] = [d for d in dns if not d.startswith(".")]
         for fn in fns:
             if fn.endswith(".md"):
                 rel = os.path.relpath(os.path.join(dp, fn), root).replace(os.sep, "/")
                 all_md[rel] = open(os.path.join(dp, fn)).read()
+            else:
+                rel = os.path.relpath(os.path.join(dp, fn), root).replace(os.sep, "/")
+                non_md.append(rel)
+
+    for rel in sorted(non_md):
+        warnings.append(f"W6 | {rel} | bundle should hold knowledge, not datasets/credentials — verify this belongs here")
 
     if "0-core/log.md" not in all_md:
         if "log.md" in all_md:
@@ -108,6 +123,16 @@ def main():
                     errors.append(f"E1 | {rel} | status '{st}' not in {sorted(STATUSES)}")
                 else:
                     counts[st] += 1
+                    if st == "active" and base not in RESERVED and base != "AGENTS.md":
+                        citations = re.search(r"(?ms)^# Citations[ \t]*\n(.*?)(?=^#\s|\Z)", body)
+                        entries = (re.findall(r"(?m)^\s*(?:[-*]\s+)?\[\d+\]\s+(.+?)\s*$", citations.group(1))
+                                   if citations else [])
+                        if not citations:
+                            errors.append(f"E11 | {rel} | active file is missing a # Citations section")
+                        elif not entries:
+                            errors.append(f"E11 | {rel} | active file has no citation entries")
+                        elif not any("TBD" not in entry for entry in entries):
+                            errors.append(f"E11 | {rel} | active file has no non-TBD citation entry")
                 props = fm.get("schema_properties")
                 if props:
                     plist = props if isinstance(props, list) else re.findall(r"[\w-]+", str(props))
@@ -116,6 +141,9 @@ def main():
                         warnings.append(f"W2 | {rel} | stores live-state property: {sorted(hit)}")
                 elif "/" in rel:
                     warnings.append(f"W3 | {rel} | concept file without schema_properties")
+
+        if isinstance(fm, dict) and fm.get("status") == "active" and re.search(r"\bTBD\b", body):
+            errors.append(f"E10 | {rel} | active file contains a standalone TBD marker")
 
         # E5 tokens
         for tok in re.findall(r"\{\{[^}]+\}\}", text):
@@ -177,8 +205,74 @@ def main():
                     continue  # the all-entities directory link is the prescribed form
                 errors.append(f"E7 | {rel} | unscoped d-books link /d-books/{fname} in a multi-entity bundle")
 
+    # E12 gap disposition ledger shape
+    log_text = all_md.get("0-core/log.md", "")
+    ledger = re.search(r"(?ms)^### Gap disposition ledger[ \t]*\n(.*?)(?=^#{1,6}\s|\Z)", log_text)
+    if ledger and "{{GAP_LEDGER_ROWS}}" not in ledger.group(1):
+        dispositions = {"closed", "not-applicable", "blocked", "deferred"}
+        anonymous_bulk = re.compile(r"(?i)\b\d+\s+(further|more|remaining|other)\b|\bthe rest\b")
+        for line_no, line in enumerate(ledger.group(1).splitlines(), 1):
+            if not line.strip().startswith("|"):
+                continue
+            cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+            if cells and cells[0].lower() == "gap":
+                continue
+            if cells and all(re.fullmatch(r":?-{3,}:?", cell) for cell in cells):
+                continue
+            if len(cells) != 6:
+                errors.append(f"E12 | 0-core/log.md | ledger row {line_no} has {len(cells)} cells; expected 6")
+                continue
+            gap, _, disposition, per, date, reason = cells
+            disposition = disposition.lower()
+            if not gap:
+                errors.append(f"E12 | 0-core/log.md | ledger row {line_no} has an empty Gap")
+            elif anonymous_bulk.search(gap):
+                errors.append(f"E12 | 0-core/log.md | ledger row {line_no} uses an anonymous bulk Gap: {gap}")
+            if disposition not in dispositions:
+                errors.append(f"E12 | 0-core/log.md | ledger row {line_no} has invalid disposition: {cells[2]}")
+            if disposition != "closed" and (not per or not date):
+                errors.append(f"E12 | 0-core/log.md | ledger row {line_no} non-closed disposition requires Per and Date")
+            if disposition == "blocked" and not reason:
+                errors.append(f"E12 | 0-core/log.md | ledger row {line_no} blocked disposition requires Dependency/reason")
+
+    # W5 log counts vs current frontmatter statuses
+    logged_counts = re.search(r"(\d+)\s+active,\s*(\d+)\s+partial,\s*(\d+)\s+scaffold", log_text)
+    if logged_counts:
+        logged = tuple(int(n) for n in logged_counts.groups())
+        actual = (counts["active"], counts["partial"], counts["scaffold"])
+        if logged != actual:
+            warnings.append(
+                f"W5 | 0-core/log.md | log reports {logged[0]} active, {logged[1]} partial, {logged[2]} scaffold; "
+                f"current bundle has {actual[0]} active, {actual[1]} partial, {actual[2]} scaffold; "
+                "add a dated log entry reflecting current statuses"
+            )
+
     # E6 AGENTS.md vs template
     if template:
+        template_md = []
+        for dp, dns, fns in os.walk(template):
+            dns[:] = [d for d in dns if not d.startswith(".")]
+            for fn in fns:
+                if fn.endswith(".md"):
+                    template_md.append(os.path.relpath(os.path.join(dp, fn), template).replace(os.sep, "/"))
+        bundle_entity_dirs = sorted(
+            d for d in os.listdir(os.path.join(root, "d-books"))
+            if not d.startswith(".") and os.path.isdir(os.path.join(root, "d-books", d))
+        ) if os.path.isdir(os.path.join(root, "d-books")) else []
+        for rel in sorted(template_md):
+            if rel in all_md:
+                continue
+            if rel.startswith("d-books/") and rel.count("/") == 1 and bundle_entity_dirs:
+                fname = rel.split("/", 1)[1]
+                missing_entities = [entity for entity in bundle_entity_dirs
+                                    if f"d-books/{entity}/{fname}" not in all_md]
+                if not missing_entities:
+                    continue
+                if len(missing_entities) < len(bundle_entity_dirs):
+                    errors.append(f"E9 | {rel} | missing from entity subfolder(s): {', '.join(missing_entities)}")
+                    continue
+            errors.append(f"E9 | {rel} | template file missing from bundle")
+
         t = os.path.join(template, "AGENTS.md")
         b = os.path.join(root, "AGENTS.md")
         if not os.path.exists(b):
