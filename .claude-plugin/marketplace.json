@@ -5,7 +5,7 @@
     "email": "khalil@benali.com"
   },
   "metadata": {
-    "description": "Org-wide modular skills library for the Paxus CPA team. Synced into Cowork / Claude Code directly from this GitHub repo — the repo is the single source of truth.",
+    "description": "Org-wide modular skills library for the Paxus CPA team. Synced into Cowork / Claude Code directly from this GitHub repo \u2014 the repo is the single source of truth.",
     "version": "1.0.0"
   },
   "plugins": [
@@ -20,6 +20,7 @@
         "./skills/kickoff-prep",
         "./skills/manage-skills",
         "./skills/month-end-close-dashboard",
+        "./skills/monthly-capacity",
         "./skills/monthly-dashboard",
         "./skills/onboard-client",
         "./skills/onboard-client-admin",
