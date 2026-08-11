@@ -1,11 +1,11 @@
 ---
 name: paxus-quote
-description: Build the firm's standard client service proposal — a four-page branded PDF (cover, service levels, add-ons or how-it-works, getting started) plus the cover email that carries it. Starts from the firm's standard Basic / Full Service / Premium ladder, its standard service elements and its standard tier wording, takes the fees and budgeted hours the operator supplies, and turns them into a finished, brand-correct, page-verified quote. Run when someone says they need to build a quote, put together a proposal, send pricing to a prospect, or update an existing quote's numbers. This skill does not decide pricing — bring the fees with you.
+description: Price and build the firm's standard client service proposal — a monthly fee built from role hours off the client's general ledger, then a four-page branded PDF (cover, service levels, add-ons or how-it-works, getting started) plus the cover email that carries it. Starts from the firm's standard Basic / Full Service / Premium ladder, its standard service elements and its standard tier wording. Run when someone says they need to build a quote, put together a proposal, price a prospect, send pricing to a prospect, or update an existing quote's numbers. Bring the client's GL export and the partner sets the final number.
 ---
 
 # /paxus-quote — Client Service Proposal
 
-You are building a Paxus service proposal: a **four-page PDF** and the **email that delivers it**. The operator brings the pricing; you produce the document. Follow the phases in order. Be conversational and warm — match the Paxus voice.
+You are pricing and building a Paxus service proposal: a **monthly fee built from role hours**, a **four-page PDF**, and the **email that delivers it**. Follow the phases in order. Be conversational and warm — match the Paxus voice.
 
 ## The idea in one line
 
@@ -14,8 +14,8 @@ You are building a Paxus service proposal: a **four-page PDF** and the **email t
 ## Important rules for this skill
 
 - **No fabrication.** If the operator hasn't given you a fee, a date, a contact name, or a scope line, leave the `[bracketed placeholder]` in place and tell them what's missing. Never invent a number or a service inclusion.
-- **This skill does not set prices.** It formats decisions already made. Ask for whatever fees are missing and use exactly what you're given. Never derive, estimate, or suggest a fee to fill a gap — if the operator doesn't have a number yet, leave the placeholder in and tell them which one is outstanding. *(Pricing will move into this skill eventually. It is not there yet: the firm has settled billing rates per role but not how budgeted hours are calculated, and without that half the skill cannot price anything honestly.)*
-- **Budgeted hours come from the operator too.** Ask for them, don't derive them. They never reach the client, but they do get filed for the firm administrator (Phase 4).
+- **The buildup informs; the partner sets the number.** Phase 0 produces a raw calculated fee. It is a data point, not a verdict — the partner sets the final clean number, usually at or below raw. Never present the calculated figure to a client as the price.
+- **Count from the GL, never from memory.** Every volume input that can be derived from the general ledger must be derived from it, using `scripts/gl-volume.py`. Estimating volume by hand is what made two people price the same client differently. If there is no GL, say so and mark the inputs as estimates.
 - **Never put hours, rates, margin, or markup in anything the client sees.** They belong in the buildup, the internal rationale, and the partner email. Not the quote, not the cover email.
 - **Skills are the engine; client data is the fuel.** Nothing client-specific belongs in this skill or its template. Client scope, prior quotes, and engagement history live in the client's Google Drive folder (see `docs/context-model.md`).
 - **Never send email.** The skill writes the email; a human sends it. Don't add SMTP or Gmail-API send paths — the manual step is the safeguard, and some operators also have a mechanical send-guard on top of it.
@@ -111,7 +111,7 @@ Never write a line like *"we keep your programs, grants, and restricted funds tr
 |---|---|
 | **Basic** | Their monthly financial statements, delivered. |
 | **Full Service** | Notes and analysis on the statements · 1099 preparation · collaboration with the tax or 990 preparer · board reporting package *(non-profit)* |
-| **Premium** | A monthly advisory call · KPI tracking · budget and forecast support · workers' comp audit support *(when they run payroll)* |
+| **Premium** | A monthly advisory call · KPI tracking · budget and forecast support · workers' comp audit support *(when they run payroll)* · general liability audit support · annual audit support *(non-profit)* |
 
 ### The card wording is a default too — use it verbatim
 
@@ -156,7 +156,7 @@ The third item covers structural build work that isn't cleanup — standing up p
 
 A non-profit at a given level is **more work** than a for-profit at the same level: functional expense tracking, grant tracking, and restricted-fund accounting all sit in every tier, including Basic. **Every non-profit tier should be priced above what the same tier would be quoted at for a comparable for-profit.**
 
-This skill doesn't set prices — but if the operator supplies non-profit fees that look at or below their for-profit equivalents, **say so before building.** One sentence is enough: the extra tracking is real labor and it's in the lowest tier too.
+If a non-profit buildup lands at or below what a comparable for-profit would price at, **say so before building.** One sentence is enough: the extra tracking is real labor and it's in the lowest tier too.
 
 ### Common add-on gating
 
@@ -164,6 +164,97 @@ Gating is a judgment call per quote, but two patterns recur:
 
 - **Outsourced CFO on a non-profit attaches to Premium only.** It's the firm's typical non-profit add-on and it assumes the Premium reporting layer underneath it.
 - **Add-ons that replace client staff work** (invoicing, bill pay) don't belong on a level that assumes the client's own team is doing the daily work — that level exists *because* they have staff.
+
+## Phase 0 — Price it
+
+Skip this phase only when the operator brings finished fees and says so. Otherwise the monthly fee is **built from the roles that absorb the work**, off the client's general ledger.
+
+### The rate ladder
+
+| Role | Rate |
+|---|---|
+| Staff — coding, reconciling | **$90** |
+| Lead — close, review, allocation, client communication | **$135** |
+| Controller — final review, analysis | **$165** |
+| Controller — Premium advisory hours | **$250** |
+
+Reset 2026-08-10. Gross margin across the ladder runs 74–77% **before profit share and benefits** — real margin is thinner, so don't read the spread as room to discount into. Lead is the thinnest margin and the firm's bottleneck; watch buildups that pile hours there.
+
+### Step 1 — Run the GL
+
+Ask for the client's general ledger export covering the last full period available, then:
+
+```bash
+python3 scripts/gl-volume.py "<path-to-GL.xlsx>"
+```
+
+It returns the coding decision count, bills entered, per-account line volume with reconciliation banding, and a flag on any month where a bookkeeper-driven process appears to have lapsed. Everything below consumes its output.
+
+> [!warning] Never count GL distribution lines
+> A GL lists each transaction under every account it touches. On a validated file that ran **3.7×** the register-line count — quoting off raw GL lines would have tripled the fee. Count **register lines on reconciled bank and card accounts** only. The script does this; hand-counting does not.
+
+### Step 2 — Staff hours ($90)
+
+| Component | Derivation |
+|---|---|
+| Bank-feed coding | **decisions ÷ 50 per hour** |
+| Bill entry | **bills entered × 2 minutes** |
+| Reconciliation | **20 / 10 / 5 minutes** per account, by band |
+
+**A decision is** a register line on a reconciled bank or card account that isn't an auto-match. Count `Expense`, `Bill Payment`, `Credit Card Credit`, `Check`. Exclude `Payment` (applied to A/R), `Transfer`, `Credit Card Payment`, and `Journal Entry`. **`Deposit` splits both ways** — a match when it splits to undeposited funds, a mirrored transfer when it splits to another bank or card account, otherwise a decision. Deposits are frequently *not* matched from undeposited funds, so never assume the whole type is one or the other.
+
+**Bill payments count as decisions.** They routinely land a cent off the bill and take real time to match. This is the single most common place two people diverge — one treats them as matches, the other doesn't.
+
+**Reconciliation bands** — heavy (50+ lines/mo) 20 min · normal (10–49) 10 min · light (under 10) 5 min. A month spent chasing statements on a disconnected account bumps up regardless of band.
+
+**Count reconcilable accounts by statement, not by QBO account.** A card with employee sub-cards on one statement is **one** reconciliation and **one** surcharge, however many sub-accounts the chart shows.
+
+**Project and class tagging ride inside the coding rate** — no separate staff line for them.
+
+### Step 3 — Lead hours ($135)
+
+Adjusting journal entries · financial statement review, **which includes the initial review of staff work** · sales tax filing where applicable · client communication · **project or class tracking: 2.5 hrs**.
+
+Sales tax filing is lead work at $135. The retired fee template priced it at staff $90 — that was wrong.
+
+### Step 4 — Controller hours ($165)
+
+Final review · **the client analysis** · **project or class tracking review: 1.0 hr**.
+
+Project and class tracking each add controller time because reports get run by project and by class. Most clients run one or the other — a client running both is a judgment call, not double.
+
+Lead and controller both budget well above the retired template's 0.7 and 0.25 hours. Those were far too thin.
+
+### Step 5 — Fixed adds
+
+$10 per reconcilable account beyond the first · **$50/mo whenever the client has payroll, even when we don't run it** (it adds complexity either way) · 1099s at $30 each ÷ 12 · Dext at $35/mo if used.
+
+### Step 6 — Normalize bookkeeper-driven volume
+
+**Volume drawn from bank activity is trustworthy. Volume drawn from bookkeeper activity is not.** Bank-feed lines exist whether or not anyone codes them. Bills entered, invoices created, and journal entries posted exist only if somebody did the work.
+
+So for every bookkeeper-driven count, **average only the months the process was actually running.** A validated file showed bills entered at 54 · 65 · 56 · 46 · 52 · 24 · 0 — averaging all seven gave 42/mo, averaging the five working months gave 55/mo. The bills never stopped arriving; the entry stopped. Pricing off 42 would have underpriced go-forward work by 25%.
+
+**The test is whether a low month reflects less business or less bookkeeping.** A genuinely slow month belongs in the average. Cross-check against revenue: on that file, the month with zero bills entered was the client's best revenue month of the year.
+
+### Step 7 — Tiers
+
+- **Full Service = raw**, set to a clean number at or below it.
+- **Basic Service = 0.85 × Full.** Hold this as a rule, not a calculation. The only scope difference is the controller's analysis, so a buildup from Basic's own hours lands within about $130 of Full — which doesn't read as a tier. The 0.85 keeps the ladder legible and puts the differentiation in scope.
+- **Premium Service = Full + $750.** A step-up, not an hours calculation. The hours barely separate the two — an advisory call and its prep — and a cheap advisory call is the fastest route to an inefficient firm: clients book more, the controller absorbs them, and the tier stops paying for itself.
+
+### Step 8 — Sanity checks before showing anyone
+
+- **Effective rate** — raw ÷ total hours should land near **$110–125**. Outside that, something is miscounted.
+- **1% of gross annual revenue** is a reference, not a floor. Worry only below roughly half of it.
+- **Can they actually pay it?** A defensible number the client can't afford still needs surfacing. Say it out loud rather than shipping arithmetic that won't get signed.
+- **Re-derive anything startling.** An estimating pass once double-counted the same work under coding and cleanup and produced a figure several times too large. A surprising number is a prompt to check, not to believe.
+- **Estimating low is not a kindness.** Understated hours don't reduce the work — they misstate the capacity budget and hide an unprofitable engagement until someone burns out on it.
+- **Don't price efficiency straight through to the client.** As tooling takes work out of the process, hours fall. That doesn't become "this takes ten minutes now, so we'll charge $25." Price the outcome and the responsibility; the gain is the firm's margin and it funds the next improvement.
+
+### What Phase 0 does not price
+
+**Cleanup and setup are not covered here.** They are a separate method, built per defect from how many periods each spans and who fixes it — and the same coding hours must never be counted against both cleanup and monthly work. Take those figures from the operator until that method ships.
 
 ## Phase 1 — Gather (batched — ask once, not one at a time)
 
@@ -173,7 +264,7 @@ Then ask for everything else in a single message:
 
 1. **Client and contact** — legal name for the cover, and who it's addressed to.
 2. **One-line positioning** — what this engagement is, in a phrase ("Monthly bookkeeping, financial reporting & advisory").
-3. **The fees** — one per level. Names default to Basic Service / Full Service / Premium Service; ask whether this quote renames or drops any.
+3. **The fees** — from Phase 0 if you priced it, otherwise one per level from the operator. Names default to Basic Service / Full Service / Premium Service; ask whether this quote renames or drops any. Confirm the partner's final number before it reaches the page.
 4. **Deviations from the default table** — show it and ask what's different for this client. Rows to add, rows that don't apply, anything the client's own team keeps.
 5. **Add-ons** — name, fee, one-line scope, and **which levels each one attaches to**. Gating is per add-on, not one blanket rule: some attach to Full Service and Premium, others to Premium only. There is deliberately no standing list — add-ons come out of the discovery call, so they're specific to what surfaced with this client. Outsourced CFO, invoicing, bill pay, and payroll are all common, but none is assumed.
 6. **Separately-quoted services** — anything with its own timing (payroll conversions, cleanups), plus the constraint that drives the date.
