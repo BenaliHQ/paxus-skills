@@ -1,6 +1,6 @@
 ---
 name: onboard-client-admin
-description: Admin-side client onboarding for Paxus CPA. Phase 1 ingests the prospective-client quote, creates the client + primary contact in Financial Cents via API, spins up the New Client Onboarding project (Firm Admin Tasks auto-assigned to Jennifer), and drafts proposal content. Phase 2 (post-signing) copies the standard template into a new client Shared Drive, files the signed engagement PDF, moves the client from Prospective to Active, POSTs the Shared Drive link to FC's Resources section, creates an "Engagement Letters" folder in FC's Files tab with the engagement uploaded for client-portal access, attaches the 5 standard recurring project templates (weekly bookkeeping, monthly review, monthly close, cleanup, tax returns) with per-role task reassignment, and attaches the FC 1099 project templates for Full Service / Premium clients (Basic clients skip 1099). Phase 3 generates a personalized welcome packet in Canva, saves the PDF to the client's Shared Drive, and drafts the warm welcome email to the client. Phase 4 produces a populated fill-in block for the Paxus Onboarding Dossier (Claude Design at claude.ai) covering Discovery, Pre-Kickoff Readiness, and Kickoff-Call reference notes, then drafts the internal team handoff email. Phase 5 drafts the day-before-kickoff email to the client with a reminder of the meeting time and the outstanding items on the FC Onboarding Checklist. Phase 6 (post-kickoff) exports the dashboard's per-client PDF and files it in the client's Perm File. Run when a new client engages Paxus, when a signed engagement needs to be filed, the day before a client's kickoff call, or after the kickoff call.
+description: Admin-side client onboarding for Paxus CPA. Phase 1 ingests the prospective-client quote, creates the client + primary contact in Financial Cents via API, spins up the New Client Onboarding project (Firm Admin Tasks auto-assigned to Jennifer), and drafts proposal content. Phase 2 (post-signing) copies the standard template into a new client Shared Drive, files the signed engagement PDF, moves the client from Prospective to Active, POSTs the Shared Drive link to FC's Resources section, creates an "Engagement Letters" folder in FC's Files tab with the engagement uploaded for client-portal access, attaches the 5 standard recurring project templates (weekly bookkeeping, monthly review, monthly close, cleanup, tax returns) with per-role task reassignment, and attaches the FC 1099 project templates for Full Service / Premium clients (Basic clients skip 1099). Phase 3 generates a personalized welcome packet in Canva, saves the PDF to the client's Shared Drive, and drafts the warm welcome email to the client. Phase 4 produces the kickoff prep packet — a populated `Onboarding Dossier - {client} - fill-in.md` in the client's Perm File that the lead's `/kickoff-prep` skill reads — covering billing, cleanup scope, volumes/complexity, budgeted hours, Discovery, Pre-Kickoff Readiness, and Kickoff-Call reference notes, then drafts the internal team handoff email. Phase 5 drafts the day-before-kickoff email to the client with a reminder of the meeting time and the outstanding items on the FC Onboarding Checklist. Run when a new client engages Paxus, when a signed engagement needs to be filed, or the day before a client's kickoff call.
 ---
 
 # /onboard-client-admin — Paxus Admin-Side Client Onboarding
@@ -12,15 +12,14 @@ This skill is **phased**:
 - **Phase 1 (active):** Ingest quote, create client + contact in FC, create the New Client Onboarding project (Firm Admin Tasks queued for Jennifer), draft proposal content, generate handoff for the rest.
 - **Phase 2 (active):** Once the engagement is signed in FC — copy the standard template into a new Google Shared Drive, file the signed engagement PDF in `Perm File` and Active Clients, move the prospective folder over, POST the Shared Drive link to FC's Resources section, create an "Engagement Letters" folder in FC's Files tab with the engagement uploaded for client-portal access, attach the 5 standard recurring project templates (weekly bookkeeping, monthly review, monthly close, cleanup, tax returns) and reassign tasks by role, and (for Full Service / Premium clients only) attach the 1099 project templates.
 - **Phase 3 (active):** Generate a personalized welcome packet in Canva, save the PDF to the client's Shared Drive `Perm File\`, and draft the warm welcome email to the client **directly in Gmail** (with a markdown copy archived in Perm File).
-- **Phase 4 (active):** Produce a populated fill-in block for the Paxus Onboarding Dossier (Claude Design) from engagement / consultation / memo — Jennifer pastes into the shared dashboard. Draft the internal team handoff email referencing the dashboard URL.
+- **Phase 4 (active):** Produce the kickoff prep packet from engagement / consultation / memo — a populated `Onboarding Dossier - {client} - fill-in.md` filed in the client's Perm File for the lead's `/kickoff-prep` skill to read. Draft the internal team handoff email pointing the lead at the client's Perm File.
 - **Phase 5 (active):** Draft the day-before-kickoff email to the client — reminder of the meeting time, thank-you for what's been received, list of what's still outstanding on the FC Client's Onboarding Checklist.
-- **Phase 6 (active):** After the kickoff call — export the dashboard to PDF and file it in the client's Perm File.
 
 ### Phase routing at start
 
-If the operator hasn't told you which phase, ask: **"Phase 1 (new prospect — create the FC client and proposal), Phase 2 (engagement just signed — Shared Drive + engagement filing + FC Resources/Files + 1099s), Phase 3 (welcome packet + client welcome email), Phase 4 (Onboarding Dossier fill-in + team handoff email), Phase 5 (day-before-kickoff email to the client), or Phase 6 (post-kickoff dossier PDF archive)?"**
+If the operator hasn't told you which phase, ask: **"Phase 1 (new prospect — create the FC client and proposal), Phase 2 (engagement just signed — Shared Drive + engagement filing + FC Resources/Files + 1099s), Phase 3 (welcome packet + client welcome email), Phase 4 (kickoff prep packet + team handoff email), or Phase 5 (day-before-kickoff email to the client)?"**
 
-The natural order is 1 → 2 → 3 → 4 → 5 → 6, with a pause between 1 and 2 while the client signs, another pause between 4 and 5 while the kickoff gets scheduled, and another pause between 5 and 6 while the kickoff call happens.
+The natural order is 1 → 2 → 3 → 4 → 5, with a pause between 1 and 2 while the client signs, and another pause between 4 and 5 while the kickoff gets scheduled.
 
 ---
 
@@ -78,8 +77,8 @@ Ask in one message, numbered:
 7. **Cleanup start date** — when cleanup work begins / deposit drafts (often matches earliest start in quote)
 8. **Anything to override from the quote?** — confirm package choice if not already given; flag any custom pricing
 9. **Team of 3 — Lead** (first name is fine — the person who owns the client relationship / kickoff)
-10. **Team of 3 — Staff / Accountant** (first name — the person doing the day-to-day bookkeeping)
-11. **Team of 3 — Controller / Reviewer** (first name — the CPA reviewer)
+10. **Team of 3 — Staff** (first name — the person doing the day-to-day bookkeeping)
+11. **Team of 3 — Controller** (first name — the CPA reviewer)
 
 Echo back captured values in a tidy summary, then proceed — Jennifer prefers "create and report back."
 
@@ -174,7 +173,7 @@ curl -s -X POST \
 - No `GET /projects/{id}` or `DELETE /projects/{id}`. To verify tasks: `GET /api/v1/tasks?project_id={FC_PROJECT_ID}`. Stray projects must be closed via FC UI.
 - Section-to-user mappings inherit from the template — don't try to assign at creation time.
 
-**5 standard recurring project templates are NOT attached in Phase 1.** They're operational (weekly bookkeeping, monthly review, monthly close, cleanup, tax returns) and only make sense after the engagement is signed. Attaching them pre-signing clutters the prospect's FC record and creates cleanup work if the client doesn't sign (FC has no API to delete a stray project — closure is UI-only). See **Phase 2H** for the recurring-template attachment + role-reassignment logic. Client's Onboarding Checklist (`9685085`) still inherits automatically from the New Client Onboarding template and DOES come along in Phase 1 — that's fine, it's a client-facing checklist tied to the onboarding flow itself.
+**5 standard recurring project templates are NOT attached in Phase 1.** They're operational (weekly bookkeeping, monthly review, monthly close, cleanup, tax returns) and only make sense after the engagement is signed. Attaching them pre-signing clutters the prospect's FC record and creates cleanup work if the client doesn't sign (FC has no API to delete a stray project — closure is UI-only). See **Phase 2H** for the recurring-template attachment + role-reassignment logic. **The skill never POSTs the Client's Onboarding Checklist (`9685085`) — not in Phase 1, not in Phase 2.** In FC it auto-attaches from the New Client Onboarding project when Jennifer manually closes the task that precedes it, so it's her manual step, not a skill action.
 
 ---
 
@@ -330,7 +329,7 @@ Run when the engagement is signed in FC. No FC API for engagement status — the
 | 2C | Copy the client template into the new Shared Drive |
 | 2D | File signed engagement PDF to Perm File + Active Clients |
 | 2E | Move prospective folder to Active Clients |
-| 2F | POST Shared Drive URL to FC as a "Google Drive" Resource |
+| 2F | POST Shared Drive URL to FC as a "Google Drive" client Resource, and repoint the New Client Onboarding project's "Sales Onboarding Service" resource to the same Shared Drive URL |
 | 2G | Create "Engagement Letters" folder in FC Files tab + upload engagement |
 | 2H | Attach the 5 standard recurring project templates (all tiers) + reassign tasks by role |
 | 2I | Attach 1099 project templates (Full Service / Premium only — skip for Basic) |
@@ -367,25 +366,27 @@ Ask the operator (one batched message — skip questions the auto-discovery alre
 
 Then look for a Phase 1 handoff at `handoffs/{slug}-*.md`. If found, read it to recover FC client ID, contact, package. If not found, ask for the FC client ID so Phase 2's handoff entry can link to it.
 
-**Verify the Phase 1 New Client Onboarding project + Client's Onboarding Checklist still exist (do NOT skip).** Phase 2 assumes Phase 1's onboarding project is still attached — but it can be gone. The FC **UI can hard-delete** projects (the API can't — `DELETE /projects/{id}` → 405), and when the operator cleans up stray projects after Phase 1, it's easy to delete the legitimate New Client Onboarding project and its inherited Client's Onboarding Checklist along with them. This happened on a prior client run (the Phase 1 FC project came back `GET /projects/{id}` → HTTP 404 "No query results"). If it's missing and Phase 2 proceeds blindly, the client ends up with no Firm Admin Tasks and — critically — no Client's Onboarding Checklist, which **Phase 5's day-before-kickoff email depends on** to list the client's outstanding items.
+**Verify the Phase 1 New Client Onboarding project still exists (do NOT skip).** Phase 2 assumes Phase 1's onboarding project (with its Firm Admin Tasks) is still attached — but it can be gone. The FC **UI can hard-delete** projects (the API can't — `DELETE /projects/{id}` → 405), and when the operator cleans up stray projects after Phase 1, it's easy to delete the legitimate New Client Onboarding project along with them. This happened on a prior client run (the Phase 1 FC project came back `GET /projects/{id}` → HTTP 404 "No query results"). If it's missing and Phase 2 proceeds blindly, the client ends up with no Firm Admin Tasks.
 
-Check it explicitly:
+> **The Client's Onboarding Checklist is Jennifer's manual project — the skill never attaches, restores, or POSTs it in Phase 2.** She creates and maintains it herself in the FC UI. **Never POST template `9685085`.** You may *note* whether it appears to be present (Phase 5's day-before-kickoff email reads it for outstanding items), but do not create it — if it's missing, flag it as a heads-up for Jennifer to create manually, nothing more.
+
+Check the onboarding project explicitly:
 
 ```bash
 # Direct existence probe on the Phase 1 project id (from the handoff). 404 = deleted; 200 = still there.
 curl -s -A "Mozilla/5.0" -H "Authorization: Bearer $TOKEN" -H "Accept: application/json" \
   "https://app.financial-cents.com/api/v1/projects/<FC_PROJECT_ID>" -w "\nHTTP %{http_code}\n"
 # Belt-and-suspenders: paginate GET /projects?per_page=100 and confirm at least one project with
-# client.id == <FC_CLIENT_ID> whose title matches "onboarding" (New Client Onboarding) AND one matching
-# "checklist" (Client's Onboarding Checklist). Closed projects DO appear in the list, so absence = deleted.
+# client.id == <FC_CLIENT_ID> whose title matches "onboarding" (New Client Onboarding). Closed projects
+# DO appear in the list, so absence = deleted. (You may also note whether a "checklist" project is
+# present for Jennifer's benefit, but the skill does not create it.)
 ```
 
-If **either the New Client Onboarding project or the Client's Onboarding Checklist is missing**, stop and tell the operator what's gone, then ask how to restore before continuing Phase 2:
-- **Full project (usual choice):** `POST /templates/13565957/projects {"client_id":<id>}` — restores Firm Admin Tasks (auto-assigned to Jennifer) + the Client's Onboarding Checklist. Note the pre-signing Firm Admin Tasks reappear as open even if already done — the operator ticks those off.
-- **Checklist only:** `POST /templates/9685085/projects {"client_id":<id>}` — restores just the client-facing checklist, skipping the mostly-done admin tasks.
-- **Leave it:** operator handles manually in the FC UI. If chosen, record the decision in the handoff and add a Phase 5 heads-up that no FC checklist exists.
+If the **New Client Onboarding project is missing**, stop and tell the operator, then ask how to restore before continuing Phase 2:
+- **Restore the onboarding project:** `POST /templates/13565957/projects {"client_id":<id>}` — restores Firm Admin Tasks (auto-assigned to Jennifer). Note the pre-signing Firm Admin Tasks reappear as open even if already done — the operator ticks those off. **If this template POST also re-creates a Client's Onboarding Checklist by inheritance, leave it for Jennifer to reconcile with her manual one — the checklist is not a skill deliverable.**
+- **Leave it:** operator handles manually in the FC UI. Record the decision in the handoff.
 
-Record the outcome (found intact / restored via which template / left per operator) in the Phase 2 handoff.
+Record the outcome (found intact / onboarding project restored / left per operator) in the Phase 2 handoff.
 
 **FC API needs a browser User-Agent.** FC's WAF returns HTTP 403 to the default Python `urllib` User-Agent (`Python-urllib/x.y`) while `curl` passes. If you script FC calls in Python (`urllib`/`requests`), always send `User-Agent: Mozilla/5.0`. (Discovered 2026-07-10 — a paginated `urllib` scan 403'd on every page until the UA header was added; `curl` had been fine throughout.)
 
@@ -477,7 +478,7 @@ If a close match exists, confirm with the operator before moving.
 
 ---
 
-### Phase 2F — Add the Shared Drive link to FC as a client Resource
+### Phase 2F — Add the Shared Drive link to FC (client Resource + project resource repoint)
 
 FC exposes a Resources section on each client dashboard. Attach the new Shared Drive there so the team can jump to it from FC. Endpoint: `POST /api/v1/clients/{FC_CLIENT_ID}/resources` with `{"label":"Google Drive","url":"<share URL>"}`.
 
@@ -501,6 +502,33 @@ curl -s -X POST \
 - On 200/201: capture `id` → `FC_RESOURCE_ID` for the handoff doc.
 - Before POSTing, `GET /clients/{FC_CLIENT_ID}/resources` and check whether a "Google Drive" resource already exists (label match). If so, skip the POST — don't create duplicates.
 - On error: print body + status and continue. Tell the operator to add the resource manually in the FC UI (client dashboard → Resources → add link).
+
+**Then repoint the project's "Sales Onboarding Service" resource to the same Shared Drive URL.** The New Client Onboarding project (created in Phase 1E, `FC_PROJECT_ID`) inherits a **"Sales Onboarding Service"** resource from its template. That resource used to point at the retired claude.ai Onboarding Dossier dashboard — repoint it to *this client's* Shared Drive so the lead lands on the client's Drive (where the kickoff prep packet lives in `Perm File\`) instead of a dead link. `PATCH`/`PUT` on a single project resource returns 405, so "replace the link" = DELETE the old resource + POST a new one.
+
+```bash
+TOKEN=$(cat "C:/Users/paxus/.paxus/client onboarding.txt" | tr -d '\n\r' | tr -d ' ')
+# 1. List the project's resources and find the "Sales Onboarding Service" one.
+curl -s -H "Authorization: Bearer $TOKEN" -H "Accept: application/json" \
+  "https://app.financial-cents.com/api/v1/projects/<FC_PROJECT_ID>/resources" -o /tmp/proj_resources.json
+# Parse for the resource whose label == "Sales Onboarding Service" → OLD_RESOURCE_ID + its current url.
+
+# 2. If it already points at this client's Shared Drive URL, skip (idempotent). Otherwise:
+#    a. DELETE the old one (returns HTTP 202):
+curl -s -X DELETE -H "Authorization: Bearer $TOKEN" -H "Accept: application/json" \
+  "https://app.financial-cents.com/api/v1/projects/<FC_PROJECT_ID>/resources/<OLD_RESOURCE_ID>" \
+  -w "\nHTTP %{http_code}\n"
+#    b. POST the replacement pointing at the Shared Drive:
+curl -s -X POST -H "Authorization: Bearer $TOKEN" -H "Accept: application/json" -H "Content-Type: application/json" \
+  -d '{"label":"Sales Onboarding Service","url":"<share URL>"}' \
+  "https://app.financial-cents.com/api/v1/projects/<FC_PROJECT_ID>/resources" \
+  -w "\nHTTP %{http_code}\n"
+```
+
+- Reuse the `<share URL>` captured just above for the "Google Drive" client resource — same URL.
+- If no "Sales Onboarding Service" resource exists on the project (e.g., the template was edited), just POST the new one.
+- If `FC_PROJECT_ID` is unknown (Phase 1 handoff missing and the project wasn't re-created in Phase 2A), skip this and note it in the handoff for the operator to fix in the FC UI.
+- On error: print body + status and continue. Note it in the handoff so the operator can repoint manually (project → Resources → edit "Sales Onboarding Service").
+- Endpoints confirmed in **Known API constraints** below: `GET`/`POST /projects/{id}/resources`, `DELETE /projects/{id}/resources/{resource_id}` (202); `PATCH`/`PUT` on a single resource → 405.
 
 ---
 
@@ -566,7 +594,7 @@ These are operational projects that make sense only after the engagement is sign
 | Cleanup | `8266589` | `Client - Cleanup` |
 | Tax Returns | `7959692` | `Tax Returns` |
 
-Leading asterisks in three of the titles are intentional. Client's Onboarding Checklist (`9685085`) inherits automatically from the New Client Onboarding project (created back in Phase 1) — do NOT POST it explicitly here.
+Leading asterisks in three of the titles are intentional. **Do NOT POST the Client's Onboarding Checklist (`9685085`) here or anywhere in Phase 2** — it's Jennifer's manual project, which she creates and maintains herself in the FC UI. The skill never attaches it.
 
 **Attach each, then reassign by role:**
 
@@ -718,6 +746,7 @@ If a Phase 1 handoff exists at `~/.claude/skills/onboard-client-admin/handoffs/{
 - Engagement PDF locations (Perm File + Active Clients)
 - Prospective → Active move result
 - FC Resource link added (label + URL + resource ID), or "already existed" if skipped
+- "Sales Onboarding Service" project resource repointed to the Shared Drive URL (or noted if `FC_PROJECT_ID` unknown / it errored)
 - 5 recurring project IDs (Weekly Bookkeeping, Monthly Review, Monthly Close, Cleanup, Tax Returns) + task-reassignment result per role
 - 1099 projects: either `skipped (Basic Service)` or the list of `{template name → project id}` created (plus any failures)
 - Any stragglers in Shared Drive Trash (filenames)
@@ -735,6 +764,7 @@ Phase 2 done — {Legal name} is set up.
   Shared Drive:    /g/Shared drives/{Legal name}/ — template copied (11 folders, 4 seed files)
   Engagement:      Filed in Perm File + Active Clients + FC Files tab
   FC Resource:     "Google Drive" link added to client dashboard (or "already existed")
+                   "Sales Onboarding Service" project resource repointed to the client's Shared Drive (was the retired dashboard)
   FC Files:        "Engagement Letters" folder + engagement uploaded (verify client-portal visibility in FC UI)
   Folder move:     Prospective → Active Clients
   Recurring:       5 project templates attached — Weekly Bookkeeping, Monthly Review, Monthly Close, Cleanup, Tax Returns; tasks reassigned by role (Lead / Staff / Controller)
@@ -984,29 +1014,33 @@ Still to do (manual, in FC UI):
       POST /clients/{id}/groups → 404, POST /groups/{id}/clients → 404). UI clicks only.
     — Open https://app.financial-cents.com/clients/{FC_CLIENT_ID} → Groups → add each staff-clients group.
 
-After the welcome email goes out, run Phase 4 (dossier fill-in + team handoff email).
+After the welcome email goes out, run Phase 4 (kickoff prep packet + team handoff email).
 ```
 
 ---
 
-## Phase 4 — Onboarding Dossier fill-in + team handoff email
+## Phase 4 — Kickoff prep packet + team handoff email
 
-Run after Phase 3 (welcome email sent or queued). Produces a populated fill-in block for the **Paxus Onboarding Dossier** (a Claude Design at claude.ai — shared URL, one entry per client) and drafts the internal team handoff email. Jennifer manually pastes each section of the fill-in block into the live dashboard.
+Run after Phase 3 (welcome email sent or queued). Produces the **kickoff prep packet** — a populated markdown file the **lead's `/kickoff-prep` skill** reads to build the call sheet — and drafts the internal team handoff email.
 
-**Shared dashboard URL** (same for every client — do NOT try to repoint per client):
+The packet is **not** a paste-source for any dashboard. It's a clean, self-contained handoff file organized for reading. It replaces the retired Paxus Onboarding Dossier (the claude.ai Claude Design dashboard); the lead's prep notes are the record now, and they live in the client's Perm File alongside every other permanent artifact.
+
+**The filename and location are a contract with `/kickoff-prep` — do not change them:**
 
 ```
-https://claude.ai/design/p/5e8d4de8-c45b-4e17-9d3c-df01ff490fcf?file=Sales+Onboarding+Service.dc.html&via=share
+/g/Shared drives/{Legal name}/Perm File/Onboarding Dossier - {Legal name} - fill-in.md
 ```
+
+`/kickoff-prep` searches the client's Perm File for exactly this file. The name still says "Onboarding Dossier … fill-in" for that reason — it's the handshake, not a pointer to any live dashboard.
 
 ### Important rules for Phase 4
 
 - **Engagement is the source of truth on billing.** Re-read the engagement letter — the Phase 1 handoff figures may be quote-shaped (pre-signing) and the engagement often consolidates line items.
 - **The signed engagement names the legal client. Period.** Pre-engagement consultation notes that mention related entities the principal owns are context, not contradictions. Do not flag "entity mismatches" or write parenthetical "(scope: SomeOtherEntity)" qualifiers.
-- **Dashboard writes are manual.** claude.ai/design URLs are Anthropic-account-gated and can't be written from Claude Code (403 confirmed 2026-07-03). The skill always produces a markdown fill-in block; Jennifer pastes.
-- **Team-role labels differ from the workbook heritage.** The dashboard sidebar uses **Lead / Accountant / Reviewer**. The Paxus tier hours use **Staff / Lead / Controller**. Map: Lead=Lead, Accountant=Staff, Reviewer=Controller.
-- **The dashboard sidebar's "Kickoff" field means the actual kickoff call date — NOT the cleanup start date.** Kickoff is usually TBD (Lead schedules); use `TBD`, not the cleanup start.
-- **Deadline field** = the onboarding deadline from the quote timeline (e.g., `08/31/2026`), not a Paxus-internal deadline.
+- **Every field is filled or explicitly marked `TBD — ask on call`. Never leave a field silently blank.** `/kickoff-prep` classifies each field as *filled*, *`TBD — ask on call`* (→ becomes a discovery question on the call sheet), or *missing* (→ flagged loudly in a "Request from firm admin" block). A silently blank field is ambiguous — the lead's skill can't tell "genuinely unknown" from "just not filled in yet." `TBD — ask on call` turns an unknown into a question on the call, which is where it belongs.
+- **Team-role labels: Staff / Lead / Controller** — the firm's own terms. (The retired dashboard used Lead / Accountant / Reviewer; Accountant = Staff, Reviewer = Controller. Drop the old labels.)
+- **"Kickoff" means the actual kickoff call date — NOT the cleanup start date.** Kickoff is usually `TBD — ask on call` (Lead schedules it); never substitute the cleanup start.
+- **Deadline** = the onboarding deadline from the quote timeline (e.g., `08/31/2026`), not a Paxus-internal deadline.
 
 ### Budgeted hours source — the client's Service Fee Template, not the tier defaults
 
@@ -1034,9 +1068,9 @@ ws = wb["Monthly Accounting Services"]
 | Basic | 2.5 | 0.7 | 0.083 |
 | Premium Service | TBD on first Premium run | TBD | TBD |
 
-### One-time FC setup (do NOT repeat per client)
+### The "Sales Onboarding Service" resource is now handled in Phase 2
 
-The New Client Onboarding project template's **"Sales Onboarding Service"** resource should point to the shared dashboard URL above. This is a one-time fix on the template itself — after that, every new client's inherited project automatically carries the correct link. If a client's project shows the old spreadsheet URL, fix the template, don't patch the client.
+The New Client Onboarding project template's **"Sales Onboarding Service"** resource used to point at the retired dashboard. It's now repointed **per client in Phase 2F** to that client's own Shared Drive (a per-client link can't live on the shared template). Nothing to do here in Phase 4 — if a client's project still shows the dead dashboard link, re-run Phase 2F for that client.
 
 ---
 
@@ -1057,50 +1091,90 @@ If any source is missing, ask — don't fabricate.
 
 ---
 
-### Phase 4B — Produce the Onboarding Dossier fill-in block
+### Phase 4B — Produce the kickoff prep packet
 
-Write a markdown fill-in block to `/g/Shared drives/{Legal name}/Perm File/Onboarding Dossier - {Legal name} - fill-in.md`. Jennifer opens this file, copies each section, and pastes into the corresponding field on the live dashboard. Structure it to mirror the dashboard exactly so field-to-field mapping is obvious.
+Write the packet to `/g/Shared drives/{Legal name}/Perm File/Onboarding Dossier - {Legal name} - fill-in.md` (the contract filename — see the Phase 4 rules above). It's a reading file for the lead's `/kickoff-prep` skill, not a paste-source. Organize it head-to-toe for reading, in the block order below.
 
-**Sidebar / header block:**
+**Every field is either filled or `TBD — ask on call`. Never leave a field silently blank.** Where a value genuinely can't be known yet (transaction volume, 1099 count, kickoff date, COA-cleanup consent, etc.), write `TBD — ask on call` verbatim — that string is what `/kickoff-prep` turns into a discovery question on the call sheet.
 
-| Dashboard field | Fill-in value | Source |
+**Top-of-file preamble** — one short paragraph: this is {Legal name}'s kickoff prep packet, the single file the lead's `/kickoff-prep` skill reads to build the call sheet; it lives in the client's Perm File; every field is filled or marked `TBD — ask on call`; the Section 03 kickoff items stay blank until the Lead runs the call. No dashboard, no paste instructions, no URL.
+
+**Header block:**
+
+| Field | Value | Source |
 |---|---|---|
 | Client name | `{Legal name}` | Engagement / FC display name |
 | Lead | `{Lead first + last}` | Phase 3 handoff (team assignments) |
-| Kickoff | `TBD` (or actual date if scheduled) | **Not the cleanup start date** |
+| Kickoff | `TBD — ask on call` (or actual date if scheduled) | **Not the cleanup start date** |
 | Deadline | Onboarding deadline (e.g., `08/31/2026`) | Quote timeline |
 | Team of 3 — Lead | `{Lead first}` | Phase 3 handoff |
-| Team of 3 — Accountant | `{Staff first}` | Phase 3 handoff (this is the "Staff" role in Paxus tier language) |
-| Team of 3 — Reviewer | `{Controller first}` | Phase 3 handoff |
+| Team of 3 — Staff | `{Staff first}` | Phase 3 handoff |
+| Team of 3 — Controller | `{Controller first}` | Phase 3 handoff |
+
+**Billing block** (engagement is authoritative — re-read it; the engagement often consolidates line items the quote itemized). No silent blanks — a missing figure here is `TBD — ask on call`, never omitted. The Lead covers billing while setting expectations on the call, so these must be present:
+
+| Field | Value | Source |
+|---|---|---|
+| Monthly amount | `${monthly}/month` — report the headline the client is drafted for; if it bundles a sub-item (e.g., service fee + software subscription), note the breakdown but don't report a sub-item as the monthly fee | Engagement |
+| First draft date | Date the monthly draft begins | Engagement |
+| Onboarding fee + paid status | `${onboarding}` (paid at signing / outstanding) | Engagement |
+| Cleanup amounts | Record **whichever shape the engagement uses** — deposit + balance (two fixed one-time items) OR floor/ceiling (a range). Don't coerce one into the other; never report a ceiling that isn't in the document. If no cleanup in scope: `N/A` | Engagement |
+
+Exact figures — a `$799` monthly is not `$800`. Never round a contractual amount (the Lead reads these to the client).
+
+**Team and budgeted hours block** — Lead / Staff / Controller, each with name + budgeted hours, per the **Budgeted hours source** section above. Note that Staff may stay `TBD` client-facing. If the hours came from tier defaults (the Service Fee Template's per-client block wasn't populated), **say so explicitly**, and note that the Lead refines the hours after kickoff. (This block already works — no change to how hours are read.)
+
+**Cleanup scope block** — the punch list as quoted, gathered in one place (the Lead previews this on the call):
+
+| Field | Value | Source |
+|---|---|---|
+| Cleanup in scope? | `Yes` / `No` — if `No`, the Lead renders the no-cleanup variant instead of an empty punch list | Quote / engagement |
+| Punch list | One line per item (each line may be `TBD — ask on call`) | Quote |
+| Cleanup window | Start + target end | Quote timeline |
+| First monthly close month | Spelled-out month | Quote / engagement |
+
+**Volumes and complexity block** — gathered in one place; drives how deep discovery goes and whether Dext comes up:
+
+| Field | Value | Source |
+|---|---|---|
+| Bank accounts | Count + nicknames, **last-four only** (never full account or routing numbers) | Service Fee Template |
+| Credit cards | Count | Service Fee Template |
+| Monthly transaction volume | Number, or `TBD — ask on call` (often missing) | Service Fee Template |
+| 1099 count | Number, or `TBD — ask on call` (often missing) | Service Fee Template |
+| Dext subscribed? | `Yes` / `No` | Service Fee Template |
+| Payroll flag | Are we running payroll? `Yes` / `No` | Service Fee Template |
+| Entity manifest | One row per entity | Engagement |
+
+> **Never full account or routing numbers** — nicknames and last-four only, anywhere in the packet. Both are permanent Drive artifacts.
 
 **Section 01 — Discovery** (all free-text fields):
 
-| Dashboard field | Fill-in value | Source |
+| Field | Value | Source |
 |---|---|---|
 | HOW THEY HEARD ABOUT US | referral source | Consultation / memo |
 | ENTITY TYPE | `LLC`, `Nonprofit — files 990. Fiscal year end M/D.`, `Sole Prop`, etc. | Engagement / memo |
 | # PARTNERS / TEAM | Owners/partners + employee count | Consultation |
-| TAX RETURNS CURRENT? | `TBD` or `Yes through {year}` | Consultation / memo |
+| TAX RETURNS CURRENT? | `TBD — ask on call` or `Yes through {year}` | Consultation / memo |
 | ACCOUNTING SOFTWARE | QBO / Quicken / Xero + one-line status | Consultation |
 | PAYROLL COMPANY | Vendor name or `None` — flag if Paxus is/isn't running it | Consultation |
 | CURRENT CPA | External tax accountant + note if we need contact permission | Consultation |
 | SERVICES REQUESTED | Package tier + one-line scope summary | Engagement |
 | PAIN POINTS & PRIORITIES DURING ONBOARDING | Verbatim pain points + numbered priority list | Consultation + memo |
 
-**Section 02 — Pre-Kickoff Readiness** (checkbox items — indicate the current state next to each so the Lead knows what to tick):
+**Section 02 — Pre-Kickoff Readiness** (current-state note next to each item so the Lead knows where things stand):
 
 Under ACCOUNTING · QBO:
 - `Do they have a QBO file?` — YES / NO
 - `Do we have access?` — YES / NOT YET (obtain during/after kickoff)
 - `Chart of accounts reviewed — needs cleanup` — YES + brief note, or N/A
-- `Client OK with us cleaning up the COA?` — TBD (confirm on kickoff) or YES
+- `Client OK with us cleaning up the COA?` — `TBD — ask on call` or YES
 - `Bank & card feeds connected?` — YES / NO + note if there are mapping errors
 - `How caught up is the file?` — plain-text status (e.g., "Behind — last rec 3/31; April–June open")
 
 Under TAX:
-- `Prior-year returns — which years?` — years received or `TBD`
-- `EIN on file` — YES/NO/TBD
-- `Tax returns current?` — YES/NO/TBD
+- `Prior-year returns — which years?` — years received or `TBD — ask on call`
+- `EIN on file` — YES / NO / `TBD — ask on call`
+- `Tax returns current?` — YES / NO / `TBD — ask on call`
 
 Under PAYROLL:
 - `Are we running payroll?` — YES/NO (usually NO — out of scope)
@@ -1109,8 +1183,8 @@ Under PAYROLL:
 Under SALES TAX & PORTAL:
 - `Sales tax handled?` — YES/NO/N/A
 - `Current services confirmed` — one-line scope confirmation
-- `Portal access — who is authorized? (2FA)` — comma-separated names + roles
-- `Next steps assigned` — leave for Lead to check post-kickoff
+- `Portal access — who is authorized? (2FA)` — names + roles (credentials are pointers, never values)
+- `Next steps assigned` — leave for Lead to fill post-kickoff
 
 **Section 03 — Kickoff Call** (11 items, Lead fills live during the call):
 
@@ -1118,13 +1192,7 @@ Pre-load only item **06 Gather information** — a bulleted reference list of wh
 
 Leave items 01/02/03/04/05/07/08/09/10/11 blank — Lead fills them live.
 
-**File the fill-in block:**
-
-```
-/g/Shared drives/{Legal name}/Perm File/Onboarding Dossier - {Legal name} - fill-in.md
-```
-
-Include a top-of-file `Instructions` line pointing at the shared dashboard URL and reminding Jennifer to paste section-by-section.
+**Reference files** — a bulleted list of paths to the engagement, quote, Service Fee Template, PNCR(s), Welcome Packet, and Welcome Email draft, so the Lead can jump to any source.
 
 ---
 
@@ -1153,7 +1221,7 @@ Before drafting, pull the primary contact's email + phone fresh from FC (`GET /c
 3. **Billing** — onboarding paid; cleanup deposit + balance amounts (from engagement); monthly draft amount + start date.
 4. **Scope** — tier, what's in/out, cleanup window, first monthly month, software transition notes (e.g., Quicken → QBO).
 5. **Your team and budgeted hours** — Controller / Lead / Staff with tier-default hours. Flag that Staff stays TBD client-facing. Note that Lead refines hours after kick-off.
-6. **Action items** — Lead schedules kick-off; point to the **Paxus Onboarding Dossier** URL (the FC "Sales Onboarding Service" resource, same URL for every client); note that the pre-populated fill-in block is saved in the client's Perm File for reference; where the Service Fee Template lives; what to confirm on the call.
+6. **Action items** — Lead schedules kick-off; point the Lead at the **client's Perm File**, where the kickoff prep packet (`Onboarding Dossier - {Legal name} - fill-in.md`) is saved for the `/kickoff-prep` skill to read (the "Sales Onboarding Service" resource on the FC project also links to the client's Shared Drive); where the Service Fee Template lives; what to confirm on the call.
 7. **Things to know going in** — pain points, complex transactions, system quirks (e.g., check-printing needs), access gaps, FC checklist status, tax-return status.
 8. **One-line close:** "Let me know if anything is unclear — happy to chase down any of the TBDs."
 
@@ -1167,27 +1235,24 @@ Before drafting, pull the primary contact's email + phone fresh from FC (`GET /c
 ### Phase 4D — Update the handoff doc and report back
 
 Append a `## Phase 4 completed {YYYY-MM-DD}` section to the **main handoff at `/g/Shared drives/{Legal name}/Perm File/Onboarding Handoff - {Legal name}.md`** (created/moved into Perm File in Phase 2G) with:
-- Onboarding Dossier fill-in file path (`Onboarding Dossier - {Legal name} - fill-in.md`)
-- Shared dashboard URL (same for every client)
+- Kickoff prep packet file path (`Onboarding Dossier - {Legal name} - fill-in.md`) — read by the lead's `/kickoff-prep` skill
 - Team handoff email draft path (Perm File)
 - Suggested recipients and subject
-- Reminder: post-kickoff, run Phase 6 to export the client's dossier PDF into Perm File
+- Any fields left `TBD — ask on call` so the Lead knows what's still open
 
 Report:
 
 ```
-Phase 4 done — kickoff materials ready.
+Phase 4 done — kickoff prep packet ready.
 
-  Dossier fill-in:     G:\Shared drives\{Legal name}\Perm File\Onboarding Dossier - {Legal name} - fill-in.md
-  Live dashboard:      https://claude.ai/design/p/5e8d4de8-c45b-4e17-9d3c-df01ff490fcf?file=Sales+Onboarding+Service.dc.html&via=share
-                       (Paste each section of the fill-in into the corresponding dashboard field.)
-  Team email draft:    G:\Shared drives\{Legal name}\Perm File\Team Handoff Email - {Legal name}.md
-                       TO: {Lead, Controller, Staff, Lisa}@paxuscpa.com
+  Prep packet:      G:\Shared drives\{Legal name}\Perm File\Onboarding Dossier - {Legal name} - fill-in.md
+                    (The lead's /kickoff-prep skill reads this from the Perm File — no dashboard, no pasting.)
+  Team email draft: G:\Shared drives\{Legal name}\Perm File\Team Handoff Email - {Legal name}.md
+                    TO: {Lead, Controller, Staff, Lisa}@paxuscpa.com
 
 Still to do (manual):
-  • Open the dashboard and paste each section from the fill-in file for {Legal name}.
   • Send the team handoff email after the welcome email has gone out.
-  • After the kickoff call, run /onboard-client-admin → Phase 6 to export the dashboard PDF into Perm File.
+  • The Lead runs /kickoff-prep against the client's Perm File to build the call sheet.
 ```
 
 End warmly — e.g., "All set — {Legal name} is fully launched."
@@ -1282,7 +1347,7 @@ Paste into Gmail and send. This is a client-facing email — CC the internal tea
 
 **Skill work — split across phases by signing gate.** As of 2026-07-08, recurring project attachment moved out of Phase 1 and into Phase 2 (post-signing). Rationale: attaching operational recurring projects (weekly bookkeeping, cleanup, tax returns, etc.) to a prospect who hasn't signed clutters the FC record and creates cleanup work if they don't sign — FC has no API to delete a stray project, so closures are UI-only. The skill only POSTs the New Client Onboarding project itself in Phase 1 (its Firm Admin Tasks belong pre-signing).
 
-- **Phase 1E** POSTs the New Client Onboarding project only. Client's Onboarding Checklist (`9685085`) inherits automatically from that project and does NOT need explicit POSTing.
+- **Phase 1E** POSTs the New Client Onboarding project only. The Client's Onboarding Checklist (`9685085`) is never POSTed by the skill — it auto-attaches in FC when Jennifer manually closes the task that precedes it, so it's her manual step.
 - **Phase 2H** POSTs the 5 standard recurring templates (Weekly Bookkeeping Tasks `5082639`, Monthly Client - Review `5082645`, Monthly Client - Month End Close `5110296`, Client - Cleanup `8266589`, Tax Returns `7959692`) and reassigns tasks by role.
 - **Phase 2I** POSTs the 1099 templates when the package is Full Service or Premium Service.
 
@@ -1329,67 +1394,6 @@ If FC expands the public API to expose proposals or invoices, update Phase 1F/G 
 
 ---
 
-## Phase 6 — Post-kickoff Dossier PDF archive
-
-Run **after the kickoff call happens**. Prompts the operator to export the Paxus Onboarding Dossier as a PDF for this client (from the shared claude.ai/design dashboard) and files it into the client's `Perm File\` alongside the engagement, welcome packet, and handoff.
-
-### Important rules for Phase 6
-
-- **PDF export is a manual browser step.** claude.ai/design doesn't expose an export API and the URL is auth-gated; the operator generates the PDF from the browser (usually browser print → Save as PDF, or the dashboard's built-in export if available).
-- **Auto-discover from Downloads.** Same pattern as the Phase 2 engagement pickup: newest `*Dossier*.pdf` or `*Onboarding*Dossier*.pdf` in `~/Downloads/`.
-- **File naming:** `Onboarding Dossier - {Legal name}.pdf` — matches the naming convention of the other Perm File artifacts.
-
----
-
-### Phase 6A — Prompt the operator + auto-discover the PDF
-
-Tell the operator:
-
-> Open the dashboard at `https://claude.ai/design/p/5e8d4de8-c45b-4e17-9d3c-df01ff490fcf?file=Sales+Onboarding+Service.dc.html&via=share`, switch to **{Legal name}** in the client switcher, and export/print to PDF. Save it into `~/Downloads/`. Type `ready` when done.
-
-After the operator confirms, auto-discover:
-
-```bash
-ls -t ~/Downloads/*[Dd]ossier*.pdf 2>/dev/null | head -1
-```
-
-Show the filename + mod time and confirm before using. If nothing matches, ask for the filename explicitly.
-
----
-
-### Phase 6B — File the PDF to Perm File
-
-```bash
-cp ~/Downloads/{FILENAME} "/g/Shared drives/{Legal name}/Perm File/Onboarding Dossier - {Legal name}.pdf"
-ls -la "/g/Shared drives/{Legal name}/Perm File/Onboarding Dossier - {Legal name}.pdf"
-```
-
-Verify the file landed and matches the source size.
-
----
-
-### Phase 6C — Update the handoff doc and report back
-
-Append a `## Phase 6 completed {YYYY-MM-DD}` section to the main handoff at `/g/Shared drives/{Legal name}/Perm File/Onboarding Handoff - {Legal name}.md`:
-- Dossier PDF path
-- Kickoff call date (as reported by the operator)
-- Any next-step notes the operator wants logged
-
-Report:
-
-```
-Phase 6 done — dossier archived.
-
-  Dossier PDF:    G:\Shared drives\{Legal name}\Perm File\Onboarding Dossier - {Legal name}.pdf
-  Kickoff date:   {YYYY-MM-DD}
-
-{Legal name} is fully onboarded — kickoff complete, dossier archived, engagement in Perm File.
-```
-
-End warmly — e.g., "That's a wrap on onboarding for {Legal name}."
-
----
-
 ## Reference files in this skill folder
 
 | File | Purpose |
@@ -1397,5 +1401,5 @@ End warmly — e.g., "That's a wrap on onboarding for {Legal name}."
 | `SKILL.md` | This file — operational instructions |
 | `welcome-email-template.md` | Approved warm/concise client welcome email |
 | `phase3-design-notes.md` | Detailed Canva design IDs, page structure, element IDs, file ID caches |
-| `phase4-design-notes.md` | Design notes for the current Phase 4 dossier flow — dossier structure, fill-in format, Service Fee Template read logic, and team handoff email format. |
+| `phase4-design-notes.md` | Design notes for the Phase 4 kickoff prep packet — packet structure, block/field format (the `/kickoff-prep` contract), Service Fee Template read logic, and team handoff email format. |
 | `handoffs/` | Per-client artifacts (proposal, welcome email draft, team email draft) |
