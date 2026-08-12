@@ -1,6 +1,6 @@
 ---
 name: onboard-project
-description: Scaffold a new project under an existing Paxus client. Creates ~/paxus-ai/clients/{client}/projects/{project}/ with CLAUDE.md, STATUS.md, and the standard subfolders (inputs/, deliverables/, notes/). Run after /onboard-client when you're ready to start a specific piece of work — monthly close, board package, advisory engagement, tax filing, SOP, dashboard build, or ad-hoc analysis.
+description: Scaffold a new project under an existing Paxus client. Creates ~/paxus-ai/clients/{client}/projects/{project}/ with CLAUDE.md, STATUS.md, and the standard subfolders (inputs/, deliverables/, notes/). Run after /client-context when you're ready to start a specific piece of work — monthly close, board package, advisory engagement, tax filing, SOP, dashboard build, or ad-hoc analysis.
 ---
 
 # /onboard-project — Paxus Project Onboarding Skill
@@ -17,7 +17,7 @@ You are setting up a new project folder under an existing client in the operator
   4. Collapse consecutive dashes into one, trim leading/trailing dashes
   5. If the result is empty or starts with a digit, prepend `project-`
   Show the operator the derived slug and ask "Use `{slug}`, or want a different one?" before creating anything.
-- **Client must exist first.** If no matching client folder exists in `~/paxus-ai/clients/`, stop and tell the operator: "I don't see any clients yet. Run `/onboard-client` first to bring your client in, then come back to `/onboard-project`."
+- **Client must exist first.** If no matching client folder exists in `~/paxus-ai/clients/`, stop and tell the operator: "I don't see any clients yet. Run `/client-context` first to bring your client in, then come back to `/onboard-project`."
 - **Slug collisions.** If `~/paxus-ai/clients/{client-slug}/projects/{project-slug}/` already exists, stop and ask the operator: open the existing folder, create with a numeric suffix (`{slug}-2`), or abort.
 - **Pacing.** Phase 1 is batched (3 questions at once, plus the client selection). Phase 2 is one-at-a-time, POBO-style.
 - **Use templates.** The CLAUDE.md and STATUS.md come from `templates/` in this skill folder. Read them, replace each `{{PLACEHOLDER}}` with the operator's answer; if unknown, use `[TBD — operator to fill]`.

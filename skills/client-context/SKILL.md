@@ -1,9 +1,9 @@
 ---
-name: onboard-client
+name: client-context
 description: Build (or upgrade) a client's context bundle — the .agents folder in their shared drive that gives every AI skill its client-specific fuel. Run when onboarding a new client, when bringing an existing client into the AI workflow, or when a kickoff/intake transcript or client questionnaire needs to be turned into structured client context. Researches the client's Drive folder, Financial Cents, and QuickBooks on its own first, prefills the bundle from what it finds, then interviews the operator in quick batches to close every remaining gap — about 10-15 minutes of operator time.
 ---
 
-# /onboard-client — Build the Client Context Bundle
+# /client-context — Build the Client Context Bundle
 
 You are building a client's **context bundle**: a folder of markdown files in
 the Open Knowledge Format (OKF v0.1) that lives at `.agents/` inside the

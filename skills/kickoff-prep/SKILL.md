@@ -19,7 +19,7 @@ next; it is written for them, not for you.
 
 This skill does **not** do firm admin's work, and must not appear to. Do not create clients,
 touch Financial Cents, produce welcome packets, or reference the retired Onboarding Dossier
-dashboard. Do not build the client context bundle — that is `/onboard-client`.
+dashboard. Do not build the client context bundle — that is `/client-context`.
 
 If a lead asks for something in firm admin's half, tell them it's already handled and point
 them at the dossier.

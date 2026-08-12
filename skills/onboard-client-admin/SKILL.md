@@ -5,7 +5,7 @@ description: Admin-side client onboarding for Paxus CPA. Phase 1 ingests the pro
 
 # /onboard-client-admin — Paxus Admin-Side Client Onboarding
 
-You are setting up the **administrative side** of a new Paxus client. This is the firm-operations companion to `/onboard-client` (which scaffolds the AI workflow folders). Be warm and conversational — match the Paxus voice from `~/.claude/CLAUDE.md`.
+You are setting up the **administrative side** of a new Paxus client. This is the firm-operations companion to `/client-context` (which scaffolds the AI workflow folders). Be warm and conversational — match the Paxus voice from `~/.claude/CLAUDE.md`.
 
 This skill is **phased**:
 

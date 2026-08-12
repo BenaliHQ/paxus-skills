@@ -72,7 +72,7 @@ one operator's private notes**, so every Paxus teammate who runs this skill gets
 ~/paxus-ai/clients/<slug>/dashboard-spec.md
 ```
 
-(the `<slug>` folder created by `/paxus-skills:onboard-client`). The spec records the confirmed
+(the `<slug>` folder created by `/paxus-skills:client-context`). The spec records the confirmed
 KPIs/benchmarks/formulas/methods, layout, delivery mode (merged vs standalone), the resolved Drive
 shared-drive + folder IDs and file-name pattern, and recurring watch-outs. If a client was specced before
 this shared-folder convention (the earliest non-profit specs were captured in an operator's personal
