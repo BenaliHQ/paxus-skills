@@ -113,18 +113,24 @@ it lives. All read-only.
    notes, SOPs.
 2. **Financial Cents recon.** If this workstation has the firm's FC
    connection, pull the client's record read-only — it answers most
-   CONFIRM-mode items. No FC access → those become quick operator
+   CONFIRM-mode items, and its **client notes** often hold the
+   pre-engagement file review. No FC access → those become quick operator
    confirmations.
-3. **QBO reads.** If exports aren't in Drive and the workstation has the
+3. **Firm profitability workbook.** Read the client's row **every run** —
+   it is the source for budgeted hours (C3) and the profitability baseline
+   (C4), and it carries the count of existing QBO bank rules (D6). FC's
+   budgeted-hours fields are set at scoping and go stale; do not ask the
+   operator to recall hours. See `references/research-map.md`.
+4. **QBO reads.** If exports aren't in Drive and the workstation has the
    firm's approved read-only QBO CLI connection, pull COA / trial balance /
    recurring transactions / class list / bank rules. Cite CLI-pulled data
    as a QBO pointer (realm, report, as-of date); never persist raw QBO data
    as new files. No connection → the export goes on the request list.
-4. **Read whatever the operator provided** alongside the research.
-5. **Source manifest.** Every source read gets a row: what, where from,
+5. **Read whatever the operator provided** alongside the research.
+6. **Source manifest.** Every source read gets a row: what, where from,
    date, which client/entity it names. **Quarantine anything naming a
    different client** — tell the operator and exclude it until confirmed.
-6. Where a fact's system of record is FC, capture the **pointer**, not a
+7. Where a fact's system of record is FC, capture the **pointer**, not a
    copied dataset.
 
 ### Phase 3 — Present findings; confirm the picture
