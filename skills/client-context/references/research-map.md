@@ -22,8 +22,8 @@ gap interview (Phase 5) as a question.
 | B9 financial_delivery_owner | Team assignment / delivery config (controller default) |
 | B10 controller_review_requirement | Review workflow config (firm default: every close) |
 | C1 pod_assignment | Team assignments |
-| C3 budgeted_hours_by_role | Client budget fields |
-| C4 profitability_baseline_as_of_date | Profitability as-of |
+| C3 budgeted_hours_by_role | Client budget fields — **cross-check only.** The firm profitability workbook is the source; see below. |
+| C4 profitability_baseline_as_of_date | Profitability as-of — **cross-check only.** The firm profitability workbook is the source; see below. |
 | C5 recurring_work_schedule | Recurring projects and their cadence |
 | C6 client_application_setup | Setup subtasks / checklists |
 | C8 controller_call_settings | Recurring meeting project, where modeled |
@@ -36,6 +36,33 @@ gap interview (Phase 5) as a question.
 | G1/G2 onboarding checklist + outstanding | Onboarding checklist state |
 | G6 financial_delivery_history | Delivery archive — seed last period + pointer |
 | G8 year_end_close_status | Pointer only (live state) |
+
+## Firm profitability & capacity workbook (read the client's row every run)
+
+**Check this on every run.** It is the source for budgeted hours and
+profitability; Financial Cents is the cross-check, not the authority. FC's
+budgeted-hours custom fields are set once at scoping and are rarely revisited,
+so a bundle built from FC alone can ship internal economics that are wrong by
+several multiples and hide a margin trend entirely.
+
+It lives in the firm's own Drive (not the client's), under the Paxus admin
+spreadsheets folder — currently
+`2026_Client_Profitability_and_Capacity.xlsx`, one workbook per year. Match the
+client on the **Client Map** tab, which reconciles the client's legal name to
+the timesheet's shorthand.
+
+| Property | Where in the workbook |
+|---|---|
+| C3 budgeted_hours_by_role | **Dashboard** tab — Staff / Lead / Reviewer Budget Hrs |
+| C3 actual hours by role | **Dashboard** and **Actual Hours** tabs — YTD average actual hours per role, with the named person in each seat. Record budget *and* actual: the variance is the finding, and a zero in a role usually means an unfilled seat whose work moved up to a more expensive one. |
+| C4 profitability_baseline_as_of_date | **Dashboard** tab — monthly profit and margin, YTD profit and YTD margin. The as-of date is the last month with figures. |
+| D6 vendor_coding_rules (partial) | **Dashboard** tab — "# Rules in QBO" gives the count of existing bank rules. Partially answers D6 even when no QBO connection is available, and confirms rules exist to be read rather than recreated. |
+
+Two cautions. The workbook's **monthly revenue figures go stale** — reconcile
+against the latest Financial Cents invoice before trusting a margin percentage.
+And it is **firm-internal economics**: it belongs in
+`c-staffing/internal-economics.md` and the variance log under the standing
+no-behavior-change instruction, and nowhere near a client-facing artifact.
 
 ## Client Drive folder (inventory first, read selectively)
 
@@ -101,3 +128,6 @@ outcomes, G4 challenges, G7 meeting calendar, G9 escalation, H2 advisory
 plan — plus the ASK residue of any mapped item research couldn't fill
 (e.g., the judgment parts of D17/D22/D24/D25). Batch these per person
 (controller / lead / client contact) so the interview stays short.
+
+Note that C3 and C4 are **not** interview questions — read them from the firm
+profitability workbook above rather than asking the operator to recall hours.
