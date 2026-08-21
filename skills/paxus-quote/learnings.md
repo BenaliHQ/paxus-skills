@@ -50,3 +50,63 @@ Pricing was built into the skill on 2026-08-10 and **removed the same day** at t
 - **Don't price AI efficiency straight through to the client.** As tooling takes work out of the process, hours fall. That does not become "this takes ten minutes now, so we'll charge $25." Price the outcome and the responsibility. The efficiency gain is the firm's margin and it funds the next improvement.
 - **Gut-check the fee against the client's size.** A defensible hours-based number can still be one the client cannot pay. Surface it rather than shipping arithmetic that won't get signed.
 - **The old service-fee template's only real output is the hours**, which the firm administrator needs for the budget. Its useful residue is the per-item time anchors — bank transactions, invoicing, bill pay. The rest is subjective and isn't worth reproducing.
+
+## 2026-08-21 — Lisa — for-profit construction consulting (S-corp, new entity)
+
+### [PROMOTED] KPI tracking belongs in Full Service, not Premium
+
+Her words: *"tracking KPIs is included in full service. That needs to go on the tier
+above advisory call so all the check marks for full service are in line."*
+
+Two things in one correction, and the second is the more general one:
+
+- **The tier change.** KPI tracking & benchmarking is a Full Service element. Premium's
+  differentiators are the advisory call, the budget/forecast, and the audit support.
+- **Row order follows the checkmarks.** When a row changes tiers it has to be
+  repositioned so each column's ✓ run stays unbroken. A gap mid-column reads to a client
+  as a mistake rather than a distinction.
+
+Both promoted to `SKILL.md` the same day — the default table, the card copy, the
+level-differences table, and a new bullet under § Rules for changing the default.
+
+### [SUGGESTION] The hard onboarding-date rule has now failed twice — change it
+
+The 2026-08-21 real-estate entry already flagged this and said *"revisit before the next
+quote."* This was the next quote, and the same thing happened: the useful answer was a
+**window** ("week of September 21st"), not a date, and the quote shipped fine with it.
+
+The skill still calls a specific date **blocking**. It isn't, in practice, and treating it
+as blocking just means the operator gets asked a question she can't answer yet. Proposal:
+accept a window, keep the first close month required, and let the exact date be set later
+without holding the quote. Two occurrences now — this qualifies for promotion.
+
+### [DECISION] Premium was set below the standard advisory step-up, knowingly
+
+The 2026-08-10 decision puts Premium at least $700 above Full Service. This quote went out
+at **$425 / $950 — a $525 step-up.** Raised with the operator before building; she chose
+$950 deliberately.
+
+Recorded because it is a real exception to a firm-level rule, not an error, and the
+internal hours-budget file carries a note telling a future reviser not to "correct" it
+back without asking. Worth watching whether the $700 floor holds in practice or wants
+restating as a guideline.
+
+### [SUGGESTION] The cover's preparer-name field has no source
+
+`[PREPARER NAME]` on page 1 assumes the operator's full name is known. It wasn't — the
+operator profile carried a first name only, and inventing a surname on a client proposal
+isn't an option. The quote shipped with `Paxus CPA Group · August 2026` and no preparer
+line, which reads fine. Either make the field genuinely optional in the template, or have
+Phase 1 ask for it once.
+
+### [DECISION] Sensitive call material stays out of the shared-drive summary
+
+Phase 4 asks for the discovery-call minutes to be filed alongside the quote. This call's
+meeting note was marked sensitive — it carried client disclosures that bear on whether to
+take the engagement at all. Filing it as-is would have put that in front of the whole
+team.
+
+Resolution: a separate **team-scoped** scoping summary was written for the shared drive
+(scope, systems, method items, what's quoted) and the full note stayed in the vault.
+Worth saying explicitly in Phase 4 — the minutes that get filed are the ones the team
+needs to serve the engagement, not necessarily everything that was said.
