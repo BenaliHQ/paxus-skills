@@ -1,6 +1,6 @@
 ---
 name: client-context
-description: Build (or upgrade) a client's context bundle — the .agents folder in their shared drive that gives every AI skill its client-specific fuel. Run when onboarding a new client, when bringing an existing client into the AI workflow, or when a kickoff/intake transcript or client questionnaire needs to be turned into structured client context. Researches the client's Drive folder, Financial Cents, and QuickBooks on its own first, prefills the bundle from what it finds, then interviews the operator in quick batches to close every remaining gap — about 10-15 minutes of operator time.
+description: Build (or upgrade) a client's context bundle — the .agents folder in their shared drive that gives every AI skill its client-specific fuel. Run when onboarding a new client, when bringing an existing client into the AI workflow, or when a kickoff/intake transcript or client questionnaire needs to be turned into structured client context. Researches the client's Drive folder, Financial Cents, and QuickBooks on its own first, prefills the bundle from what it finds, then interviews the operator in quick batches to close every remaining gap — about 10-15 minutes of operator time. Also folds in answers that come back later: run it when someone replies to a bundle's outstanding questions, or when you want to know which bundles have answers waiting.
 ---
 
 # /client-context — Build the Client Context Bundle
@@ -47,6 +47,9 @@ workstation project folders are `/onboard-project`'s job.)
 - **Don't edit the firm-standard files per client.** AGENTS.md and the folder
   structure are versioned in the template (`template_version` in AGENTS.md).
   Schema changes are PRs to this repo.
+- **A non-answer is not a closure.** "I'm not sure," "I don't know what I'm
+  looking at," or an answer to a different question leaves the gap open. What
+  changes is the **dependency**, not the disposition.
 - **Conflicts vs. supersession.** Newer source with clear authority → the
   newer fact is operative, the older recorded as history with its citation.
   Otherwise record BOTH with attribution, leave the file `partial`, and take
@@ -193,9 +196,24 @@ operator's 10-15 minutes go.
    if it isn't itemized, it isn't dispositioned.
 6. Every disposition is a row in the **gap disposition ledger** in
    `0-core/log.md`'s initialization entry (gap ID | file | disposition |
-   per | date | dependency or reason). The blocked/deferred rows are also
-   handed to the operator formatted to send (email or FC task), grouped by
-   who unblocks each one.
+   per | date | dependency or reason — six cells, enforced). The
+   blocked/deferred rows are also handed to the operator formatted to send
+   (email or FC task), grouped by who unblocks each one.
+7. **Make the handover openable.** Whenever you ask someone to *read or
+   check a bundle file*, include a **direct link to that file**, not a path
+   and not the folder. The bundle is dot-prefixed and hidden by design, so a
+   teammate who has never seen it cannot navigate to it and will not ask —
+   they will simply not answer. Say in one line what the bundle is and what
+   you want their eyes on. A reviewer who can't open the file isn't a
+   blocked gap; it's a failed handover.
+8. **Record where each question went.** Once the operator sends the
+   blocked items, fill the **Asked / thread** column in
+   `g-living/onboarding-status.md` with the thread identifier and the date
+   sent. This is what makes `--check-replies` deterministic instead of a
+   fuzzy mailbox search. (The ledger keeps its fixed six-cell shape — the
+   outstanding-items table is the follow-up surface; the ledger is the
+   disposition record.) If the operator sends them outside this session,
+   ask for the thread and date at the next touch rather than guessing.
 
 If the operator is genuinely not present (e.g., processing a transcript
 solo), skip the live interview and leave the gaps undispositioned — the run
@@ -234,7 +252,12 @@ was never present, end as "staged — interview pending" per Phase 5; that
 path never reaches this phase).
 
 1. If the firm keeps a **client map** and the operator provides its
-   location, add/update this client's row (the map is never this repo). If
+   location, add/update this client's row (the map is never this repo),
+   including the **bundle pointer**: the bundle's Drive ID and the date it
+   was built. That pointer is what lets `--check-replies` find this bundle
+   later — a bundle nothing points at is invisible to every later pass. If
+   the map has no columns for it, propose adding them **appended after the
+   last existing column**, never inserted, so nothing in the map shifts. If
    no map exists, note the Drive ID is in `0-core/workspace-locations.md`;
    suggest a map as future infrastructure, don't create one unilaterally.
 2. **Workstation bridge.** Ask whether the operator uses
@@ -246,6 +269,8 @@ path never reaches this phase).
    exports, and have the pod lead fact-check
    `a-identity/working-with-this-client.md` and
    `c-staffing/review-focus-areas.md` — the two highest-judgment files.
+   Send those two as **direct links** per Phase 5.7; asking someone to
+   review a hidden file they can't open is how this step quietly fails.
 4. End with one line: "Context bundle for {client} at {location}: N active,
    N partial, N scaffold. Gaps: N closed in interview, N not-applicable,
    N blocked (named), N deferred by {operator}."
@@ -266,3 +291,72 @@ Client-specific observations go in the client's bundle
 (`g-living/known-challenges.md`), not here. Template/schema change ideas
 need a PR to this repo per CONTRIBUTING.md — offer to draft the
 de-identified proposal.
+
+## Follow-up modes (after the bundle exists)
+
+The blocked rows a run hands over are the start of a loop, not the end of
+one. Answers come back days or weeks later, usually by email, and **nothing
+reaches the bundle until a session goes and gets them** — no process watches
+a mailbox. These two modes close that loop. Both are manual; neither runs on
+a schedule.
+
+### `--check-replies` — which bundles have answers waiting
+
+Detection only. This mode never writes to a bundle.
+
+1. **Enumerate the bundles** from the firm client map, when the operator
+   provides its location (Phase 7.1). The map carries two bundle-pointer
+   columns — **"Context Bundle Drive ID"** and **"Bundle Built"**. Read them
+   **by header name, never by column position**: they sit past the map's
+   original last column, and a neighbouring column may hold unrelated
+   overflow data from some other row. A row with an empty Drive ID has no
+   bundle and is skipped, so scoping needs no separate list.
+2. For each bundle, read `g-living/onboarding-status.md`'s outstanding
+   items. A bundle with no open rows produces no output and costs nothing.
+3. For each open row naming a thread, check whether a reply has landed
+   since the date asked.
+4. **Report one line per bundle with something waiting**: client, who
+   replied, how many open items that thread covers, how long it has sat.
+   Then say which bundles were checked and found quiet — silence has to be
+   visible, or a missing line reads as "nothing waiting" when it might mean
+   "never checked."
+5. Offer to ingest any of them. Never start ingesting unasked.
+
+Report what you could not check, too: a bundle whose outstanding items carry
+no thread (asked before this was recorded, or sent outside a session) can't
+be swept. Name those rather than omitting them.
+
+### `--ingest-replies` — fold a reply into the bundle
+
+This is update mode: back up the bundle first, stage locally, show the
+operator a complete diff, then apply — `references/bundle-mechanics.md`
+§ Update mode. Then, per answer:
+
+**Merge without asking** when the answer is a single unambiguous value
+filling a named field — a 2FA frequency, a payroll cadence, a platform name,
+who holds a seat, where a report is built — and it contradicts nothing
+already recorded.
+
+**Stop and ask the operator** when the answer:
+
+- sets a threshold, a policy, or a price;
+- contradicts anything in the bundle or in the books;
+- touches `0-core/client-critical-rules.md`;
+- is hedged, partial, or not an answer to the question asked.
+
+Applied or not, **every answer lands with a citation** naming the person,
+the thread, and the date, plus a `0-core/log.md` entry. Auto-applied is
+never silent: it shows up in the diff and the log like everything else.
+
+**A non-answer is not a closure.** Re-point the ledger row at whoever can
+now unblock it — often the operator — and say why. Closing a gap on a
+non-answer is the specific failure this mode exists to prevent.
+
+**Split, don't force.** Where a reply resolves one half of a two-part gap,
+split the ledger row: one row closed, one still blocked. Where a reply
+volunteers something nobody asked about, treat it on its merits — a clean
+fact merges, a scope change stops for the operator.
+
+**Statuses move both ways.** A file can go `partial` → `active` when a reply
+completes it, and `active` → `partial` when a reply reveals something
+unrecorded. Honest beats tidy; note either move in the log.

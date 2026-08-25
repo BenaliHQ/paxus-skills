@@ -12,9 +12,13 @@ FC client-facing 13-item checklist: TBD (pointer). State: TBD.
 
 # Outstanding items
 
-| Item | Owner | Next follow-up |
-|---|---|---|
-| TBD | | |
+Each row carries the thread it was asked in, so a later pass can check for a
+reply without re-deriving which email went where. Leave the column blank for
+items nobody was asked about.
+
+| Item | Owner | Asked / thread | Next follow-up |
+|---|---|---|---|
+| TBD | | | |
 
 # Citations
 
