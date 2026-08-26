@@ -29,6 +29,13 @@ Defined by the firm's controller, 2026-07-29.
 - **Items 04 and 06 are the only customized ones.** Everything else is the same
   script every time. This is what makes the sheet buildable from the dossier
   without invention.
+- **Context questions ride inside existing items.** As of 2026-08-26 the agenda also
+  carries the client-facing questions that feed the context bundle — what the business
+  is, who we talk to, what they need the numbers cut by. They sit under the item they
+  naturally belong to (`references/context-capture.md` maps each one), phrased as plain
+  questions, capped at three or four per item. **The spine stays eleven items in this
+  order.** No new items, no reordering, and no item turned into a questionnaire — an
+  agenda that reads as an intake form is a worse first call than one that misses a field.
 - **Item 11 branches.** Scheduled → capture the date and carry it into the
   recap. Not scheduled → an action item to schedule, also carried into the recap.
 - **No-cleanup clients** need an item-04 variant — the header reads as an error

@@ -29,17 +29,27 @@ Three field states, three behaviours:
 | **`TBD — ask on call`** | Flows onto the call sheet as a discovery question under agenda item 06. Working as intended. |
 | **Missing or silently blank** | Sheet still builds. The field is listed in a **Request from firm admin** block at the top, and the agenda item that needed it shows the gap inline — never a guessed value. |
 
-**The only hard stops** are conditions where there is nothing to build from, not
-conditions where a field is absent:
+**The hard stops are about the packet, never about a field.** A missing field builds; a
+missing packet stops. Full table in `references/input-resolution.md` § Dossier not ready:
 
-- No dossier and no source documents in the picked folder.
 - The picked folder's client doesn't match the dossier's client name — likely the
-  wrong folder, so stop and confirm rather than build the wrong client's sheet.
-- The dossier exists but is unreadable.
+  wrong folder, so stop and confirm rather than build the wrong client's sheet. **No
+  override.**
+- No dossier in the folder, or one that can't be read — stop and route it to firm admin.
+  The lead may explicitly say to build without it.
+- A dossier that predates the signed engagement, contradicts it, or that the lead says is
+  out of date — report it and ask whether firm admin should refresh it first.
+- No dossier and no source documents at all — nothing to build from.
 
 Operator correction, 2026-07-29 — replaces an earlier "require completeness, halt
 otherwise" rule: *"I don't want the kick off prep call to be blocked because of
 missing items… the billing information shouldn't stop me from being able to prep."*
+
+Operator instruction, 2026-08-26 — the other half of the same rule: **the lead never fills
+in the dossier.** A missing *field* is not a blocker; a missing *packet* is firm admin's to
+produce, and a lead reconstructing it from memory is how invented content gets into a
+permanent client record. These two instructions are not in tension: gaps inside the packet
+never block, and the packet's absence is not a gap.
 
 ## Blocks the admin skill already produces
 
@@ -147,6 +157,10 @@ three tiers. Full behaviour in Phase 1 of the project plan.
    firm-admin Active Clients folder rather than the client's own drive.
 3. **Build anyway**, listing each unresolved field *and* the document that would
    answer it under **Request from firm admin**.
+
+With **no dossier at all**, this is not the default path — stop first, route it to firm
+admin, and run the sweep only if the lead says to proceed without one. A prep built entirely
+from the quote looks as finished as any other, which is exactly the problem.
 
 Resolution is per-field, not all-or-nothing — a dossier missing only billing gets
 billing swept, not a full re-read.
