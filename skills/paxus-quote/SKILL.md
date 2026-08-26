@@ -52,8 +52,8 @@ Unless the operator says otherwise, a Paxus quote offers three levels with the s
 | Financial statements with notes & analysis | — | ✓ | ✓ |
 | 1099 preparation (filing fees separate) | add-on | ✓ | ✓ |
 | Collaboration with your tax preparer | — | ✓ | ✓ |
+| KPI tracking & benchmarking | — | ✓ | ✓ |
 | Monthly controller advisory call | — | — | ✓ |
-| KPI tracking & benchmarking | — | — | ✓ |
 | Budget / forecast | — | — | ✓ |
 | Workers' comp audit support † | — | — | ✓ |
 | General liability audit support | — | — | ✓ |
@@ -101,6 +101,7 @@ Never write a line like *"we keep your programs, grants, and restricted funds tr
 - **Adding a row is normal** when the engagement has a real element the default doesn't cover.
 - **Silently removing a default row is not.** If a standard element is coming out, say so and confirm — an omission the operator didn't intend becomes a scope gap in a signed engagement.
 - **The default table and the card wording are locked.** Render every row above, and use the standard card copy, unless the operator explicitly says otherwise. Do not condense two rows into one, reword a row into something narrower, or drop a row because it felt redundant — *"Monthly performance & KPI call"* in place of separate *KPI tracking* and *Budget / forecast* rows is a silent scope reduction, not a tidier table. **The deviation has to come from the operator, never from your own judgment about what this client needs.** Before Phase 2, count the rows against the default and name any difference out loud. The whole point is that nobody has to proofread the table on every quote to check whether something fell off.
+- **Keep each column's checkmarks contiguous.** When a row moves between levels, reposition it so every column's ✓ run is unbroken and the levels above it form a single block underneath. KPI tracking sits immediately **above** the monthly controller advisory call for exactly this reason. A checkmark column with a gap in the middle reads to the client as a mistake rather than a distinction. *(Operator instruction, 2026-08-21.)*
 - **A level where the client keeps their own bookkeeper** marks the coding and month-end rows as *Your team*, not as excluded. That distinction matters: it says who does the work, not whether it happens. This is a **deviation** from the default, not the default itself.
 
 ### What actually separates the three levels
@@ -110,8 +111,8 @@ Never write a line like *"we keep your programs, grants, and restricted funds tr
 | Level | What the client gets that the level below doesn't |
 |---|---|
 | **Basic** | Their monthly financial statements, delivered. |
-| **Full Service** | Notes and analysis on the statements · 1099 preparation · collaboration with the tax or 990 preparer · board reporting package *(non-profit)* |
-| **Premium** | A monthly advisory call · KPI tracking · budget and forecast support · workers' comp audit support *(when they run payroll)* |
+| **Full Service** | Notes and analysis on the statements · 1099 preparation · collaboration with the tax or 990 preparer · KPI tracking · board reporting package *(non-profit)* |
+| **Premium** | A monthly advisory call · budget and forecast support · workers' comp audit support *(when they run payroll)* |
 
 ### The card wording is a default too — use it verbatim
 
@@ -120,8 +121,8 @@ The three price cards have **standard names and standard descriptions.** They ar
 | Card name | Description |
 |---|---|
 | **Basic Service** | Your complete monthly accounting through close, with financial statements delivered each month. |
-| **Full Service** | Adds notes and analysis on your statements, 1099 preparation, and collaboration with your tax preparer. |
-| **Premium Service** | Adds a monthly advisory call with your controller, KPI tracking, budget and forecast, and workers' comp and general liability audit support. |
+| **Full Service** | Adds notes and analysis on your statements, 1099 preparation, collaboration with your tax preparer, and KPI tracking. |
+| **Premium Service** | Adds a monthly advisory call with your controller, budget and forecast, and workers' comp and general liability audit support. |
 
 On a **non-profit** quote, swap *tax preparer* → *990 preparer* in Full Service, and add the board reporting package and annual audit support to the relevant cards. Those are the only routine substitutions.
 
