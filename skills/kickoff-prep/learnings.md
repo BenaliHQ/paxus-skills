@@ -32,8 +32,9 @@ client's prep notes.
   lead filled in a dossier herself, then had to redo the prep once the real one arrived; and
   the Financial Cents kickoff project's task list predates the current process. Two fixes on
   our side: a dossier that is missing, stale, or another client's now stops the run and routes
-  to firm admin, and the skill never writes a dossier. The Financial Cents task list is firm
-  admin's to update — not something this skill should compensate for.
+  to firm admin, and the skill never writes a dossier. The Financial Cents task list was firm
+  admin's to update — **resolved 2026-08-26: the kickoff-call project template has been
+  updated to match the current process.** Not something this skill should compensate for.
 - [SUGGESTION] Open question outside this skill: whether the per-client cleanup/findings folder
   one lead has been using is a firm-wide pattern or a one-off. Worth settling before two skills
   start writing findings to different places on the same client.
