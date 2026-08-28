@@ -16,6 +16,7 @@ Most of the work is already done by the bundled scripts. Your job is to orchestr
 - **The report contains per-person detail and stays local.** It is written to the runner's own `~/Downloads`. Never upload it to the shared Capacity folder in Drive — ten of the people named in section 3 have access to that folder. Passing it on is the runner's decision to make, not this skill's.
 - **No fabrication.** If a client's team or budget is unknown, leave it and flag it. Never guess a roster.
 - **Run at month end only.** The script warns when the timesheet does not cover the whole month; if that warning fires, stop and get a complete export.
+- **A filtered export is destructive, so check the input before trusting it.** Write-back *clears* the Assignments tab and rebuilds it from the timesheet alone, and the snapshot then freezes whatever that produced. So an export scoped to one person or one group does not produce a small month — it silently deletes everyone missing from the roster. Section 0 exists to catch this and it can halt the run. Never build past a halt.
 - **Skills are the engine; the data is the fuel.** No client or staff names belong in this folder. Client name mappings live in the sheet's `Aliases` tab.
 
 ## What you need before starting
@@ -44,6 +45,23 @@ gws drive files export \
   -o app.xlsx
 ```
 
+**Check the input before building.** This runs against the raw CSV, so it works even on a file the build would choke on:
+
+```python
+from checks import preflight, render as render_checks
+pre = preflight('<YYYY-MM>', '<timesheet.csv>', 'app.xlsx')
+print(render_checks(pre))
+```
+
+If `pre['halt']` is non-empty, **stop**. Show the operator what it says, get a complete export, and start again. Do not build, and above all do not write back. A halt means one of:
+
+- **Active staff who logged real hours last month have no rows at all** — the signature of an export filtered to a subset of people. Graded against last month deliberately, so someone who simply does not book client time is a note rather than a stop.
+- **Client hours or client count collapsed** against the previous snapshot — an export scoped to a group looks exactly like this.
+
+Warnings are for the operator to read, not to resolve here. One worth understanding: a person rostered in **two roles on the same client** will have *all* their hours booked to the higher role, leaving the other reading zero for the month. That reads as "no work done" when the work simply went to the other line, and it is not fixable in the data — either split the roles between two people or accept the split is not measurable.
+
+Then build:
+
 ```python
 from build_month import build
 a, s, r = build('<YYYY-MM>', None, '<timesheet.csv>', {}, None, app_path='app.xlsx')
@@ -55,11 +73,18 @@ The old staff scope spreadsheet is **not** part of this loop. Do not read capaci
 
 ```python
 from review import render, coverage, save
+from checks import drift
 text = render('<YYYY-MM>', a, s, r, coverage('<timesheet.csv>', '<YYYY-MM>'))
-path = save(text, '<YYYY-MM>')          # -> the runner's own ~/Downloads
+dr = drift('<YYYY-MM>', a, 'app.xlsx')
+path = save(render_checks(pre, dr) + text, '<YYYY-MM>')   # -> the runner's own ~/Downloads
 ```
 
-Print `text` verbatim to the operator and tell them where the file was saved.
+Print the section 0 checks followed by `text` verbatim to the operator, and tell them where the file was saved.
+
+`drift()` only ever warns, and both of its checks are worth reading rather than clearing:
+
+- **A client/role line that carried hours last month and none this month.** Sometimes a client genuinely wound down. It is also exactly what an unflipped handoff looks like — someone changed role, nobody updated Assignments, and their hours are still booking to the role they left. Role comes from the roster, never from the timesheet, so this drifts silently and indefinitely.
+- **Rostered people logging nothing, month after month.** A name that never carries hours makes the team list wrong and hides who actually owns the work. One person sat rostered on a client for ten months having logged 0.3 hours in total.
 
 ### Phase 4 — Stop and wait
 
@@ -90,12 +115,15 @@ This replaces the Assignments tab wholesale with this month's rows and updates t
 
 Snapshotting stays in the app so there is one implementation of that logic rather than two that can drift. Tell the operator to open CapacityIQ and capture the snapshot for the period.
 
+Capturing the snapshot also fills the `staff_hours` column and feeds the app's **Handoffs** tab, which compares a seat's new occupant against the previous one. That analysis lives in the app, editor-only — not in this review — so nothing needs doing here beyond capturing the month.
+
 Then verify: reconciliation balanced, the app total ties to client hours, no departed staff on a live assignment, nothing left unresolved.
 
 ## Edge cases
 
 - **Bootstrap overrides must stay empty.** `overrides.py` ships empty on purpose. Populating it would mask a genuinely new client — the whole point of §2 is that an unknown client gets flagged. The populated version exists only for rebuilding history from the retired scope sheets and lives privately in the operator's own Drive.
 - **Never add a column to the Assignments tab.** `Code.gs` rebuilds the entire row from the header and blanks any column its record does not know about, so a new column is wiped on every edit in the app. Staff and Clients are safe; Assignments is not.
+- **`SnapshotRows` has eight columns, not seven.** The eighth, `staff_hours`, holds the per-person split behind each role total as `Name:hrs, Name:hrs`. `createSnapshot` fills it from the Assignments tab automatically, so the monthly flow needs no extra step — but anything that writes `SnapshotRows` directly must carry all eight, or the per-person history silently stops. It is what lets a months-long overlap be read as the handoff it is, instead of a transition window belonging to no one. Unlike Assignments, adding to this tab is safe.
 - **Non-breaking spaces.** Client names arrive from QB carrying U+00A0, which silently splits one client into two. `tidy()` and `pname()` handle it — 23 names were affected when this was found.
 - **Role suffixes on names.** Some sources carry a trailing role marker on a person's name (`... - S`) to denote a second role. `pname()` strips it; the role has its own column.
 - **Deepest job code wins.** Resolve `<parent>: <sub>` against the client list, rolling up to the parent when it has no sub-clients. Anything unresolvable is reported, never guessed.
