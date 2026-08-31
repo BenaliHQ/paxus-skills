@@ -844,38 +844,40 @@ For each of the 3 assigned team members (Controller, Lead, Staff in that page-2 
 
 ### Phase 3D — Text-swap pages 1 and 7
 
-Start an editing transaction on the working copy:
+**Current tool names (CORRECTED 2026-08-31):** the standalone `start-editing-transaction` / `perform-editing-operations` / `commit-editing-transaction` tools referenced elsewhere in older notes no longer exist. The current MCP surface is:
+- `mcp__claude_ai_Canva__read-design(design_id, open_transaction: true, filter: {fields: ["design_content","thumbnails"], page_indices: [...], thumbnail_pages: [...]})` — opens a transaction, returns `transaction.transaction_id`, per-page `design_content` (with `locator_id`s to target), and before-thumbnails.
+- `mcp__claude_ai_Canva__edit-design(transaction_id, page_index, operations: [...], finalize: "keep_open" | "commit" | "cancel")` — applies operations to ONE page per call (all ops in a call must target the same `page_index`) and returns an after-thumbnail. Finalize with a separate call (`operations` omitted/empty) — `commit` and `cancel` cannot be combined with `operations`.
 
-```
-mcp__claude_ai_Canva__start-editing-transaction(design_id: <working copy>)
-```
+Open a transaction and inspect pages 1, 2, and 7 together (one `read-design` call, `page_indices: [1,2,7]`) to capture before-thumbnails and locator_ids in one shot.
 
-Find the element IDs for the package-name placeholder on page 1 (e.g., `FULL SERVICE` / `BASIC` / `PREMIUM`) and the `XXXXX` placeholder on page 7. These are stable on the Full Service master:
+Find the element IDs (`locator_id`) for the package-name placeholder on page 1 (e.g., `FULL SERVICE` / `BASIC` / `PREMIUM`) and the `XXXXX` placeholder on page 7. These are stable on the Full Service master:
 - Page 1 "FULL SERVICE": `PBBmQW3jLpcqG42m-LBNJHY2pW54z1Fnf`
 - Page 7 "XXXXX": `PBfbgrMgx6k3P9Mm-LBVBvW2L098zGTDK`
 
-For Basic / Premium, verify the element IDs on first use (re-parse from the start-editing-transaction response).
+For Basic / Premium, verify the element IDs on first use (re-parse from the `read-design` response).
 
-Operations to issue in a single `perform-editing-operations` call:
+Page 1 operations (`page_index: 1`, one `edit-design` call):
 
 ```python
 [
-  {"type": "find_and_replace_text", "element_id": "<page1 placeholder>", "find_text": "<package name>", "replace_text": "<Client legal name>"},
-  {"type": "find_and_replace_text", "element_id": "<page7 placeholder>", "find_text": "XXXXX", "replace_text": "<Client legal name>"},
+  {"type": "find_and_replace_text", "locator_id": "<page1 placeholder>", "find_text": "<package name>", "replace_text": "<Client legal name>"},
   {"type": "update_title", "title": "<Client legal name> - Welcome Packet"}
 ]
 ```
 
-Then commit:
+Page 7 operations (`page_index: 7`, separate `edit-design` call — different page, can't share a call with page 1):
+
+```python
+[{"type": "find_and_replace_text", "locator_id": "<page7 placeholder>", "find_text": "XXXXX", "replace_text": "<Client legal name>"}]
 ```
-mcp__claude_ai_Canva__commit-editing-transaction(transaction_id: <returned id>)
-```
+
+**Check the page 1 after-thumbnail for title/photo overlap before moving on.** The title's text box auto-grows *downward* from its original `top` when the client name wraps to 2 lines (true for most names longer than "FULL SERVICE"/"BASIC"/"PREMIUM") — this can push the second line down into the fixed-position photo below it. If the thumbnail shows tight/overlapping spacing, reposition the title up in the same page-1 call before moving on: `{"type": "position_element", "locator_id": "<page1 placeholder>", "top": 90, "left": 0}` (down from the default ~204 — tune based on how tall the 2-line box actually rendered). A short single-line name may not need this.
 
 ---
 
-### Phase 3E — Insert 3 team blocks on page 2
+### Phase 3E — Insert team blocks on page 2
 
-Open a new editing transaction on the same working copy. Page 2 layout (816×1056, "Meet Your Team" title at y≈122, URL at y≈993):
+Open a fresh `edit-design` call (`page_index: 2`, same transaction). Page 2 layout (816×1056, "Meet Your Team" title bottom ≈166, footer URL top ≈993):
 
 | Position | Top | Left | Width | Height |
 |---|---|---|---|---|
@@ -883,14 +885,17 @@ Open a new editing transaction on the same working copy. Page 2 layout (816×105
 | Lead (middle) | 450 | 62 | 693 | 260 |
 | Staff (bottom) | 730 | 62 | 693 | 260 |
 
-Single `perform-editing-operations` call with 3 `insert_fill` ops (asset_type=image, asset_ids from Phase 3C, page_id of page 2). Then commit.
+One `insert_fill` op per assigned role (asset_type=image, asset_ids from Phase 3C, page_id of page 2) — 2 or 3 ops depending on whether Staff is assigned yet.
 
-**Visual-size mismatch escape hatch.** If the operator says one block renders visually larger than the others after export (because a bio PNG's internal composition has less padding than the others), keep the other two blocks alone and shrink the offending one:
+**If fewer than 3 blocks are placed, don't use the default positions as-is — center the pair instead.** The default tops (170/450/730) assume all 3 slots fill; with only 2 (e.g. Staff still `TBD`), those positions sit top-heavy with a large empty gap below, not centered. Recompute centered positions between the title bottom (~166) and footer top (~993) — e.g. for 2 blocks with a 60px gap: `top = 166 + (827 - (260+60+260)) / 2 ≈ 290` for the first, `+320` for the second (→ 290 and 610). Recompute if the actual title/footer positions differ on a master.
+
+Check the after-thumbnail, then finalize with a separate call: `edit-design(transaction_id, finalize: "commit")` (operations omitted).
+
+**Visual-size mismatch escape hatch.** If the operator says one block renders visually larger than the others after export (because a bio PNG's internal composition has less padding than the others), keep the other blocks alone and shrink the offending one in a fresh transaction:
 
 ```python
-# Inside a fresh transaction:
-{"type": "resize_element", "element_id": "<block element id>", "width": 640, "preserve_aspect_ratio": True}
-{"type": "position_element", "element_id": "<block element id>", "top": <adjusted top>, "left": <adjusted left>}
+{"type": "resize_element", "locator_id": "<block element id>", "width": 640, "preserve_aspect_ratio": True}
+{"type": "position_element", "locator_id": "<block element id>", "top": <adjusted top>, "left": <adjusted left>}
 ```
 
 Rule of thumb: `width: 640` (down from 693, ~92%) with `preserve_aspect_ratio: true` and re-centering (top +10, left +26) matched the sizing on the other two blocks on a prior production run. Iterate as needed.
@@ -955,7 +960,7 @@ Rules for the draft (all verified against the tool):
 - **Bare email addresses only.** The tool rejects the `Name <email>` format — pass plain addresses in the `to`/`cc` arrays.
 - **Use `body` (plain text), not `htmlBody`.** Keeps it clean and matches Jennifer's paste-clean preference. Don't include the subject line or a `TO:/CC:` block inside the body — those are separate fields.
 - **No sign-off or signature in the body** — Gmail's signature auto-appends (per `~/.claude/CLAUDE.md`). End on the warm closer line only.
-- **Attachments are NOT supported by the draft tool** (confirmed — the `attachments` field no-ops). The welcome packet PDF cannot be attached programmatically. Flag this in the report so Jennifer attaches `Welcome Packet - {Client legal name}.pdf` from Perm File manually before sending.
+- **Attachments are supported by the tool's schema (`attachments` array, base64 `content`), but don't try to attach the welcome packet PDF this way — CORRECTED 2026-08-31.** A regular-quality packet export runs ~1-1.5MB, which base64-encodes to ~1.5-2M characters — base64 tokenizes at close to 1 token per character, so embedding it would require ~1.5-2M tokens in a single tool call. That's far past what any single response can hold, independent of the tool's 25MB size limit. This isn't a missing capability, just a hard ceiling on how much content the assistant can emit in one turn. Flag this in the report so Jennifer attaches `Welcome Packet - {Client legal name}.pdf` from Perm File manually before sending.
 - Capture the returned draft `id` for the report.
 - If the Gmail MCP tool is unavailable (e.g., headless/cron run with no interactive auth), skip the draft, note it in the report, and rely on the markdown archive so Jennifer can paste manually.
 

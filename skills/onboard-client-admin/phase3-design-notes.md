@@ -117,12 +117,24 @@ Template lives at `~/.claude/skills/onboard-client-admin/welcome-email-template.
 
 **Staff Accountant is intentionally "TBD" in the email** even when assigned internally — the packet page 2 shows the staff member but the email keeps that line open until services begin.
 
-**Delivery (updated 2026-07-22):** create the email as a **live Gmail draft** via `mcp__claude_ai_Gmail__create_draft`, and keep a markdown archive in the client's Perm File. See SKILL.md Phase 3H for the exact call. The draft tool takes bare email addresses only (no `Name <email>`), uses plain-text `body`, no sign-off (Gmail signature auto-appends), and **cannot attach files** — Jennifer attaches the packet PDF manually before sending.
+**Delivery (updated 2026-07-22):** create the email as a **live Gmail draft** via `mcp__claude_ai_Gmail__create_draft`, and keep a markdown archive in the client's Perm File. See SKILL.md Phase 3H for the exact call. The draft tool takes bare email addresses only (no `Name <email>`), uses plain-text `body`, no sign-off (Gmail signature auto-appends).
+
+**Attaching the packet — CORRECTED 2026-08-31:** the draft tool's schema DOES accept attachments (base64 `content` in an `attachments` array) — it's not a missing capability. But a real welcome packet PDF (even "regular" export quality, ~1-1.5MB) base64-encodes to ~1.5-2M characters, and base64 tokenizes at close to 1 token per character — embedding that inline would take ~1.5-2M tokens in one tool call, which no single assistant turn can produce. This is a hard ceiling on assistant output, not a tool limitation. **Jennifer still attaches the packet PDF manually before sending** — don't keep re-attempting this per client.
 
 **Recipients:**
 - TO: primary contact from FC (Phase 1 handoff)
 - CC: Lead + Controller + Staff + lisa@paxuscpa.com
 - Attach (manual): the rendered Welcome Packet PDF from Drive
+
+---
+
+## Known layout issues + fixes (found 2026-08-31, check on every client)
+
+**Page 1 title can overlap the photo when the client name wraps to 2 lines.** The title text box auto-grows in height when `find_and_replace_text` produces a longer string, but it grows *downward* from the same anchored `top` — so a 2-line client name (most names longer than "FULL SERVICE"/"BASIC"/"PREMIUM") pushes the second line down toward the fixed-position photo below it. Always check the after-thumbnail for this. Fix: `position_element` to move the title's `top` up (e.g., from ~204 to ~90) so the taller box has room before the photo starts (~327). A single-line name may not need this — only reposition if the thumbnail actually shows tight/overlapping spacing.
+
+**Page 2 team blocks look off-center when fewer than 3 are placed.** The default positions (tops 170/450/730) assume all 3 slots are filled. If Staff is `TBD` and only 2 blocks are inserted, they sit high on the page with a large empty gap below — not vertically balanced. Fix: reposition both used blocks to center as a pair between the "Meet Your Team" title (bottom ~166) and the footer URL (top ~993) — e.g., tops 290 and 610 (matches the exact gap of 3 blocks, 260 each, but centered as 2). Recompute if the actual title/footer positions differ on a master.
+
+Both fixes are per-page `position_element` operations inside the existing editing transaction — no new transaction needed if caught before commit; if caught after commit (as happened here), open a fresh transaction, fix, commit again, and re-export.
 
 ---
 
