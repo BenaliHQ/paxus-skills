@@ -174,7 +174,9 @@ curl -s -X POST \
 - No `GET /projects/{id}` or `DELETE /projects/{id}`. To verify tasks: `GET /api/v1/tasks?project_id={FC_PROJECT_ID}`. Stray projects must be closed via FC UI.
 - Section-to-user mappings inherit from the template — don't try to assign at creation time.
 
-**5 standard recurring project templates are NOT attached in Phase 1.** They're operational (weekly bookkeeping, monthly review, monthly close, cleanup, tax returns) and only make sense after the engagement is signed. Attaching them pre-signing clutters the prospect's FC record and creates cleanup work if the client doesn't sign (FC has no API to delete a stray project — closure is UI-only). See **Phase 2H** for the recurring-template attachment + role-reassignment logic. Client's Onboarding Checklist (`9685085`) still inherits automatically from the New Client Onboarding template and DOES come along in Phase 1 — that's fine, it's a client-facing checklist tied to the onboarding flow itself.
+**5 standard recurring project templates are NOT attached in Phase 1.** They're operational (weekly bookkeeping, monthly review, monthly close, cleanup, tax returns) and only make sense after the engagement is signed. Attaching them pre-signing clutters the prospect's FC record and creates cleanup work if the client doesn't sign (FC has no API to delete a stray project — closure is UI-only). See **Phase 2H** for the recurring-template attachment + role-reassignment logic.
+
+**Never POST the Client's Onboarding Checklist (`9685085`) from this skill, in any phase — CORRECTED 2026-09-02.** Whether or not it auto-inherits from the New Client Onboarding template, creating it is an automated step on Jennifer's own end that fires when she completes a task in FC. POSTing it manually here creates a stray duplicate project that has to be closed by hand in the FC UI (no API delete exists). If a later phase needs the checklist and it isn't there, ask Jennifer rather than creating it — do not call `POST /templates/9685085/projects` anywhere in this skill.
 
 ---
 
@@ -367,7 +369,7 @@ Ask the operator (one batched message — skip questions the auto-discovery alre
 
 Then look for a Phase 1 handoff at `handoffs/{slug}-*.md`. If found, read it to recover FC client ID, contact, package. If not found, ask for the FC client ID so Phase 2's handoff entry can link to it.
 
-**Verify the Phase 1 New Client Onboarding project + Client's Onboarding Checklist still exist (do NOT skip).** Phase 2 assumes Phase 1's onboarding project is still attached — but it can be gone. The FC **UI can hard-delete** projects (the API can't — `DELETE /projects/{id}` → 405), and when the operator cleans up stray projects after Phase 1, it's easy to delete the legitimate New Client Onboarding project and its inherited Client's Onboarding Checklist along with them. This happened on a prior client run (the Phase 1 FC project came back `GET /projects/{id}` → HTTP 404 "No query results"). If it's missing and Phase 2 proceeds blindly, the client ends up with no Firm Admin Tasks and — critically — no Client's Onboarding Checklist, which **Phase 5's day-before-kickoff email depends on** to list the client's outstanding items.
+**Verify the Phase 1 New Client Onboarding project still exists (do NOT skip).** Phase 2 assumes Phase 1's onboarding project is still attached — but it can be gone. The FC **UI can hard-delete** projects (the API can't — `DELETE /projects/{id}` → 405), and when the operator cleans up stray projects after Phase 1, it's easy to delete the legitimate New Client Onboarding project along with them. This happened on a prior client run (the Phase 1 FC project came back `GET /projects/{id}` → HTTP 404 "No query results"). If it's missing and Phase 2 proceeds blindly, the client ends up with no Firm Admin Tasks.
 
 Check it explicitly:
 
@@ -376,16 +378,17 @@ Check it explicitly:
 curl -s -A "Mozilla/5.0" -H "Authorization: Bearer $TOKEN" -H "Accept: application/json" \
   "https://app.financial-cents.com/api/v1/projects/<FC_PROJECT_ID>" -w "\nHTTP %{http_code}\n"
 # Belt-and-suspenders: paginate GET /projects?per_page=100 and confirm at least one project with
-# client.id == <FC_CLIENT_ID> whose title matches "onboarding" (New Client Onboarding) AND one matching
-# "checklist" (Client's Onboarding Checklist). Closed projects DO appear in the list, so absence = deleted.
+# client.id == <FC_CLIENT_ID> whose title matches "onboarding" (New Client Onboarding). Closed projects
+# DO appear in the list, so absence = deleted.
 ```
 
-If **either the New Client Onboarding project or the Client's Onboarding Checklist is missing**, stop and tell the operator what's gone, then ask how to restore before continuing Phase 2:
-- **Full project (usual choice):** `POST /templates/13565957/projects {"client_id":<id>}` — restores Firm Admin Tasks (auto-assigned to Jennifer) + the Client's Onboarding Checklist. Note the pre-signing Firm Admin Tasks reappear as open even if already done — the operator ticks those off.
-- **Checklist only:** `POST /templates/9685085/projects {"client_id":<id>}` — restores just the client-facing checklist, skipping the mostly-done admin tasks.
-- **Leave it:** operator handles manually in the FC UI. If chosen, record the decision in the handoff and add a Phase 5 heads-up that no FC checklist exists.
+If the **New Client Onboarding project is missing**, stop and tell the operator what's gone, then ask how to restore before continuing Phase 2:
+- **Restore (usual choice):** `POST /templates/13565957/projects {"client_id":<id>}` — restores Firm Admin Tasks (auto-assigned to Jennifer). Note the pre-signing Firm Admin Tasks reappear as open even if already done — the operator ticks those off.
+- **Leave it:** operator handles manually in the FC UI. If chosen, record the decision in the handoff.
 
-Record the outcome (found intact / restored via which template / left per operator) in the Phase 2 handoff.
+**Do not check for or restore the Client's Onboarding Checklist (`9685085`) here — that project is created by Jennifer's own automation on her end, not by this skill, in any phase.** If a later phase needs it and it doesn't exist, flag that to Jennifer rather than creating it.
+
+Record the outcome (found intact / restored / left per operator) in the Phase 2 handoff.
 
 **FC API needs a browser User-Agent.** FC's WAF returns HTTP 403 to the default Python `urllib` User-Agent (`Python-urllib/x.y`) while `curl` passes. If you script FC calls in Python (`urllib`/`requests`), always send `User-Agent: Mozilla/5.0`. (Discovered 2026-07-10 — a paginated `urllib` scan 403'd on every page until the UA header was added; `curl` had been fine throughout.)
 
@@ -566,7 +569,7 @@ These are operational projects that make sense only after the engagement is sign
 | Cleanup | `8266589` | `Client - Cleanup` |
 | Tax Returns | `7959692` | `Tax Returns` |
 
-Leading asterisks in three of the titles are intentional. Client's Onboarding Checklist (`9685085`) inherits automatically from the New Client Onboarding project (created back in Phase 1) — do NOT POST it explicitly here.
+Leading asterisks in three of the titles are intentional. Client's Onboarding Checklist (`9685085`) is created by Jennifer's own automation on her end (not this skill, and not by template inheritance) — do NOT POST it here or anywhere else in this skill.
 
 **Attach each, then reassign by role:**
 
@@ -1229,7 +1232,7 @@ Ask the operator (one batched message — skip the ones the handoff already answ
 
 1. **Kickoff date and time** — paste from Google Calendar (e.g., `Tuesday, July 15 at 2:00 PM`).
 2. **What's been received so far** — one short line (e.g., `the bank statements, prior 990, and QBO login`). Leave blank if nothing yet.
-3. **Outstanding items** — pull these live from FC via `GET /api/v1/client-tasks` (see the Phase 5 rule above): find the client's "Client's Onboarding Checklist" project id, then list the client tasks on it where `is_completed == false`. Only ask the operator to paste if the endpoint returns nothing.
+3. **Outstanding items** — pull these live from FC via `GET /api/v1/client-tasks` (see the Phase 5 rule above): find the client's "Client's Onboarding Checklist" project id, then list the client tasks on it where `is_completed == false`. If no such project exists for this client, do NOT create one (never `POST /templates/9685085/projects` — see Phase 1E) — ask the operator to paste the outstanding items instead, or flag that the checklist is missing.
 4. **Primary contact** — if the client has multiple FC contacts (e.g., President + Treasurer), confirm which one gets the TO line. Default to the treasurer / original consultation contact — that's usually the day-to-day.
 5. **Send-time greeting** — default "Good afternoon" per Jennifer's template. Override only if she says otherwise.
 
@@ -1282,7 +1285,7 @@ Paste into Gmail and send. This is a client-facing email — CC the internal tea
 
 **Skill work — split across phases by signing gate.** As of 2026-07-08, recurring project attachment moved out of Phase 1 and into Phase 2 (post-signing). Rationale: attaching operational recurring projects (weekly bookkeeping, cleanup, tax returns, etc.) to a prospect who hasn't signed clutters the FC record and creates cleanup work if they don't sign — FC has no API to delete a stray project, so closures are UI-only. The skill only POSTs the New Client Onboarding project itself in Phase 1 (its Firm Admin Tasks belong pre-signing).
 
-- **Phase 1E** POSTs the New Client Onboarding project only. Client's Onboarding Checklist (`9685085`) inherits automatically from that project and does NOT need explicit POSTing.
+- **Phase 1E** POSTs the New Client Onboarding project only. Client's Onboarding Checklist (`9685085`) is never POSTed by this skill, in any phase — it's created by Jennifer's own automation on her end (corrected 2026-09-02).
 - **Phase 2H** POSTs the 5 standard recurring templates (Weekly Bookkeeping Tasks `5082639`, Monthly Client - Review `5082645`, Monthly Client - Month End Close `5110296`, Client - Cleanup `8266589`, Tax Returns `7959692`) and reassigns tasks by role.
 - **Phase 2I** POSTs the 1099 templates when the package is Full Service or Premium Service.
 
