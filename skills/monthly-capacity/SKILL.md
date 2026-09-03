@@ -84,6 +84,7 @@ Print the section 0 checks followed by `text` verbatim to the operator, and tell
 `drift()` only ever warns, and both of its checks are worth reading rather than clearing:
 
 - **A client/role line that carried hours last month and none this month.** Sometimes a client genuinely wound down. It is also exactly what an unflipped handoff looks like — someone changed role, nobody updated Assignments, and their hours are still booking to the role they left. Role comes from the roster, never from the timesheet, so this drifts silently and indefinitely.
+  - Read the whole client before concluding a handoff. If the *other* roles still carry hours, the quiet line is the suspicious one. If **every** role went quiet, the client left — set its status to **Inactive** in the app. A departed client left on Active keeps producing budgeted role lines with no hours and nobody assigned, which reads every month as work the firm failed to deliver.
 - **Rostered people logging nothing, month after month.** A name that never carries hours makes the team list wrong and hides who actually owns the work. One person sat rostered on a client for ten months having logged 0.3 hours in total.
 
 ### Phase 4 — Stop and wait
@@ -147,8 +148,11 @@ Capturing the snapshot also fills the `staff_hours` column and feeds the app's *
 
 Then verify: reconciliation balanced, the app total ties to client hours, no departed staff on a live assignment, nothing left unresolved.
 
+Check the captured period landed as **text** — `2026-08`, not a date. In the Sheet, `SnapshotIndex` and column A of `SnapshotRows` / `SnapshotStaff` should read as the period string. If a long `Sat Aug 01 2026 …` string appears anywhere in the app, that month was written by a build of the app from before the 2026-09 fix; see the edge case below.
+
 ## Edge cases
 
+- **A snapshot period can arrive as a date, not the period string.** Apps Script's `setValues()` parses date-looking text the way typing into a cell does, so `"2026-08"`, `"August 2026"` and `"2026-08-01"` all became 1 Aug 2026 — 430 cells on the first month ever captured through the app. Fixed in the app (`appendSnapshot_` forces the column to text before writing; `periodKey_` normalises every comparison), and `checks.py` normalises here too via `_pkey()`. The failure this guards against is the **mixed** state — `SnapshotIndex` holding a date while `SnapshotRows` holds text — where the prior-snapshot lookup silently returns **0 hours**, tripping the collapsed-hours halt and stopping the next month's run on a false alarm.
 - **A client is never dropped for being unknown, but its hours are.** The review flags it in §2; the build leaves the hours in `unresolved`. Only Phase 4b brings them into the month. Verified on the 2026-08 close: two new clients, 11.13 hours, which write-back alone would have silently omitted.
 - **Bootstrap overrides must stay empty.** `overrides.py` ships empty on purpose. Populating it would mask a genuinely new client — the whole point of §2 is that an unknown client gets flagged. The populated version exists only for rebuilding history from the retired scope sheets and lives privately in the operator's own Drive.
 - **Never add a column to the Assignments tab.** `Code.gs` rebuilds the entire row from the header and blanks any column its record does not know about, so a new column is wiped on every edit in the app. Staff and Clients are safe; Assignments is not.
