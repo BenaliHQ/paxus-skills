@@ -5,7 +5,7 @@ description: >
   non-profit or for-profit. For non-profits it fronts the monthly board financials package (CFO /
   non-profit clients); for for-profit clients it is the client's own monthly dashboard (Wheel of Service
   businesses, advisory clients, and similar). Pulls
-  monthly financials from the Paxus shared Drive via the gws CLI (read-only), computes bespoke KPIs
+  monthly financials from the Paxus shared Drive via the gws CLI, computes bespoke KPIs
   against confirmed benchmarks, renders a brand-consistent one-page dashboard to PDF, and either merges
   it as page 1 of the board package, delivers it standalone, or hands it off to the monthly client
   email. For repeat clients, uses the prior delivered dashboard and the per-client spec file as the spec; for
@@ -162,10 +162,11 @@ If anything is missing, stop and ask only for what's missing.
 
 ---
 
-## Step 1 — Pull the source files (gws, read-only)
+## Step 1 — Pull the source files (gws)
 
 The local Google Drive path on macOS is sandbox-blocked (`Operation not permitted`) — **always use the
-gws CLI** (read-only), never the local `CloudStorage` path.
+gws CLI**, never the local `CloudStorage` path. Everything in this step is a read; the only write this
+skill ever makes is the finished dashboard in Step 7.
 
 **Resolve the folder once, then store the IDs.** Drive has many same-named folders across clients (multiple
 "Financials", "2026", etc.), so blind `name contains` searches are ambiguous and slow. On a **repeat** run,
@@ -370,8 +371,40 @@ double-add. Verify the merged page count and that page 1 is the dashboard.
 
 ## Step 7 — Operator review, upload, and persistence
 
-**gws is read-only** — Claude cannot write to Drive. After the operator approves, they upload it
-themselves. Hand them the exact local path and the steps for the client's delivery mode:
+**Try the upload; fall back to the operator if it fails.** gws can write to Drive when the operator's
+account allows it — attempt the upload, and hand off the local path only if it doesn't go through. Never
+change or widen the gws scope to make an upload work: if it fails, that is the fall-back path, not a
+problem to solve.
+
+**Ask before uploading.** The operator approves the dashboard content at Step 5; uploading puts a file in
+the client's Drive, which is a separate decision. Confirm it plainly — *"Want me to save this to their
+Drive, or hand you the file?"* — unless they already said to file it.
+
+**Step 7a — attempt the upload** (standalone and merged modes; skip for email ride-along):
+
+```bash
+cd <folder containing the PDF>      # --upload only accepts a path INSIDE the working directory
+gws drive files create \
+  --json '{"name":"MM.DD.YYYY <Client> Dashboard.pdf","parents":["<financials-folder-id>"],"mimeType":"application/pdf"}' \
+  --upload "MM.DD.YYYY <Client> Dashboard.pdf" \
+  --params '{"supportsAllDrives":true,"fields":"id,name,parents,webViewLink"}'
+```
+
+- `--upload` rejects an absolute path outside the current directory with a `validationError`. `cd` to the
+  file's folder first and pass a **relative filename** — this is the most common failure and it is not a
+  permissions problem.
+- On success, verify by listing the target folder, and give the operator the `webViewLink`.
+- **A 403 / insufficient-permission error means this operator can't write to that drive.** Say so plainly
+  and switch to the manual hand-off below. Don't retry, and don't try another scope or account.
+
+Two separate gates decide whether the upload works, and it's worth naming which one failed:
+1. **Drive role on that shared drive.** *Content manager* or *Manager* can upload; *Contributor* varies;
+   *Viewer* / *Commenter* cannot. Roles differ per drive and per teammate — check with
+   `gws drive permissions list --params '{"fileId":"<driveId>","supportsAllDrives":true}'`.
+2. **gws being installed and authenticated** on that person's machine at all.
+
+**Step 7b — manual hand-off** (when the upload isn't possible, wasn't wanted, or the mode is ride-along).
+Hand the operator the exact local path plus the steps for the client's delivery mode:
 
 - **Merged:** open the existing board financials file → **Manage versions → Upload new version**
   (keeps the link stable and a recoverable prior version), or replace it.
@@ -382,7 +415,8 @@ themselves. Hand them the exact local path and the steps for the client's delive
   hand the operator that path; they attach it (or pass it to `/monthly-client-email`). This skill never
   drafts the email and never sends it.
 
-Do not attempt to escalate gws to a write scope.
+**Record which path was used** in the client's `dashboard-spec.md`, so the next month starts from what
+actually worked for the person running it rather than re-discovering it.
 
 After operator approval, create/update `~/paxus-ai/clients/<slug>/dashboard-spec.md` (the **shared firm
 location**, so any teammate can run next month). Mandatory for cold starts; required whenever a repeat
@@ -470,8 +504,9 @@ Quick cheat-sheet; the steps above are authoritative.
 - **Flag one-time/timing items** (pledges, front-loaded grants, one-time donations, one-off gains) — footnote
   them; never let them read as run-rate.
 - **One page, navy/teal scheme** for every client (not the Paxus brand) unless the operator says to rebrand.
-- **Delivery is per-client:** merged page-1, standalone file, or email ride-along. gws is read-only — the
-  operator uploads; back up the original before any merge/overwrite.
+- **Delivery is per-client:** merged page-1, standalone file, or email ride-along. Ask before filing to
+  Drive, then **try the upload and fall back to handing over the file** if the operator's account can't
+  write. Never widen the gws scope to force it. Back up the original before any merge/overwrite.
 - **Spec is shared, not personal:** persist to `~/paxus-ai/clients/<slug>/dashboard-spec.md` so any teammate
   can run next month.
 
