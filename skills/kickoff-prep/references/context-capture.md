@@ -64,6 +64,7 @@ is now complete."**
 | **07** Monthly workflow | D2 accounting_method | Cash or accrual — for the financials and for the tax return. |
 | **07** | D3 fiscal_year_end | Year end. *Nonprofits are often June 30 — ask, don't assume.* |
 | **07** | D5 classification_tracking | What they need the numbers cut by — by job, by location, by program, by department. The single highest-value question on this list for job-cost businesses. |
+| **07** | D9b recurring_journal_entries *(hand-computed half)* | Which month-end entries someone works out by hand each period rather than QuickBooks posting them automatically — cost allocations, wage splits across programs or jobs, drawing down money received up front, accruals. For each one: what report it comes off, who works it out, and how we check it. *Head knowledge — no export will ever find these.* |
 | **07** | D7 materiality *(client-facing half)* | What we should just code and what they always want to be asked about. |
 | **07** | D26 client_question_send_schedule | How often they want the open-questions list — weekly, monthly, twice a month. |
 | **07** | A12 *(their side)* | What they'll be doing each month to support us, so it's said out loud once. |
@@ -87,7 +88,7 @@ like the call failed to get them.
 | D4 chart_of_accounts | The COA export and the QuickBooks review. |
 | D6 vendor_coding_rules | The first close, and the bank-rule export. |
 | D8 transfer_and_clearing_rules | The file — visible in the accounts, not in the client's head. |
-| D9 recurring_journal_entries | The recurring-transactions export. |
+| D9 recurring_journal_entries *(QBO templates only)* | The recurring-transactions export. **Only the templated half** — the hand-computed close entries (D9b) are head knowledge and are asked at item 07 above. |
 | D21 sales_deposit_reconciliation_rules | The first month's tie-out. |
 | D24 sales_tax detail *(jurisdictions, logins)* | The dossier flag plus item 6 pointers; the detail follows. |
 | D7 exact thresholds | Ours to set, informed by what the client says at item 7. |
