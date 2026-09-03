@@ -91,11 +91,37 @@ Print the section 0 checks followed by `text` verbatim to the operator, and tell
 
 Sections 2, 3 and 5 are questions. Do not proceed until they are answered:
 
-- **§2 New clients** — hours logged against something with no entry in the app. Get the team and budgets. A client with hours but no entry is *flagged, never dropped*.
+- **§2 New clients** — hours logged against something with no entry in the app. Get the **team and the budgets**. The client is flagged, never silently ignored — but its **hours are not in the build**: they sit in `unresolved` in §1 until the client exists in the app. Phase 4b is what puts them in.
 - **§3 Hours short** — recorded less than a full month with no reason on file. If the operator knows why, record it in the Staff tab's `unpaid_off_hours`; if not, those are conversations for them to have, not something to resolve here.
 - **§5 Client phase** — the 20–50% onboarding band is deliberately undecided, and clean-up coded on an Active client is a flag. Both are the operator's call.
 
 If reconciliation in §1 does not balance, **stop entirely** and say so. Do not write a month that does not tie.
+
+### Phase 4b — Stage any new clients and rebuild
+
+Skip this when §2 was empty. Otherwise it is **not optional** — the month does not tie without it.
+
+`build()` only emits assignment rows for job codes that resolve to a known client, so a §2 client's hours are not in `a` at all. They are in `unresolved`. Adding the client at write-back time adds the *row* and not the *hours*, which writes a month that is short by exactly that client's total and a client sitting in the app with zero assignments.
+
+So put them in the workbook first, then build the month again:
+
+```python
+from newclients import stage
+stage('app.xlsx', [
+    {'name': '<exactly as §2 shows it>',
+     'team': [('<person>', 'Staff'), ('<person>', 'Lead'), ('<person>', 'Controller')],
+     'status': 'Onboarding',        # or 'Active' — see below
+     'staff_budget': 0.0, 'lead_budget': 0.0, 'controller_budget': 0.0},
+])
+a, s, r = build('<YYYY-MM>', None, '<timesheet.csv>', {}, None, app_path='app.xlsx')
+```
+
+Then **re-render the review** (Phase 3) and confirm `unresolved` is now **0** before going on.
+
+- **The team is required, and it is why §2 asks for it.** Role comes from the roster, never from the timesheet. With no roster row the build falls back to each person's primary role, which is not necessarily the role the operator named.
+- **Leave a budget out rather than inventing one.** A client quoted but not yet budgeted is a real state; a guessed budget is not.
+- **Status follows the coding, not the default.** A client whose hours are mostly Onboarding / Clean-up service items belongs in `Onboarding` — check §5 rather than accepting `Active`.
+- `stage()` refuses a duplicate client, a missing team, a (person, role) pair that is not on the Staff tab, or an unknown Clients column, and writes nothing when it refuses.
 
 ### Phase 5 — Write back
 
@@ -107,6 +133,8 @@ plan = write_month(SHEET_ID, '<YYYY-MM>', a, s,
                    new_clients=[...],   # approved in §2, or omit
                    dry_run=True)        # review the plan first
 ```
+
+`new_clients` here adds the rows to the **live sheet's** Clients tab and nothing more — it is the counterpart to Phase 4b, not a replacement for it. Pass the same clients to both. The ids the two assign do not need to match: writeback matches assignment rows to clients by name.
 
 Show the plan (rows to write, rows replaced, staff updated, anything unmatched). If `unmatched` is non-empty, resolve it before applying. Then re-run with `dry_run=False`.
 
@@ -125,6 +153,7 @@ Check the captured period landed as **text** — `2026-08`, not a date. In the S
 ## Edge cases
 
 - **A snapshot period can arrive as a date, not the period string.** Apps Script's `setValues()` parses date-looking text the way typing into a cell does, so `"2026-08"`, `"August 2026"` and `"2026-08-01"` all became 1 Aug 2026 — 430 cells on the first month ever captured through the app. Fixed in the app (`appendSnapshot_` forces the column to text before writing; `periodKey_` normalises every comparison), and `checks.py` normalises here too via `_pkey()`. The failure this guards against is the **mixed** state — `SnapshotIndex` holding a date while `SnapshotRows` holds text — where the prior-snapshot lookup silently returns **0 hours**, tripping the collapsed-hours halt and stopping the next month's run on a false alarm.
+- **A client is never dropped for being unknown, but its hours are.** The review flags it in §2; the build leaves the hours in `unresolved`. Only Phase 4b brings them into the month. Verified on the 2026-08 close: two new clients, 11.13 hours, which write-back alone would have silently omitted.
 - **Bootstrap overrides must stay empty.** `overrides.py` ships empty on purpose. Populating it would mask a genuinely new client — the whole point of §2 is that an unknown client gets flagged. The populated version exists only for rebuilding history from the retired scope sheets and lives privately in the operator's own Drive.
 - **Never add a column to the Assignments tab.** `Code.gs` rebuilds the entire row from the header and blanks any column its record does not know about, so a new column is wiped on every edit in the app. Staff and Clients are safe; Assignments is not.
 - **`SnapshotRows` has eight columns, not seven.** The eighth, `staff_hours`, holds the per-person split behind each role total as `Name:hrs, Name:hrs`. `createSnapshot` fills it from the Assignments tab automatically, so the monthly flow needs no extra step — but anything that writes `SnapshotRows` directly must carry all eight, or the per-person history silently stops. It is what lets a months-long overlap be read as the handoff it is, instead of a transition window belonging to no one. Unlike Assignments, adding to this tab is safe.
