@@ -19,7 +19,7 @@ set, and all books links must be entity-scoped. Never rename or duplicate the
 * [Fixed asset schedule](fixed-asset-schedule.md) - nonprofit-flagged schedule pointer
 * [Bank & card accounts](bank-and-card-accounts.md) - accounts, recon scope, statement sources, feed recovery notes
 * [Document intake](document-intake.md) - document tool configuration and attachment policy
-* [Point of sale](point-of-sale.md) - POS platforms, report specs, deposit reconciliation
+* [Point of sale](point-of-sale.md) - POS platforms, report specs, deposit reconciliation, month-end cut-off and accrued sales
 * [Payroll](payroll.md) - configuration and processing rules
 * [Sales tax](sales-tax.md) - filing configuration
 * [Bill payment](bill-payment.md) - platform and approval path

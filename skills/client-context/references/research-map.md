@@ -97,6 +97,9 @@ response owner matrix, D3 FYE, D7 materiality, D8 transfers, D10 loans, D12
 budgeting process, D9b hand-computed close entries, D13 fixed assets, D16
 feed recovery, D19-21 POS, D23
 payroll processing rules, D26 questions cadence, E1-3 access and
+budgeting process, D13 fixed assets, D16 feed recovery, D19-21 POS, D23
+payroll processing rules, D21b sales accrual and cut-off, D26 questions
+cadence, E1-3 access and
 credentials, F3 tax accountant, F4 year-end requirements, G3 cleanup
 outcomes, G4 challenges, G7 meeting calendar, G9 escalation, H2 advisory
 plan — plus the ASK residue of any mapped item research couldn't fill

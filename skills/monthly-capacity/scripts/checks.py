@@ -27,6 +27,7 @@ No client or staff names live in this file. Everything is read from the sheet.
 """
 import collections
 import csv
+import datetime
 
 import openpyxl
 
@@ -46,6 +47,24 @@ SOFT_FLOOR = 0.85
 # Hours in the previous month above which a person counts as a timekeeper, and
 # so their total absence from an export is a stop rather than a note.
 TIMEKEEPER_HOURS = 5.0
+
+
+def _pkey(v):
+    """A period cell as "YYYY-MM", whether it holds text or a date.
+
+    A snapshot captured through the app before its 2026-09 fix stored a DATE in
+    that column, not the period string: Apps Script's setValues() parses
+    date-looking text the way typing into the cell does, so "2026-08" became
+    2026-08-01. str() of that is "2026-08-01 00:00:00", which equals no period
+    string, so every comparison in this file silently found nothing — no prior
+    snapshot, no baseline, and therefore none of the checks below. A month that
+    goes wrong this way must not take the next month's guard rails down with it.
+
+    Mirrors periodKey_() in the app's Code.gs.
+    """
+    if isinstance(v, (datetime.datetime, datetime.date)):
+        return f'{v.year:04d}-{v.month:02d}'
+    return str(v or '')
 
 
 def _is_client(code):
@@ -101,7 +120,7 @@ def _prior_person_hours(wb, period):
         return {}
     out = collections.defaultdict(float)
     for r in read_by_header(wb['SnapshotRows']):
-        if str(r.get('period') or '') != prev:
+        if _pkey(r.get('period')) != prev:
             continue
         try:
             act = float(r.get('actual') or 0)
@@ -130,7 +149,7 @@ def _prior_period(wb, period):
         idx = read_by_header(wb['SnapshotIndex'])
     except KeyError:
         return None
-    periods = sorted({str(r.get('period') or '') for r in idx} - {''})
+    periods = sorted({_pkey(r.get('period')) for r in idx} - {''})
     earlier = [p for p in periods if p < period]
     return earlier[-1] if earlier else None
 
@@ -146,7 +165,7 @@ def _prior_snapshot(wb, period):
         return None
     hours, clients = 0.0, set()
     for r in rows:
-        if str(r.get('period') or '') != prev:
+        if _pkey(r.get('period')) != prev:
             continue
         try:
             a = float(r.get('actual') or 0)
@@ -288,7 +307,7 @@ def drift(period, assignments, app_path, quiet_months=3):
         rows = read_by_header(wb['SnapshotRows'])
         went_quiet = []
         for r in rows:
-            if str(r.get('period') or '') != prior['period']:
+            if _pkey(r.get('period')) != prior['period']:
                 continue
             c, rl = tidy(r.get('client')), tidy(r.get('role'))
             try:
@@ -315,7 +334,7 @@ def drift(period, assignments, app_path, quiet_months=3):
         idx = read_by_header(wb['SnapshotIndex'])
     except KeyError:
         return {'warn': warn}
-    periods = sorted({str(r.get('period') or '') for r in idx} - {''})
+    periods = sorted({_pkey(r.get('period')) for r in idx} - {''})
     recent = [p for p in periods if p < period][-(quiet_months - 1):]
     stale = []
     for (c, s), h in sorted(now_person.items()):
@@ -323,7 +342,7 @@ def drift(period, assignments, app_path, quiet_months=3):
             continue
         quiet = True
         for r in rows:
-            if str(r.get('period') or '') not in recent:
+            if _pkey(r.get('period')) not in recent:
                 continue
             if tidy(r.get('client')) != c:
                 continue
