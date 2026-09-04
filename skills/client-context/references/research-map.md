@@ -51,7 +51,7 @@ skill wants are, increasingly, already sitting there:
 | Bank-feed rules (QBO bank rules export) | D6 |
 | Class list | D5 |
 | Trial balance | D14/D15 account enumeration |
-| Recurring transactions | D9 |
+| Recurring transactions | D9 *(the template half only; D9b is interview-only)* |
 
 (The firm is still finalizing the full export list; treat any other QBO
 export found in `perm` as fair game and cite it like the rest.)
@@ -82,7 +82,7 @@ export found in `perm` as fair game and cite it like the rest.)
 | D4 chart_of_accounts | COA export |
 | D5 classification_tracking (enumeration) | Class list |
 | D6 vendor_coding_rules (existing-rules part) | Bank rules export |
-| D9 recurring_journal_entries | Recurring-transactions list |
+| D9 recurring_journal_entries *(templates only)* | Recurring-transactions list. Does NOT cover D9b, the hand-computed close entries — those are interview-only. |
 | D14/D15 bank + card accounts (enumeration) | Trial balance / account list |
 
 Never authenticate to QBO, a bank, or any portal yourself. No connection →
@@ -94,6 +94,9 @@ Head-knowledge items, mostly judgment and process: A3 relationships, A4
 industry description, A5 founded, A6 ownership/governance, A12 working with
 this client, B7 billing config detail, B8 delivery config detail, C2
 response owner matrix, D3 FYE, D7 materiality, D8 transfers, D10 loans, D12
+budgeting process, D9b hand-computed close entries, D13 fixed assets, D16
+feed recovery, D19-21 POS, D23
+payroll processing rules, D26 questions cadence, E1-3 access and
 budgeting process, D13 fixed assets, D16 feed recovery, D19-21 POS, D23
 payroll processing rules, D21b sales accrual and cut-off, D26 questions
 cadence, E1-3 access and
