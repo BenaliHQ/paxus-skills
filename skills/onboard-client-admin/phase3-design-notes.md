@@ -6,7 +6,7 @@ last_updated: 2026-06-26
 
 # /onboard-client-admin — Phase 3 design notes
 
-Phase 3 = generate a personalized welcome packet in Canva, save it to the client's Shared Drive, and draft the welcome email. **Working end-to-end as of 2026-06-26.** Build the SKILL.md section against this file's pattern.
+Phase 3 = generate a personalized welcome packet in Canva, save it to the client's Shared Drive, and draft the welcome email. **Working end-to-end as of 2026-06-26** — verified on a first production run that day. Build the SKILL.md section against this file's pattern.
 
 ---
 
@@ -94,16 +94,16 @@ All three masters share the same page structure and placeholder pattern (cover p
 **File ID map** (parse from folder HTML on first use, then cache here):
 | File | Drive file ID | Canonical Canva direct URL |
 |---|---|---|
-| 1_Cassie Rigsby.png | `1ThyCuUzlm4V4vTSKizYFYAIqRIVphx7a` | https://lh3.googleusercontent.com/d/1ThyCuUzlm4V4vTSKizYFYAIqRIVphx7a |
+| Cassie Rigsby.png | `1ecgr3re1JZhXIEKJ7KjzQiiXasxLismz` | https://lh3.googleusercontent.com/d/1ecgr3re1JZhXIEKJ7KjzQiiXasxLismz |
 | 8_Joyce Maregmen.png | `11wk1kGoGal2CaC2NrbZhOWlzWm4OYgjH` | https://lh3.googleusercontent.com/d/11wk1kGoGal2CaC2NrbZhOWlzWm4OYgjH |
 | 9_Rachel Hastings.png | `1X5fgFBWX-niiIAqav03kIwCQzLCSZ2xS` | https://lh3.googleusercontent.com/d/1X5fgFBWX-niiIAqav03kIwCQzLCSZ2xS |
 | 2_Megan States.png | TBD | TBD |
 | 3_Becky Humphers.png | TBD | TBD |
 | 4_Caroline Jeffreys.png | TBD | TBD |
-| 5_Landry Greenhill.png | TBD | TBD |
-| 6_Kristie Andrews.png | TBD | TBD |
+| 5_Landry Greenhill.png | `1UJno3wx-VJzMcwcNzfVMHv-LZLRWt4bz` | https://lh3.googleusercontent.com/d/1UJno3wx-VJzMcwcNzfVMHv-LZLRWt4bz |
+| 6_Kristie Andrews.png | `1LNm9l7l_rjppcOUe6_Clh-Se86dcVpJQ` | https://lh3.googleusercontent.com/d/1LNm9l7l_rjppcOUe6_Clh-Se86dcVpJQ |
 | 7_Consuelo Gervacio.png | TBD | TBD |
-| 10_Michelle Mauldin.png | TBD | TBD |
+| 10_Michelle Mauldin.png | `1dgNzMOKnGC8zGHtebxu9zb7EhAczxOJm` | https://lh3.googleusercontent.com/d/1dgNzMOKnGC8zGHtebxu9zb7EhAczxOJm |
 
 **How to look up a new file ID:** `curl -sL "https://drive.google.com/drive/folders/1L16UTDzb27mHmpcHJQprVkOxiwqHcZqV" -A "Mozilla/5.0" -o /tmp/bios.html` and grep for `data-id="..."` near the filename. Fill in this table as IDs become known so future runs skip the HTTP step.
 
@@ -128,15 +128,34 @@ Template lives at `~/.claude/skills/onboard-client-admin/welcome-email-template.
 
 ## First production run (2026-06-26)
 
-- Client: (first production run — client identity omitted per no-client-data rule)
 - Package: Full Service
-- Team blocks placed in Controller / Lead / Staff order on page 2.
-- Canva working copy moved to `FAF-ADpbNnU` before export.
-- PDF: `G:\Shared drives\{Client legal name}\Perm File\Welcome Packet - {Client legal name}.pdf` (~11-12 MB at pro quality).
-- Email: archived in the client's Perm File as `Welcome Email - {Client legal name}.md` (see SKILL.md Phase 3H).
+- Team: Cassie (Controller), Rachel (Lead), Joyce (Staff)
+- Canva design: `DAHNrogt5Ac` (moved to `FAF-ADpbNnU`)
+- PDF exported at 11.6 MB, filed to the client's Perm File as usual.
 - Jennifer's tweak: small spacing adjustments on page 2 done manually post-commit — the re-export captured them.
 
 ---
+
+## Second production run (2026-08-07)
+
+- Package: Premium (master `DAHNmNfCQw8`)
+- Team: Kristie Andrews (Controller), Rachel Hastings (Lead) — **intern excluded** (Staff = Paxus Intern/Macie), so only 2 blocks on page 2.
+- Canva design: `DAHRpD4x9Gw` (moved to `FAF-ADpbNnU`)
+- PDF exported at 10.68 MB, filed to the client's Perm File as usual.
+- **Premium master element IDs confirmed identical to Full Service:** page 1 cover `PBBmQW3jLpcqG42m-LBNJHY2pW54z1Fnf`, page 7 XXXXX `PBfbgrMgx6k3P9Mm-LBVBvW2L098zGTDK`. Cover placeholder text is `PREMIUM SERVICE`.
+- **Page-7 double-space fix:** the placeholder is `have XXXXX  as` (two spaces). Use `find_and_replace_text` on `have XXXXX  as` → `have {name} as` to avoid a leftover double space.
+- **2-block layout (intern excluded):** Premium page 2 = `PBNnwHFmMBcnzmd4`. Placed blocks at 693×260, left=62, **tops 330 (Controller) / 665 (Lead)** — centered in the open area below the title/divider with balanced top/bottom gaps. Looks clean; use this when only 2 team members are client-facing.
+
+## Third production run (2026-08-12)
+
+- Package: Basic (master `DAHNmFp_ltM`)
+- Team: Rachel Hastings (Controller), Landry Greenhill (Lead) — Staff = TBD, so 2-block layout (tops 330 / 665, left 62, 693×260).
+- Canva design: `DAHSGTT-OAg` (moved to `FAF-ADpbNnU`); PDF 11.1 MB in Perm File.
+- **Basic master element IDs confirmed identical to Full Service:** page 1 cover `PBBmQW3jLpcqG42m-LBNJHY2pW54z1Fnf` (text `BASIC SERVICE`), page 7 XXXXX `PBfbgrMgx6k3P9Mm-LBVBvW2L098zGTDK` (same `have XXXXX  as` double-space — replace `have XXXXX  as` → `have {name} as`).
+- Canva API is now transaction-based: `read-design(open_transaction:true)` → `edit-design(operations, finalize:"keep_open")` per page → `edit-design(finalize:"commit")`. (Old start/perform/commit-editing-transaction tools are gone.)
+- **Role-label gotcha:** when a person serves a role their bio PNG isn't labeled for (here Rachel = Controller but her standard block says "Lead Accountant"), page 2 shows a mismatched/duplicate label. Resolved this run: Jennifer dropped `Rachel Hastings - Controller.pdf` (Drive id `14ZYA1eHINU6qJjQudUEyanM3v1Jp1IxY`) into the Bios folder; swapped it onto the top block via `update_fill`.
+- **Bios can arrive as PDF, and lh3 renders a Drive PDF to an image.** `https://lh3.googleusercontent.com/d/{PDF_FILE_ID}=s1600` returns a clean rendered PNG (this one came back 1024×384, the correct 8:3 block aspect, no page margins) — upload that URL to Canva just like a PNG. No local PDF→PNG converter needed (none installed on this machine anyway: no magick/pdftoppm/fitz).
+- **lh3 CDN caches in-place content updates.** When a bio is updated *in place* (same Drive file id), re-ingesting the same `lh3/d/{id}` URL can return the STALE image (hit this first — got the old "Lead Accountant" render back). Always verify the after-thumbnail shows the new content before committing; a brand-new file id (like the Controller PDF) sidesteps the cache.
 
 ## Still to build out
 

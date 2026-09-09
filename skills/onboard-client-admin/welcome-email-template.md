@@ -23,8 +23,9 @@ Sent **TO** primary contact, **CC** Lead + Controller + Staff + lisa@paxuscpa.co
 | `{Month}` | Spelled-out month monthly billing begins (e.g., "September") |
 | `{Lead}` | Lead Accountant — first name only |
 | `{Controller}` | Controller — first name only |
+| `{Staff}` | Staff Accountant line — see note below (intern vs. non-intern) |
 
-**Staff Accountant is intentionally "to be determined"** in the email even when assigned internally — the packet page 2 names them, but the client-facing email keeps that line open until services begin.
+**Staff Accountant line — intern vs. non-intern.** If the Staff member is an **intern**, name them (first name only) under "Your team" — do NOT write "to be determined." For a non-intern Staff Accountant, keep the line **"to be determined (we'll confirm before monthly services begin)"** even when they're assigned internally (the packet page 2 names them; the client-facing email keeps that line open until services begin). **Interns may be left off the Welcome Packet** page 2 — naming them in the email is enough.
 
 ---
 
@@ -49,7 +50,7 @@ Your team
 "In teamwork there is strength" is one of our core values — and you'll see it in action. You'll have a dedicated Team of Three, each with a defined role (full details in the attached Welcome Packet):
 - Lead Accountant & primary contact: {Lead}
 - Controller: {Controller}
-- Staff Accountant: to be determined (we'll confirm before monthly services begin)
+- Staff Accountant: {Staff}
 
 What's next
 A separate email with your portal-setup checklist is on its way. {Lead} will reach out shortly to schedule a kickoff call — having those checklist items ready beforehand keeps everything moving. Please send anything sensitive through the client portal rather than email; that's also where your monthly financials will live. Reach out to me directly with any bank-access or portal questions — I'll be making sure your QBO file is connected and ready.
