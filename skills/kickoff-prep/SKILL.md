@@ -35,8 +35,12 @@ them at the dossier.
 | The lead has… | Mode |
 |---|---|
 | No transcript, and no prep documents exist yet | **Prep mode.** The call hasn't happened. |
-| No transcript, but prep documents already exist | **Refresh mode.** New information before the call. |
+| No transcript, but prep documents already exist | **Refresh mode.** Anything before the call, including a re-run with nothing to report. |
 | A transcript (uploaded file, or pasted) | **Debrief mode.** The call has happened. |
+
+**Everything before the transcript is a refresh.** A lead who re-runs the skill and tells
+you nothing has changed is not a prep run and not an error — they are asking you to go and
+look for what has arrived since the documents were written. See § REFRESH MODE.
 
 A transcript is the whole signal. **Never require the same conversation as the prep run** —
 a lead may return in a fresh session days later, and everything needed is in the client's
@@ -263,37 +267,90 @@ Short. Both links, the gap count and what they are, and the QuickBooks ask. Say 
 document is which: prep notes to read beforehand, agenda to run the call from. Don't recap
 the contents — they're about to read them.
 
-Two additions worth one line each:
+Three additions worth one line each:
 
 - **Read the agenda in your own voice before it goes anywhere.** Anything that sounds
   generated, change. It's their call, not the skill's.
 - **Consider sending the agenda to the client a few days out.** It has worked well —
   clients arrive with item 6 largely answered and the call goes faster. Their call, not a step.
+- **If the call is more than a week out, tell them to run this again before it.** Compare
+  the call date from step 2 against today. More than seven days and these documents will be
+  out of date by the time the call happens — firm admin fills fields in, clients send
+  things. Name the re-run plainly, and name the Financial Cents task that carries it:
+  *"If you ran the skill more than a week before the kickoff call, be sure to rerun it right
+  before the call to gather any information that may have been added since the last time you
+  ran it."* Say why in one line — so we don't ask the client for something they already
+  sent. If the call is inside a week, don't spend a line on it.
 
 ---
 
 # REFRESH MODE
 
-The call hasn't happened, the documents exist, and something changed — firm admin filled in
-the billing figures, the client sent three of the four things we asked for, the lead found
+The call hasn't happened, the documents exist, and time has passed — firm admin filled in the
+billing figures, the client sent three of the four things we asked for, the lead found
 something in QuickBooks, the call moved. This happens on most engagements and it is not a
 reason to start over.
 
 Operator observation, 2026-08-26: firm admin had additional updates between the time the
 notes were created and the call actually happening.
 
-1. **Read what's there first** — both Docs, including anything the lead has typed in.
-2. **Take the new information** from the lead, or re-read the dossier if firm admin has since
-   filled it in. Re-run only the resolution steps the new information touches; don't re-sweep
-   fields that are already answered.
-3. **Update both documents in place.** No new files, no dated variants, no backups. Anything
-   now answered comes off the gap list and off agenda item 6; anything now known that the
-   client no longer needs to be asked comes off the agenda entirely.
-4. **Say what changed** in the report back — three or four lines, so the lead knows whether
-   they need to re-read or just glance.
+**A re-run with nothing to report is a refresh, and it is the ordinary case.** Anything
+before the transcript arrives is a refresh. A lead who runs the skill again and says nothing,
+or says *"just checking for anything new,"* is asking you to go and look — not telling you
+there is nothing to do. **Go and look first, then ask them.** Never open a refresh by asking
+what changed and stopping when the answer is "nothing."
 
-If the dossier arrived for the first time in this pass, treat it as authoritative over
-anything previously swept from the quote, and say so.
+Operator instruction, 2026-09-15: the firm's Financial Cents onboarding workflow carries the
+task *"If you ran the skill more than a week before the kickoff call, be sure to rerun it
+right before the call to gather any information that may have been added since the last time
+you ran it."* This mode is what that task runs, and its purpose is one thing: **we do not ask
+a client on the kickoff call for something they have already given us.**
+
+## What a refresh does
+
+1. **Read what's there first** — both Docs, including anything the lead has typed in. Note
+   when each was last modified. That timestamp is the *since* the rest of this works from.
+2. **Re-read the dossier.** Firm admin may have filled fields that were blank, or refreshed
+   it entirely. Anything it now answers comes off the gap list. If the dossier arrived for
+   the first time in this pass, it is authoritative over anything previously swept from the
+   quote — and say so.
+3. **Sweep for what has arrived since.** Look at the client's picked folder — `Perm File\`
+   included — and at the firm-admin `Active Clients\{client}` folder for documents created
+   or modified since the documents were last written. Same rules as
+   `references/input-resolution.md` in full: one client only, **never glob Active Clients**,
+   quarantine anything naming another client, read the `parents` field rather than inferring
+   a folder from a flat listing. This is a sweep for *new arrivals* — a document already read
+   and unchanged gets skipped, not re-parsed.
+4. **Then ask the lead**, in one short message, what came in outside the folder: an email
+   attachment, a portal upload, something they found in QuickBooks, a moved call date. Their
+   answer adds to what you found. It does not replace it, and its absence does not end the
+   refresh.
+5. **Update both documents in place.** No new files, no dated variants, no backups. Anything
+   now answered comes off the gap list and **off agenda item 6**; anything now known that the
+   client no longer needs to be asked comes off the agenda entirely.
+6. **Say what changed** in the report back — three or four lines, so the lead knows whether
+   to re-read or just glance. If the sweep and the lead both turned up nothing, say so
+   plainly: the documents are current, nothing has landed since {date}. That is a complete
+   answer, not a failed run — and it is worth the minute it took.
+
+If the call is still more than a week out after this pass, say the same thing prep mode says:
+run it again in the day or two before the call.
+
+## Coming off item 6 is the point
+
+Item 6 is the list the lead reads aloud to the client. Every request still on it that the
+client already satisfied costs the firm credibility in the first ten minutes of the
+relationship — it says nobody looked at what they sent. So when this pass finds a document
+that answers an item 6 request:
+
+- **Tick it or remove it**, per what it answers.
+- **Record in the prep notes what answered it and when it arrived**, so the debrief pass
+  doesn't reopen a question that was closed before the call.
+- **Update the prep section the document corrects, not just the checklist.** A bank list that
+  arrives changes the account count in *The books today*, with the document named as source.
+
+A request stays on item 6 only when the document genuinely hasn't arrived — or arrived
+unreadable or clearly incomplete, in which case keep it and say which.
 
 ---
 
@@ -473,6 +530,12 @@ of their own in it before sending.** Every lead so far has, and it's the right i
 - **The client answered the agenda in writing before the call.** Treat their reply as a
   source: run refresh mode, mark those items received, and take them off item 6 so the lead
   doesn't ask twice.
+- **The lead re-runs and has nothing to tell you.** Normal — that is the Financial Cents
+  re-run task. Sweep the folder and the dossier for anything that arrived since the documents
+  were last written, then report what you found, including "nothing." Don't treat an empty
+  answer from the lead as an empty run.
+- **The lead re-runs twice in the same day.** Say the documents are current as of the earlier
+  pass and stop; don't re-sweep the same window or rewrite the Docs to no effect.
 
 ## Learnings capture
 
