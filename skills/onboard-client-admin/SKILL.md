@@ -583,6 +583,8 @@ All 8 attach for every tier. Notes:
 - Post Cleanup is the transition-to-recurring project that follows the initial Cleanup.
 - Client's Onboarding Checklist (`9685085`) is NOT part of this 8-project loop — it's handled separately (see Phase 1E / Phase 2A). Do NOT POST it here.
 
+**⚠️ `GET /tasks?project_id=` hard-caps at 15 results per page — `per_page` is ignored on this endpoint.** Discovered 2026-09-15 on Alzarrok Bio's `Client - Cleanup` project (template `8266589`, 22 tasks total): page 1 returned only the first 15 (`meta.per_page: 15` even when `per_page=100` was requested), with `links.next` pointing to page 2, which held the remaining 4 Lead tasks (including the two "trigger" tasks — `Complete this task to start cleanup process.` and `Add Paxus' monthly draft recurring expense...`) plus all 3 `CPA/Controller` tasks. A loop that reads only page 1 silently leaves every task past #15 on its template default (usually Jennifer/Lisa) with no error. `Client - Cleanup` is the one template in this set of 8 known to exceed 15 tasks today, but **always paginate — don't special-case by template**, since template edits can push any of them over 15 later.
+
 **Attach each, then reassign by role:**
 
 ```bash
@@ -597,11 +599,19 @@ for TID in 5082639 5082645 5110296 8266589 13989492 13565957 7995444 7959692; do
     -w "\nHTTP %{http_code}\n"
   # capture the returned project id as $NEW_PROJECT_ID from the response
 
-  # 2. List that project's tasks and reassign by project_role.name
-  curl -s -H "Authorization: Bearer $TOKEN" \
-    "https://app.financial-cents.com/api/v1/tasks?project_id=${NEW_PROJECT_ID}" \
-    > /tmp/tasks_${NEW_PROJECT_ID}.json
-  # For each task, look at task.project_role.name and PUT the correct user_id.
+  # 2. List ALL of that project's tasks — paginate until a page returns no `links.next`.
+  #    Do NOT rely on `per_page` to fetch everything in one call; it's capped at 15 regardless of the value requested.
+  PAGE=1
+  > /tmp/tasks_${NEW_PROJECT_ID}.jsonl
+  while true; do
+    RESP=$(curl -s -H "Authorization: Bearer $TOKEN" \
+      "https://app.financial-cents.com/api/v1/tasks?project_id=${NEW_PROJECT_ID}&page=${PAGE}")
+    echo "$RESP" >> /tmp/tasks_${NEW_PROJECT_ID}.jsonl
+    HAS_NEXT=$(echo "$RESP" | python -c "import sys,json;print(bool(json.load(sys.stdin).get('links',{}).get('next')))")
+    [ "$HAS_NEXT" = "True" ] || break
+    PAGE=$((PAGE+1))
+  done
+  # For each task across every page in the .jsonl file, look at task.project_role.name and PUT the correct user_id.
 done
 ```
 
@@ -639,17 +649,25 @@ curl -s -X PUT \
 **Verification after the loop:**
 
 ```bash
-# GET tasks per project and confirm distribution matches expected roles
-curl -s -H "Authorization: Bearer $TOKEN" "https://app.financial-cents.com/api/v1/tasks?project_id=${NEW_PROJECT_ID}" \
-  | python -c "
-import sys, json
-d = json.load(sys.stdin).get('data', [])
+# Confirm distribution matches expected roles — read every page collected above, not just page 1.
+python -c "
+import json
 from collections import Counter
-by_role = Counter(((t.get('project_role') or {}).get('name'), (t.get('user') or {}).get('name')) for t in d)
-for (role, user), n in by_role.items():
-    print(f'  {role} → {user}: {n} tasks')
+by_role = Counter()
+with open('/tmp/tasks_${NEW_PROJECT_ID}.jsonl') as f:
+    for line in f:
+        line = line.strip()
+        if not line: continue
+        for t in json.loads(line).get('data', []):
+            role = (t.get('project_role') or {}).get('name')
+            assignees = [a.get('name') for a in (t.get('assignees') or [])]
+            by_role[(role, tuple(assignees))] += 1
+for (role, assignees), n in by_role.items():
+    print(f'  {role} → {assignees}: {n} tasks')
 "
 ```
+
+Check the `assignees` array here, not the top-level `user` field — `user` stays on the template default even after a successful reassignment (see below) and will make a correctly-reassigned task look wrong if you check the wrong field.
 
 Ideal outcome: every `Lead Accountant` task → Lead's name; every `Staff Accountant` task → Staff's name; every `CPA/Controller` task → Controller's name.
 
