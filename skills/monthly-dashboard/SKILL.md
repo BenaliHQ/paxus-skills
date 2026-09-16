@@ -5,7 +5,8 @@ description: >
   non-profit or for-profit. For non-profits it fronts the monthly board financials package (CFO /
   non-profit clients); for for-profit clients it is the client's own monthly dashboard (Wheel of Service
   businesses, advisory clients, and similar). Pulls
-  monthly financials from the Paxus shared Drive via the gws CLI, computes bespoke KPIs
+  monthly financials from the client's shared Drive (gws CLI in Claude Code; the connected Drive folder
+  in Cowork), computes bespoke KPIs
   against confirmed benchmarks, renders a brand-consistent one-page dashboard to PDF, and either merges
   it as page 1 of the board package, delivers it standalone, or hands it off to the monthly client
   email. For repeat clients, uses the prior delivered dashboard and the per-client spec file as the spec; for
@@ -65,19 +66,42 @@ confirm it with the operator before anything else. Don't apply non-profit constr
 efficiency, grants, fund classes, budget-vs-actual) to a for-profit client, or commercial constructs
 (gross margin, runway) to a non-profit.
 
-Then read the client's confirmed-spec file. **The spec lives in the shared firm client folder, not in any
-one operator's private notes**, so every Paxus teammate who runs this skill gets the same spec:
+Then read the client's confirmed-spec file, `dashboard-spec.md`. **The spec lives in the client's own
+shared drive** — never on one person's laptop and never in one operator's private notes — so every Paxus
+teammate who runs this skill, from Claude Code or from Cowork, finds the same spec.
 
-```
-~/paxus-ai/clients/<slug>/dashboard-spec.md
-```
+**Where the spec lives (canonical location, in this order of precedence):**
 
-(the `<slug>` folder created by `/paxus-skills:client-context`). The spec records the confirmed
-KPIs/benchmarks/formulas/methods, layout, delivery mode (merged vs standalone), the resolved Drive
-shared-drive + folder IDs and file-name pattern, and recurring watch-outs. If a client was specced before
-this shared-folder convention (the earliest non-profit specs were captured in an operator's personal
-notes), migrate that spec into `dashboard-spec.md` on the next run. If no spec file exists, this is a
-cold start. Then search for the client's **prior delivered dashboard PDF** (Step 1).
+| Client drive shape | Canonical spec location |
+|---|---|
+| Drive has a `.agents/` context bundle (built by `/paxus-skills:client-context`) | `.agents/b-engagement/dashboard-spec.md` |
+| Single-entity drive, no bundle | `Perm File/dashboard-spec.md` at the drive root |
+| Multi-entity drive (one folder per entity at the root, e.g. a group of LLCs) | `<Entity folder>/Perm File/dashboard-spec.md` — one spec per entity |
+
+The file is always named exactly `dashboard-spec.md`. It never goes in `Financials/`, the year folder,
+`Review Notes`, `Special Projects`, or Cowork's default `Claude outputs` folder — **always name the
+destination folder explicitly when saving**, or Cowork will drop it in `Claude outputs`.
+
+**Finding it on a repeat run:** search the client's drive for a file named `dashboard-spec.md` (gws:
+`name = 'dashboard-spec.md'` with `corpora:"drive"` scoped to the client's `driveId`; Cowork: search the
+connected client folder). Then:
+- **One file, in the canonical folder** → that's the spec. Read it.
+- **One file, in the wrong folder** → it's still the spec; *move* it (don't copy) to the canonical folder
+  and tell the operator you did.
+- **Two or more files** → the newest is operative. Move the others to the canonical folder renamed
+  `dashboard-spec-superseded-YYYY-MM-DD.md` (their modified date) and tell the operator. Never leave two
+  files named `dashboard-spec.md` on one drive.
+- **None** → cold start (below), unless a prior delivered dashboard PDF exists — then rebuild the spec from
+  the PDF and save it (Step 7) so the next run has one.
+
+A copy at `~/paxus-ai/clients/<slug>/dashboard-spec.md` on someone's laptop is an **optional local cache
+only**. It is unreachable from Cowork and from every other teammate's machine. If a laptop copy and the
+Drive copy differ, Drive wins; refresh the cache from Drive, never the other way round.
+
+The spec records the confirmed KPIs/benchmarks/formulas/methods, layout, delivery mode (merged vs
+standalone), the resolved Drive shared-drive + folder IDs (and the connected-folder path when run from
+Cowork), the source-file name pattern, and recurring watch-outs. Then locate the client's **prior delivered
+dashboard PDF** (Step 1).
 
 **Repeat path:** If a prior dashboard exists, it is the spec. Pull it, read it, and recover the exact
 layout, KPI set, benchmark bands, formulas, header-tile methods, color/label conventions, delivery
@@ -129,9 +153,9 @@ path for any client that needs a monthly financial dashboard, non-profit or for-
 5. **Sections and snapshot tiles:** confirm which sections matter for the first month (e.g. YTD revenue/
    expenses/net, cash, budget vs actual, revenue mix, grants/customers, A/R aging, A/P/LOC, activity
    notes). Omit sections with missing data rather than filling with guesses.
-6. **Persistence target:** after approval, create `~/paxus-ai/clients/<slug>/dashboard-spec.md` so month 2
-   has a spec — and the resolved Drive IDs — even before the prior PDF is pulled. (Shared firm location, not
-   personal notes, so any teammate can run month 2.)
+6. **Persistence target:** after approval, save `dashboard-spec.md` to the client's canonical Drive location
+   (Step 0 table) so month 2 has a spec — and the resolved Drive IDs — even before the prior PDF is pulled.
+   In the client's drive, not on a laptop, so any teammate can run month 2 from Claude Code or Cowork.
 
 ## Required Inputs — Confirm Before Proceeding
 
@@ -156,17 +180,25 @@ Do not begin until ALL of the following are confirmed (recovered from Step 0 whe
    **standalone PDF** unless the operator explicitly requests merged delivery and provides the target board
    financials package. Determines whether Step 6 runs at all.
 6. **Cold-start spec record** — for a first run, confirm that the approved layout/KPIs/benchmarks/Drive-IDs
-   will be saved to `~/paxus-ai/clients/<slug>/dashboard-spec.md` after operator review.
+   will be saved to `dashboard-spec.md` in the client's canonical Drive location (Step 0) after operator
+   review, and name that folder to the operator.
 
 If anything is missing, stop and ask only for what's missing.
 
 ---
 
-## Step 1 — Pull the source files (gws)
+## Step 1 — Pull the source files
 
-The local Google Drive path on macOS is sandbox-blocked (`Operation not permitted`) — **always use the
-gws CLI**, never the local `CloudStorage` path. Everything in this step is a read; the only write this
-skill ever makes is the finished dashboard in Step 7.
+**Two environments, one rule: use whatever Drive access the session already has.**
+- **Claude Code on macOS:** the local Google Drive path is sandbox-blocked (`Operation not permitted`) —
+  **always use the gws CLI**, never the local `CloudStorage` path. The gws commands below are this path.
+- **Cowork (Windows or Mac):** there is no gws. The client's shared drive is a *connected folder* (e.g.
+  `G:\Shared drives\<Client>\`). Read the financials, the prior dashboard, and `dashboard-spec.md`
+  straight from it, and save outputs back into it by explicit folder path. Record the connected-folder path
+  in the spec alongside the Drive IDs so either environment can run next month.
+
+Everything in this step is a read. The only writes this skill makes are the finished dashboard and the
+client's `dashboard-spec.md` (Step 7).
 
 **Resolve the folder once, then store the IDs.** Drive has many same-named folders across clients (multiple
 "Financials", "2026", etc.), so blind `name contains` searches are ambiguous and slow. On a **repeat** run,
@@ -418,9 +450,14 @@ Hand the operator the exact local path plus the steps for the client's delivery 
 **Record which path was used** in the client's `dashboard-spec.md`, so the next month starts from what
 actually worked for the person running it rather than re-discovering it.
 
-After operator approval, create/update `~/paxus-ai/clients/<slug>/dashboard-spec.md` (the **shared firm
-location**, so any teammate can run next month). Mandatory for cold starts; required whenever a repeat
-client's spec changes. Record:
+After operator approval, create/update `dashboard-spec.md` in the client's **canonical Drive location**
+(Step 0 table: `.agents/b-engagement/` when the client has a context bundle, otherwise `Perm File/`;
+`<Entity>/Perm File/` on multi-entity drives). Saving the spec into the client's drive is part of the
+approved run — don't ask separately, but state exactly where it went. If the session can't write to that
+drive, hand the operator the file and the exact destination path instead. When the spec lands inside a
+`.agents/` bundle, follow the bundle's `AGENTS.md`: OKF frontmatter on the file, a line in
+`b-engagement/index.md`, and a dated entry in `0-core/log.md`. Mandatory for cold starts; required whenever
+a repeat client's spec changes. Record:
 
 - Client name and type (NP/FP), reporting month used for the first/updated spec, accounting basis, and the
   upload/naming convention.
@@ -507,17 +544,20 @@ Quick cheat-sheet; the steps above are authoritative.
 - **Delivery is per-client:** merged page-1, standalone file, or email ride-along. Ask before filing to
   Drive, then **try the upload and fall back to handing over the file** if the operator's account can't
   write. Never widen the gws scope to force it. Back up the original before any merge/overwrite.
-- **Spec is shared, not personal:** persist to `~/paxus-ai/clients/<slug>/dashboard-spec.md` so any teammate
-  can run next month.
+- **Spec is shared, not personal:** persist `dashboard-spec.md` to the client's canonical Drive location
+  (Step 0) so any teammate can run next month from Claude Code or Cowork. A laptop folder is never the
+  source of truth.
 
 ## Persistence note
 
 Two kinds of state, two homes:
 - **The skill itself** (this `SKILL.md` + `assets/`) lives in the **Paxus firm skills repo**, committed via
   `/paxus-skills:manage-skills`. It is firm-specific — keep it out of any shared general-purpose product repo.
-- **Per-client specs and delivered dashboards** live with the client: `dashboard-spec.md` in
-  `~/paxus-ai/clients/<slug>/`, and the PDF in the client's Drive `Financials/<year>` folder. Never store
-  client specs in one operator's personal notes — teammates must be able to run the skill and get the same spec.
+- **Per-client specs and delivered dashboards** live with the client, in the client's shared drive:
+  `dashboard-spec.md` in `.agents/b-engagement/` (clients with a context bundle) or `Perm File/` (all
+  others; per-entity `Perm File/` on multi-entity drives), and the PDF in `Financials/<year>`. Never store
+  client specs in one operator's private notes or on one laptop — teammates must be able to run the skill,
+  from either environment, and get the same spec.
 
 **Self-contained:** this skill must not depend on any one operator's private notes or vault rules — a
 teammate running it from the firm repo won't have those. State principles inline rather than linking them.
