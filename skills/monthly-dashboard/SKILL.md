@@ -1,20 +1,17 @@
 ---
 name: monthly-dashboard
 description: >
-  Build the one-page monthly financial dashboard for any Paxus CFO, advisory, or bookkeeping client —
-  non-profit or for-profit. For non-profits it fronts the monthly board financials package (CFO /
-  non-profit clients); for for-profit clients it is the client's own monthly dashboard (Wheel of Service
-  businesses, advisory clients, and similar). Pulls
-  monthly financials from the client's shared Drive (gws CLI in Claude Code; the connected Drive folder
-  in Cowork), computes bespoke KPIs
-  against confirmed benchmarks, renders a brand-consistent one-page dashboard to PDF, and either merges
-  it as page 1 of the board package, delivers it standalone, or hands it off to the monthly client
-  email. For repeat clients, uses the prior delivered dashboard and the per-client spec file as the spec; for
-  brand-new clients, runs a cold-start intake, defaults to standalone/no-trend, documents benchmark
-  sources, and saves the approved spec for future months. Use when the operator asks to build a monthly
-  dashboard, make the dashboard, build the board/client dashboard, add the dashboard to monthly
-  financials, or prepend a dashboard to a board financials package. SCOPED TO THE DASHBOARD PAGE — it
-  does not draft the client email or update the forecast workbook.
+  Build the one-page monthly financial dashboard for any Paxus CFO, advisory, or bookkeeping client,
+  non-profit or for-profit. For non-profits it fronts the monthly board financials package; for for-
+  profits it is the client's own monthly dashboard (Wheel of Service, advisory, and similar). Pulls
+  the month's financials from the client's shared Drive (gws in Claude Code; the connected Drive
+  folder in Cowork), computes bespoke KPIs against confirmed benchmarks, renders a brand-consistent
+  one-page PDF, and merges it as page 1 of the board package, delivers it standalone, or hands it to
+  the monthly client email. Repeat clients rebuild from the prior dashboard plus the per-client
+  dashboard-spec.md in the client's Drive; new clients get a cold-start intake, standalone/no-trend
+  default, documented benchmark sources, and a saved spec. Use when asked to build, make, or prepend
+  a monthly, board, or client dashboard. SCOPED TO THE DASHBOARD PAGE: it does not draft the client
+  email or update the forecast workbook.
 ---
 
 # Monthly Financial Dashboard
