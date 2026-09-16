@@ -1,6 +1,6 @@
 ---
 name: onboard-client-admin
-description: Admin-side client onboarding for Paxus CPA. Phase 1 ingests the prospective-client quote, creates the client + primary contact in Financial Cents via API, spins up the New Client Onboarding project (Firm Admin Tasks auto-assigned to Jennifer), and drafts proposal content. Phase 2 (post-signing) copies the standard template into a new client Shared Drive, files the signed engagement PDF, moves the client from Prospective to Active, POSTs the Shared Drive link to FC's Resources section, creates an "Engagement Letters" folder in FC's Files tab with the engagement uploaded for client-portal access, attaches the 8 standard project templates (weekly bookkeeping, month-end review, month-end close, cleanup, post cleanup, kick-off call, client training manual, tax returns) with per-role task reassignment, and attaches the FC 1099 project templates for Full Service / Premium clients (Basic clients skip 1099). Phase 3 generates a personalized welcome packet in Canva, saves the PDF to the client's Shared Drive, and drafts the warm welcome email to the client. Phase 4 produces the internal Onboarding Dossier handoff file (Discovery, Pre-Kickoff Readiness, billing, cleanup scope, volumes/complexity, and Kickoff-Call reference notes) in the client's Perm File for the lead, then drafts the internal team handoff email pointing the team at the Dossier. Phase 5 drafts the day-before-kickoff email to the client with a reminder of the meeting time and the outstanding items on the FC Onboarding Checklist. Phase 6 completes the FC client-dashboard "About" section — the firm-wide custom fields (Entity Type, EIN, Package, monthly billing, budgeted hours, tax accountant, etc.) — sourcing values from the Perm File, recurring invoice, Taxes folder, and budgeted-hours tracker, and writing each via PATCH /clients/{id}/about-fields/{field_id}. Run when a new client engages Paxus, when a signed engagement needs to be filed, the day before a client's kickoff call, or to fill in a client's FC About section.
+description: Admin-side client onboarding for Paxus CPA. Phase 1 ingests the prospective-client quote, creates the client + primary contact in Financial Cents via API, spins up the New Client Onboarding project (Firm Admin Tasks auto-assigned to Jennifer), and drafts proposal content. Phase 2 (post-signing) copies the standard template into a new client Shared Drive, files the signed engagement PDF, moves the client from Prospective to Active, POSTs the Shared Drive link to FC's Resources section, creates an "Engagement Letters" folder in FC's Files tab with the engagement uploaded for client-portal access, attaches the 8 standard project templates (weekly bookkeeping, month-end review, month-end close, cleanup, post cleanup, kick-off call, client training manual, tax returns) with per-role task reassignment, and attaches the FC 1099 project templates for Full Service / Premium clients (Basic clients skip 1099). Phase 3 generates a personalized welcome packet in Canva, saves the PDF to the client's Shared Drive, and drafts the warm welcome email to the client. Phase 4 produces the internal Onboarding Dossier handoff file (Discovery, Pre-Kickoff Readiness, billing, cleanup scope, volumes/complexity, and Kickoff-Call reference notes) in the client's Perm File for the lead, then drafts the internal team handoff email pointing the team at the Dossier. Phase 5 drafts the day-before-kickoff email to the client with a reminder of the meeting time and the outstanding items on the FC Onboarding Checklist. Phase 6 completes the FC client-dashboard "About" section — the firm-wide custom fields (Entity Type, EIN, Package, monthly billing, budgeted hours, tax accountant, etc.) — sourcing values from the Perm File, recurring invoice, Taxes folder, and budgeted-hours tracker, writing each via PATCH /clients/{id}/about-fields/{field_id}, and also updates the separate Master Client Tracker Google Sheet. Run when a new client engages Paxus, when a signed engagement needs to be filed, the day before a client's kickoff call, or to fill in a client's FC About section.
 ---
 
 # /onboard-client-admin — Paxus Admin-Side Client Onboarding
@@ -14,7 +14,7 @@ This skill is **phased**:
 - **Phase 3 (active):** Generate a personalized welcome packet in Canva, save the PDF to the client's Shared Drive `Perm File\`, and draft the warm welcome email to the client **directly in Gmail** (with a markdown copy archived in Perm File).
 - **Phase 4 (active):** Produce the internal **Onboarding Dossier** handoff file for the lead (from engagement / consultation / memo) and save it to the client's `Perm File\`. Draft the internal team handoff email **directly in Gmail**, pointing the team at the Dossier — no separate email archive, since the email is just a shorter narrative of the same content already captured in the Dossier.
 - **Phase 5 (active):** Draft the day-before-kickoff email to the client **directly in Gmail** (with a markdown copy archived in Perm File) — reminder of the meeting time, thank-you for what's been received, list of what's still outstanding on the FC Client's Onboarding Checklist.
-- **Phase 6 (active):** Complete the FC client-dashboard **"About" section** — the firm-wide set of ~24 custom "About" fields (Entity Type, EIN, Package, billing figures, budgeted hours, etc.). Sources each field from the client's Perm File, the recurring invoice, the Taxes folder, and the budgeted-hours tracker; writes each value via `PATCH /clients/{id}/about-fields/{about_field_id}`. Leaves not-applicable fields blank and marks kickoff-capture unknowns `TBD`.
+- **Phase 6 (active):** Complete the FC client-dashboard **"About" section** — the firm-wide set of ~24 custom "About" fields (Entity Type, EIN, Package, billing figures, budgeted hours, etc.). Sources each field from the client's Perm File, the recurring invoice, the Taxes folder, and the budgeted-hours tracker; writes each value via `PATCH /clients/{id}/about-fields/{about_field_id}`. Leaves not-applicable fields blank and marks kickoff-capture unknowns `TBD`. Also updates the separate **Master Client Tracker** Google Sheet (see Phase 6F) — no write tool exists for it yet, so report the row values to the operator to paste in.
 
 ### Phase routing at start
 
@@ -175,12 +175,14 @@ curl -s -X POST \
 **Why this works (don't re-probe):**
 - Endpoint shape: `POST /api/v1/templates/{template_id}/projects`. The unscoped `/projects` and `/clients/{id}/projects` both 405/404.
 - Body `{"client_id":<id>}` attaches the project. Body `{}` creates an orphan — avoid.
-- No `GET /projects/{id}` or `DELETE /projects/{id}`. To verify tasks: `GET /api/v1/tasks?project_id={FC_PROJECT_ID}`. Stray projects must be closed via FC UI.
+- `GET /projects/{id}` IS supported (200 with the full record, 404 if it doesn't exist) — see the note below on verifying before flagging a stray project. `DELETE /projects/{id}` is not supported (405). To verify tasks: `GET /api/v1/tasks?project_id={FC_PROJECT_ID}`. Stray projects must be closed via FC UI.
 - Section-to-user mappings inherit from the template — don't try to assign at creation time.
 
 **8 standard project templates are NOT attached in Phase 1.** They're operational (weekly bookkeeping, month-end review, month-end close, cleanup, post cleanup, kick-off call, client training manual, tax returns) and only make sense after the engagement is signed. Attaching them pre-signing clutters the prospect's FC record and creates cleanup work if the client doesn't sign (FC has no API to delete a stray project — closure is UI-only). See **Phase 2H** for the template attachment + role-reassignment logic.
 
 **Client's Onboarding Checklist (`9685085`) — the skill never POSTs it (Jennifer's rule 2026-08-13).** The client-facing checklist is created by an **FC automation that fires when Jennifer marks the triggering task complete** — not by the skill, and not by template inheritance. Do NOT POST `9685085` in Phase 1 or Phase 2; doing so would create a duplicate. Phase 5's day-before-kickoff email just reads whatever checklist exists at that point (it will, once Jennifer has completed the triggering task).
+
+**Never assert a stray/erroneous project needs manual closure without verifying it exists first.** A Phase 1 handoff for a client (2026-09-02) flagged a supposed stray "Client's Onboarding Checklist" project as created in error and needing manual closure in FC UI. When checked two weeks later (2026-09-16), `GET /projects/{that_id}` returned 404 — the project never existed (or the claim was wrong from the start). Jennifer's correction: for a brand-new client, the Client Onboarding project (this template, `13946930`) is simply the first project auto-created — don't manufacture a second "stray" project claim alongside it unless you've confirmed via `GET /projects/{id}` that something else actually got created. If you ever suspect an extra project was created in error, verify with a live GET before writing it into a handoff as an action item.
 
 ---
 
@@ -583,6 +585,8 @@ All 8 attach for every tier. Notes:
 - Post Cleanup is the transition-to-recurring project that follows the initial Cleanup.
 - Client's Onboarding Checklist (`9685085`) is NOT part of this 8-project loop — it's handled separately (see Phase 1E / Phase 2A). Do NOT POST it here.
 
+**⚠️ `GET /tasks?project_id=` hard-caps at 15 results per page — `per_page` is ignored on this endpoint.** Discovered 2026-09-15 on a client's `Client - Cleanup` project (template `8266589`, 22 tasks total): page 1 returned only the first 15 (`meta.per_page: 15` even when `per_page=100` was requested), with `links.next` pointing to page 2, which held the remaining 4 Lead tasks (including the two "trigger" tasks — `Complete this task to start cleanup process.` and `Add Paxus' monthly draft recurring expense...`) plus all 3 `CPA/Controller` tasks. A loop that reads only page 1 silently leaves every task past #15 on its template default (usually Jennifer/Lisa) with no error. `Client - Cleanup` is the one template in this set of 8 known to exceed 15 tasks today, but **always paginate — don't special-case by template**, since template edits can push any of them over 15 later.
+
 **Attach each, then reassign by role:**
 
 ```bash
@@ -597,11 +601,19 @@ for TID in 5082639 5082645 5110296 8266589 13989492 13565957 7995444 7959692; do
     -w "\nHTTP %{http_code}\n"
   # capture the returned project id as $NEW_PROJECT_ID from the response
 
-  # 2. List that project's tasks and reassign by project_role.name
-  curl -s -H "Authorization: Bearer $TOKEN" \
-    "https://app.financial-cents.com/api/v1/tasks?project_id=${NEW_PROJECT_ID}" \
-    > /tmp/tasks_${NEW_PROJECT_ID}.json
-  # For each task, look at task.project_role.name and PUT the correct user_id.
+  # 2. List ALL of that project's tasks — paginate until a page returns no `links.next`.
+  #    Do NOT rely on `per_page` to fetch everything in one call; it's capped at 15 regardless of the value requested.
+  PAGE=1
+  > /tmp/tasks_${NEW_PROJECT_ID}.jsonl
+  while true; do
+    RESP=$(curl -s -H "Authorization: Bearer $TOKEN" \
+      "https://app.financial-cents.com/api/v1/tasks?project_id=${NEW_PROJECT_ID}&page=${PAGE}")
+    echo "$RESP" >> /tmp/tasks_${NEW_PROJECT_ID}.jsonl
+    HAS_NEXT=$(echo "$RESP" | python -c "import sys,json;print(bool(json.load(sys.stdin).get('links',{}).get('next')))")
+    [ "$HAS_NEXT" = "True" ] || break
+    PAGE=$((PAGE+1))
+  done
+  # For each task across every page in the .jsonl file, look at task.project_role.name and PUT the correct user_id.
 done
 ```
 
@@ -639,17 +651,25 @@ curl -s -X PUT \
 **Verification after the loop:**
 
 ```bash
-# GET tasks per project and confirm distribution matches expected roles
-curl -s -H "Authorization: Bearer $TOKEN" "https://app.financial-cents.com/api/v1/tasks?project_id=${NEW_PROJECT_ID}" \
-  | python -c "
-import sys, json
-d = json.load(sys.stdin).get('data', [])
+# Confirm distribution matches expected roles — read every page collected above, not just page 1.
+python -c "
+import json
 from collections import Counter
-by_role = Counter(((t.get('project_role') or {}).get('name'), (t.get('user') or {}).get('name')) for t in d)
-for (role, user), n in by_role.items():
-    print(f'  {role} → {user}: {n} tasks')
+by_role = Counter()
+with open('/tmp/tasks_${NEW_PROJECT_ID}.jsonl') as f:
+    for line in f:
+        line = line.strip()
+        if not line: continue
+        for t in json.loads(line).get('data', []):
+            role = (t.get('project_role') or {}).get('name')
+            assignees = [a.get('name') for a in (t.get('assignees') or [])]
+            by_role[(role, tuple(assignees))] += 1
+for (role, assignees), n in by_role.items():
+    print(f'  {role} → {assignees}: {n} tasks')
 "
 ```
+
+Check the `assignees` array here, not the top-level `user` field — `user` stays on the template default even after a successful reassignment (see below) and will make a correctly-reassigned task look wrong if you check the wrong field.
 
 Ideal outcome: every `Lead Accountant` task → Lead's name; every `Staff Accountant` task → Staff's name; every `CPA/Controller` task → Controller's name.
 
@@ -865,38 +885,35 @@ For each assigned team member who has a bio block (Controller, Lead, Staff in th
 
 ### Phase 3D — Text-swap pages 1 and 7
 
-Start an editing transaction on the working copy:
+**Tool names — current API (verified 2026-09-16; do not use `start-editing-transaction`/`perform-editing-operations`/`commit-editing-transaction`, which do not exist in this MCP surface):**
+- Open a transaction and inspect element ids: `mcp__claude_ai_Canva__read-design(design_id: <working copy>, open_transaction: true, filter: {fields: ["design_content"]})`. Returns a `transaction_id` plus each element's `locator_id` (format `PBxxx-LByyy`) inside `design_content`.
+- Apply edits: `mcp__claude_ai_Canva__edit-design(transaction_id: <id>, page_index: <1-indexed page>, operations: [...])` — default `finalize: "keep_open"`. All operations in one call must target the same `page_index`.
+- Review the returned before/after thumbnail before committing.
+- Commit: `edit-design(transaction_id: <id>, operations: [], finalize: "commit")` — IRREVERSIBLE. (`finalize: "cancel"` discards instead.)
 
-```
-mcp__claude_ai_Canva__start-editing-transaction(design_id: <working copy>)
-```
-
-Find the element IDs for the package-name placeholder on page 1 (e.g., `FULL SERVICE` / `BASIC` / `PREMIUM`) and the `XXXXX` placeholder on page 7. These are stable on the Full Service master:
+Find the `locator_id`s for the package-name placeholder on page 1 (e.g., `FULL SERVICE` / `BASIC` / `PREMIUM`) and the `XXXXX` placeholder on page 7 from `design_content`. These have been stable on the Full Service master:
 - Page 1 "FULL SERVICE": `PBBmQW3jLpcqG42m-LBNJHY2pW54z1Fnf`
 - Page 7 "XXXXX": `PBfbgrMgx6k3P9Mm-LBVBvW2L098zGTDK`
 
-For Basic / Premium, verify the element IDs on first use (re-parse from the start-editing-transaction response).
+For Basic / Premium, verify the locator_ids on first use (re-parse from the `read-design` response) — don't assume they match the Full Service master.
 
-Operations to issue in a single `perform-editing-operations` call:
+Page 1 and page 7 are different pages, so issue two `edit-design` calls (each pinned to its own `page_index`):
 
 ```python
-[
-  {"type": "find_and_replace_text", "element_id": "<page1 placeholder>", "find_text": "<package name>", "replace_text": "<Client legal name>"},
-  {"type": "find_and_replace_text", "element_id": "<page7 placeholder>", "find_text": "XXXXX", "replace_text": "<Client legal name>"},
-  {"type": "update_title", "title": "<Client legal name> - Welcome Packet"}
-]
+# page_index = 1
+[{"type": "find_and_replace_text", "locator_id": "<page1 placeholder>", "find_text": "<package name>", "replace_text": "<Client legal name>"},
+ {"type": "update_title", "title": "<Client legal name> - Welcome Packet"}]
+# page_index = 7
+[{"type": "find_and_replace_text", "locator_id": "<page7 placeholder>", "find_text": "XXXXX", "replace_text": "<Client legal name>"}]
 ```
 
-Then commit:
-```
-mcp__claude_ai_Canva__commit-editing-transaction(transaction_id: <returned id>)
-```
+Then commit the transaction (same `transaction_id`, `operations: []`, `finalize: "commit"`).
 
 ---
 
 ### Phase 3E — Insert 3 team blocks on page 2
 
-Open a new editing transaction on the same working copy. Page 2 layout (816×1056, "Meet Your Team" title at y≈122, URL at y≈993):
+Open a transaction on the same working copy (or reuse an already-open one). Page 2 layout (816×1056, "Meet Your Team" title at y≈122, URL at y≈993):
 
 | Position | Top | Left | Width | Height |
 |---|---|---|---|---|
@@ -904,16 +921,16 @@ Open a new editing transaction on the same working copy. Page 2 layout (816×105
 | Lead (middle) | 450 | 62 | 693 | 260 |
 | Staff (bottom) | 730 | 62 | 693 | 260 |
 
-Single `perform-editing-operations` call with one `insert_fill` op per uploaded block (asset_type=image, asset_ids from Phase 3C, page_id of page 2). Then commit.
+Single `edit-design` call (`page_index: 2`) with one `insert_fill` op per uploaded block (`asset_type: "image"`, `asset_id`/`alt_text` from Phase 3C, `page_id` of page 2 — read `page_id` off `design_content`). Then commit (`operations: []`, `finalize: "commit"`).
 
 **If the Staff is an intern and was omitted (2 blocks):** place Controller (top) and Lead (middle) in their normal slots and leave the bottom slot empty, or ask the operator whether to re-center the two blocks. Don't invent a third block for the intern.
 
 **Visual-size mismatch escape hatch.** If the operator says one block renders visually larger than the others after export (because a bio PNG's internal composition has less padding than the others), keep the other two blocks alone and shrink the offending one:
 
 ```python
-# Inside a fresh transaction:
-{"type": "resize_element", "element_id": "<block element id>", "width": 640, "preserve_aspect_ratio": True}
-{"type": "position_element", "element_id": "<block element id>", "top": <adjusted top>, "left": <adjusted left>}
+# Inside a fresh transaction, same page_index as the block:
+{"type": "resize_element", "locator_id": "<block locator_id>", "width": 640, "preserve_aspect_ratio": True}
+{"type": "position_element", "locator_id": "<block locator_id>", "top": <adjusted top>, "left": <adjusted left>}
 ```
 
 Rule of thumb: `width: 640` (down from 693, ~92%) with `preserve_aspect_ratio: true` and re-centering (top +10, left +26) matched the sizing on the other two blocks on a 2026-07-01 client run. Iterate as needed.
@@ -942,13 +959,15 @@ ls -la "/g/Shared drives/{Client legal name}/Perm File/Welcome Packet - {Client 
 
 ### Phase 3H — Render the welcome email and create the Gmail draft
 
+**Pull the primary contact's email/phone fresh from FC before drafting** (`GET /clients/{FC_CLIENT_ID}`) — do not trust whatever email is sitting in the Phase 1 handoff file. Contact info can change between Phase 1 and Phase 3: on a client onboarded 2026-09, the Phase 1 handoff (written 2026-09-02) recorded one contact email, but FC's contact record had been updated 2026-09-09 to a different email address (a phone number was added at the same time) — Phase 3 ran 2026-09-16 and would have drafted the welcome email to the stale address if this hadn't been caught by cross-checking FC directly. Treat the Phase 1/2 handoff as historical record, not a live source of contact details, for this and every other client-facing email (see also Phase 5A, which already does this correctly).
+
 Read `~/.claude/skills/onboard-client-admin/welcome-email-template.md`. Fill placeholders:
 
 | Placeholder | Source |
 |---|---|
 | `{Client Name}` | FC display name |
 | `{Greeting}` | "Good morning" / "Good afternoon" — from Phase 3A |
-| `{Contact First Name}` | First name from FC primary contact |
+| `{Contact First Name}` | First name from the **freshly-pulled** FC primary contact (see above) |
 | `{Onboarding}` | From **engagement letter** (not quote) |
 | `{Cleanup Deposit}` | From engagement — adapt the line if the engagement bundles QBO setup or uses a flat fee instead of a range |
 | `{Cleanup Deposit Date}` | The 20th of the month **prior** to the first monthly draft (e.g., monthly draft Aug 5 → cleanup deposit July 20). Spelled-out month + day. |
@@ -1360,6 +1379,7 @@ Run any time after Phase 2 (the client record exists), but easiest once the **re
   - **Leave blank** any field that doesn't apply to this client (e.g., all the Board/non-profit fields for a for-profit client; add-on fields like Extras when none were elected).
   - **Write `TBD`** for a field that *does* apply but isn't known yet and will be captured at kickoff (typically **Entity Type** and **Tax Accountant** when the tax return / preparer name aren't on file). This distinguishes "capture this later" from "not applicable."
 - **Ask the operator only for what the documents don't contain.** Confirm the ambiguous ones rather than guessing (see 6C). Budgeted hours in particular usually aren't in the client's Drive folders — they live in the **budgeted-hours/client tracker** (ask the operator for the three numbers or the tracker location).
+- **Also update the Master Client Tracker (see Phase 6F)** — a separate Google Sheet from the FC "About" section, added to this phase 2026-09-16 at Jennifer's instruction.
 
 ### Phase 6A — Recover client id and read the field definitions
 
@@ -1458,6 +1478,25 @@ curl -s -A "Mozilla/5.0" -H "Authorization: Bearer $TOKEN" -H "Accept: applicati
 ```
 
 Report the populated fields as a table, note which were left blank (not-applicable) vs. `TBD` (capture at kickoff), and end warmly.
+
+### Phase 6F — Update the Master Client Tracker
+
+The **Master Client Tracker** is a separate Google Sheet — distinct from the FC "About" section above, and not previously part of this skill until Jennifer asked for it during a client's onboarding (2026-09-16):
+
+```
+https://docs.google.com/spreadsheets/d/1jc-Tp-5NE56xp18wKitomKkWO4awrZz_2iN0t2Jjto8/edit?gid=693911118#gid=693911118
+```
+
+File id `1jc-Tp-5NE56xp18wKitomKkWO4awrZz_2iN0t2Jjto8`, titled "Client Master Tracker" (owner cassie@paxuscpa.com). The URL's `gid=693911118` names a specific tab, but `read_file_content` flattens all tabs into one text blob with no tab/gid names exposed — identify the right table by its content, not the gid.
+
+**No write tool exists for this sheet as of 2026-09-16.** The available Google Drive/Sheets tools in this environment (`read_file_content`, `download_file_content`, `create_file`, `update_file`, `copy_file`, `share_file`) can read, copy, or manage file metadata, but none can patch a cell or append a row to an existing spreadsheet. Check again each run — a write tool may become available — but if not, **give the operator the row values in the tracker's own column order so they can paste them in**; don't silently skip this step.
+
+**Sheet structure (as last inspected, 2026-09-16):**
+
+1. **Main roster table** (fully populated, ~100+ rows) — columns in order: `Payroll | Bill Pay | Bill.com | Dext | Wholesaled QB? | Monthly account fees | Total Monthly Draft | Package | Admin | Client | [budgeted-hours group, 3 sub-columns for Staff/Lead/Reviewer hours] | Staff | Lead | Reviewer | Client Name | Client Phone | Client Email Address | Additional Contact | Notes | Context Bundle Drive ID | Bundle Built`. Notes on non-obvious columns: `Admin` holds a QBO-admin-style email (e.g. `QBO@paxuscpa.com`), not a person; `Client` (col 10) appears to hold a short nickname/address-style identifier, not the legal name; `Staff`/`Lead`/`Reviewer` (after the hours group) hold 2-letter staff initials, not full names; `Client Name` (later in the row) holds the **contact person's** name, not the business name. This mapping came from reading a flattened text export, which is inherently lossy on exact column boundaries — verify against a couple of live rows before trusting it blindly, and flag any mismatch back to the operator rather than guessing silently.
+2. **A separate "New Clients" pipeline table** — headers `Package | Hours Budgeted | Industry | Contact Name | Client | Paxus Staff | Notes | Quote sent | Start Date provided in Quote`. This table appears to go stale after signing — multiple already-onboarded clients (including at least one fully through Phase 6) sit here as rows with only the `Client` name filled in and everything else blank. Don't treat a blank row here as meaningful signal, and don't assume it needs filling in as part of Phase 6.
+
+Populate/update the main roster table row for this client with the same values sourced in Phases 6A–6D (Package, fees, budgeted hours, payroll status, etc.) plus the primary contact's name/phone/email (pulled fresh from FC per the Phase 3H/5A contact-freshness rule) and a short Notes summary. Report the row values to the operator in column order, flagging anything you're unsure how to map.
 
 ---
 
