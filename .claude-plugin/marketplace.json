@@ -24,6 +24,8 @@
         "./skills/month-end-close-dashboard",
         "./skills/monthly-capacity",
         "./skills/monthly-dashboard",
+        "./skills/client-context",
+        "./skills/cfo-meeting-agenda",
         "./skills/onboard-client-admin",
         "./skills/onboard-project",
         "./skills/paxus-design",
