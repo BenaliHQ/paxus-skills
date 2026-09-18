@@ -1,6 +1,6 @@
 ---
 name: forecast-update
-description: Update a CFO or advisory client's forecast workbook with the latest month's actuals. Pulls the newest monthly financials PDF and the most recent forecast workbook from the firm's shared Drive, reads the client's forecast spec, pastes the new month's actuals into the workbook, applies any prior-month restatements found in the new financials, proves the result still ties to the statements, and hands back a finished workbook for review before upload. Works for any client on a formula-driven forecast workbook — non-profit or for-profit, calendar year or fiscal year. Use when someone says "run the forecast for <client>", "update the <client> forecast", "build the <month> forecast", "do the forecasting for <client>", or "roll the actuals into the forecast". SCOPED TO THE FORECAST WORKBOOK — it does not draft the meeting agenda and it does not build the dashboard.
+description: Update a CFO or advisory client's forecast workbook with the latest month's actuals. Pulls the newest monthly financials PDF and the most recent forecast workbook from the client's shared Drive (gws in Claude Code, the connected folder in Cowork), reads the client's forecast spec from their Drive, pastes the new month's actuals into the workbook, applies any prior-month restatements found in the new financials, proves the result still ties to the statements, and hands back a finished workbook for review before upload. Works for any client on a formula-driven forecast workbook — non-profit or for-profit, calendar year or fiscal year. Use when someone says "run the forecast for <client>", "update the <client> forecast", "build the <month> forecast", "do the forecasting for <client>", or "roll the actuals into the forecast". SCOPED TO THE FORECAST WORKBOOK — it does not draft the meeting agenda and it does not build the dashboard.
 ---
 
 # /forecast-update — Roll Actuals Into a Client's Forecast Workbook
@@ -37,62 +37,94 @@ Your job is only to (a) get the actuals in correctly, (b) catch any prior-month 
 
 ## Phase 1 — Resolve the client and read the spec
 
-Ask which client this is for, then read that client's **forecast spec**:
+Ask which client this is for, then read that client's confirmed spec file, `forecast-spec.md`.
+**The spec lives in the client's own shared drive** — never on one person's laptop and never in one
+operator's private notes — so every Paxus teammate who runs this skill, from Claude Code or from
+Cowork, finds the same spec.
 
-```
-~/paxus-ai/clients/<slug>/forecast-spec.md
-```
+**Where the spec lives (canonical location, in this order of precedence):**
 
-(the `<slug>` folder created by `/client-context`, the same place `/monthly-dashboard` keeps
-`dashboard-spec.md`). The spec is the shared firm record — it lives in the client folder, not in
-any one person's private notes, so everyone who runs this skill gets the same answer.
+| Client drive shape | Canonical spec location |
+|---|---|
+| Drive has a `.agents/` context bundle (built by `/paxus-skills:client-context`) | `.agents/b-engagement/forecast-spec.md` |
+| Single-entity drive, no bundle | `Perm File/forecast-spec.md` at the drive root |
+| Multi-entity drive (one folder per entity at the root) | `<Entity folder>/Perm File/forecast-spec.md` — one spec per entity |
 
-The spec records: resolved Drive folder IDs, the fiscal/calendar period basis, which financials
-report and which page is the source, the workbook family and control, the file-name patterns, the
-account-mapping quirks, the standing operator decisions (which unmapped accounts fold where), and
-the run history.
+This is the same rule `/monthly-dashboard` uses for `dashboard-spec.md`; the two specs sit side by
+side. The file is always named exactly `forecast-spec.md`. It never goes in `Financials/`, the
+forecast folder, the year folder, `Review Notes`, or Cowork's default `Claude outputs` folder —
+**always name the destination folder explicitly when saving**, or Cowork will drop it in
+`Claude outputs`.
+
+**Finding it on a repeat run:** search the client's drive for a file named `forecast-spec.md` (gws:
+`name = 'forecast-spec.md'` with `corpora:"drive"` scoped to the client's `driveId`; Cowork: search
+the connected client folder). Then:
+
+- **One file, in the canonical folder** → that's the spec. Read it.
+- **One file, in the wrong folder** → it's still the spec; *move* it (don't copy) to the canonical
+  folder and say so.
+- **Two or more** → the newest is operative. Move the others to the canonical folder renamed
+  `forecast-spec-superseded-YYYY-MM-DD.md` (their modified date) and say so. Never leave two files
+  named `forecast-spec.md` on one drive.
+- **None** → cold start (below).
+
+A copy at `~/paxus-ai/clients/<slug>/forecast-spec.md` on someone's laptop is an **optional local
+cache only**. It is unreachable from Cowork and from every other teammate's machine. If a laptop copy
+and the Drive copy differ, **Drive wins** — refresh the cache from Drive, never the other way round.
+
+The spec records: resolved Drive IDs, the Cowork connected-folder path, the fiscal/calendar period
+basis, which financials report and which page is the source, the workbook family and control, the
+file-name patterns, the account-mapping quirks, the standing decisions (which unmapped accounts fold
+where), and the run history.
 
 - **Spec exists** → use it, then still re-detect the workbook structure in Phase 3 and reconcile.
-- **No spec** → this is a **cold start**. Work through the phases below discovering each piece, ask
-  the operator only what you genuinely cannot determine, and **write the spec at the end** so next
-  month is a repeat run. Do not copy another client's spec.
+- **No spec** → **cold start.** Work through the phases below discovering each piece, ask only what
+  you genuinely cannot determine, and **write the spec to the client's canonical Drive location at
+  the end** (Phase 8) so next month is a repeat run. Do not copy another client's spec.
 
 ## Phase 2 — Pull the two inputs
 
 You need exactly two files: the **latest monthly financials PDF** and the **most recent forecast
 workbook**.
 
-**Reaching Drive.** Try the local mounted shared drive first:
+**Two environments, one rule: use whatever Drive access the session already has.**
 
-```
-~/Library/CloudStorage/GoogleDrive-<email>/Shared drives/<drive>/...
-```
+- **Claude Code on macOS:** the local Google Drive path is sandbox-blocked (`Operation not
+  permitted`) — **always use the gws CLI**, never the local `CloudStorage` path. Every gws Drive call
+  needs `includeItemsFromAllDrives:true` and `supportsAllDrives:true` (plus `corpora:"drive"` with the
+  client's `driveId` for searches). Download with `alt:media`, and **size-verify every download** —
+  gws can truncate silently. Note that `--upload` only accepts a path **inside the current working
+  directory**, so `cd` to the file's folder and pass a relative path.
+- **Cowork (Windows or Mac):** there is no gws. The client's shared drive is a *connected folder*
+  (e.g. `G:\Shared drives\<Client>\`). Read the financials, the workbook, and `forecast-spec.md`
+  straight from it, and save outputs back into it by explicit folder path. **Record the
+  connected-folder path in the spec** alongside the Drive IDs so either environment can run next
+  month.
 
-If the mount is unreadable — on a managed Mac it commonly returns `Operation not permitted`, which
-is a macOS privacy block, not a permissions problem — **fall back to the `gws` CLI**, which is how
-the sibling skills reach Drive. Every `gws` Drive call needs `includeItemsFromAllDrives:true` and
-`supportsAllDrives:true` (plus `corpora:allDrives` or a `driveId` for searches). Download with
-`alt:media` into a temp working directory. **Size-verify every download** — `gws` can truncate
-silently.
+Everything here is a read. The only writes this skill makes are the finished workbook and the
+client's `forecast-spec.md` (Phase 8).
 
-Both paths are read-only. The only write in this whole skill is the finished workbook, saved
-locally.
+**Resolve the folders once, then store the IDs.** Drive has many same-named folders across clients
+(multiple "Financials", "2026", etc.), so blind `name contains` searches are ambiguous and slow. On a
+**repeat** run read the resolved IDs from the spec and skip discovery. On a **cold start**:
 
-**Finding the folders** (if the spec doesn't already have the IDs):
-
-- The client folder name usually differs from the shorthand people say out loud — search, don't assume.
-- Inside it, find the **financials** folder and the **forecast** folder. Forecast-folder names vary
-  (`Forecast`, `Forecasts`, `Budgets and forecasts`), and the workbooks are sometimes in a
-  *subfolder* of that.
-- Find the right **year subfolder**. Calendar-year clients use the calendar year; fiscal-year
-  clients use a fiscal label like `FYE 06.30.YYYY`. Confirm the period with the operator if it's
-  ambiguous — getting this wrong wastes the whole run.
+- List shared drives to get the client's **own shared-drive ID** by name. Most clients have their own
+  drive; don't assume everything hangs off a single firm-wide drive.
+- Find the **financials** folder and the **forecast** folder. Forecast-folder names vary (`Forecast`,
+  `Forecasts`, `Budgets and forecasts`), the workbooks are sometimes in a *subfolder* of that, and a
+  drive may contain **both** a `Forecast` and a `Forecasts` folder — disambiguate by parent chain and
+  contents, don't guess.
+- Find the right **year subfolder**. Calendar-year clients use the calendar year; fiscal-year clients
+  use a fiscal label like `FYE 06.30.YYYY`. Confirm the period if it's ambiguous — getting this wrong
+  wastes the whole run.
+- Pass `--params` JSON via a file (heredoc) when a query contains a folder ID, to avoid shell-quote
+  breakage.
 
 **Which financials file.** Many clients have both a detailed financials PDF and a board/summary
 packet. The source is whichever carries the **per-month P&L with a column per month plus a
 TOTAL/YTD column** — that one page is the source of truth for both the new actuals and any
-restatements. If the packet carries both a **cash** and an **accrual** presentation, use the basis
-the workbook is built on, and record which one in the spec.
+restatements. If the packet carries both a **cash** and an **accrual** presentation, use the basis the
+workbook is built on, and record which one in the spec.
 
 > **Re-pull before building.** Some clients reissue the packet the same day, replacing the file in
 > place (same file ID), so only `modifiedTime`/size reveal it. Diff the fresh copy against what you
@@ -281,11 +313,23 @@ Upload only on the go-ahead.
 
 ## Phase 8 — Write the spec back
 
-Update `~/paxus-ai/clients/<slug>/forecast-spec.md` with anything this run learned: newly resolved
-folder IDs, a changed workbook structure, new PDF column geometry, a new standing fold decision, and
-a run-history entry (month, file built, what tied, restatements applied, decisions made, and any row
-renumbering downstream months will need). **Row renumbering is the one future-you will most want and
-most regret not writing down.**
+Create or update `forecast-spec.md` in the client's **canonical Drive location** (the Phase 1 table:
+`.agents/b-engagement/` when the client has a context bundle, otherwise `Perm File/`; per-entity
+`Perm File/` on multi-entity drives). **Saving the spec into the client's drive is part of finishing
+the run** — a spec that only exists on one laptop is the problem this skill was built to fix.
+
+Name the destination folder explicitly when saving, or Cowork drops the file in `Claude outputs`.
+If the client has an `.agents/` bundle, follow the bundle's `AGENTS.md`: OKF frontmatter on the file
+and a line in the section index.
+
+Record anything this run learned: newly resolved folder IDs, the Cowork connected-folder path, a
+changed workbook structure, new PDF column geometry, a new standing fold decision, and a run-history
+entry (month, file built, what tied, restatements applied, decisions made and by whom, and any **row
+renumbering** downstream months will need). Row renumbering is the one thing future-you will most
+want and most regret not writing down.
+
+If a local cache exists at `~/paxus-ai/clients/<slug>/forecast-spec.md`, refresh it *from* Drive.
+Never let the laptop copy become the source of truth.
 
 ## Edge cases
 
