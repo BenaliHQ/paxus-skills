@@ -1,7 +1,7 @@
 # Kickoff Prep — how to use it
 
-For the lead running a new client's kickoff call. You use this twice: once before the
-call, once after.
+For the lead running a new client's kickoff call. You use it before the call, again any
+time something changes before the call, and once more after.
 
 Everything it makes lands in the client's **Perm File** folder, so nothing lives on your
 computer and anyone on the team can find it.
@@ -37,7 +37,42 @@ questions back to Co-Work and it adds them to the agenda.
 
 **The skill is a head start, not a substitute for looking at the books yourself.**
 
-**7. Open the agenda and run your call from it.**
+**7. Read the agenda in your own voice.** Change anything that doesn't sound like you.
+It's your call — the skill just gave you a head start.
+
+**8. Worth considering: send the agenda to the client a few days out.** Leads who have done
+this got most of the item-6 list answered before the call even started, and the call went
+faster because the client already knew what was coming. Your call, not a required step.
+
+**9. Run your call from the agenda.**
+
+---
+
+## Before the call, run it again
+
+There are two reasons to re-run it, and you'll usually hit both.
+
+**Something changed and you know about it.** Firm admin fills in the billing figures. The
+client sends three of the four things you asked for. You find something in QuickBooks. The
+call moves. Run `/kickoff-prep` again and tell it what changed. It updates the two documents
+you already have — it doesn't make new ones — and tells you what moved so you know whether to
+re-read or just glance. Don't start over, and don't keep a second copy.
+
+**You prepped early and the call is now close.** Run it again in the day or two before the
+call even if you have nothing to tell it. You don't have to say anything: it goes and looks
+through the client's folder and firm admin's file for whatever landed since you last ran it,
+takes those items off your agenda, and tells you what it found. If nothing came in, it says
+so — that's a minute well spent either way.
+
+Financial Cents carries the reminder so it doesn't ride on anyone's memory:
+
+> *"If you ran the skill more than a week before the kickoff call, be sure to rerun it right
+> before the call to gather any information that may have been added since the last time you
+> ran it."*
+
+**Why it matters:** we don't want to sit on a kickoff call asking a client for something they
+already sent us. Nothing undoes a good first impression faster than looking like nobody read
+their file.
 
 ---
 
@@ -88,8 +123,15 @@ call without it.
 the file inside it, it stops and asks. That's deliberate: it would rather build nothing
 than build the wrong client's call sheet.
 
-**Edit the documents freely.** They're yours. If you re-run the skill it backs up your
-version first, so you won't lose notes.
+**It will also stop if firm admin's file isn't there yet** — and it will not write one for
+you. Filling in the Onboarding Dossier is firm admin's job, not yours. If it's missing, out
+of date, or turns out to be a different client's, the skill names the file so you can ask
+her for it. You can tell it to go ahead without one, but expect a longer list of things to
+chase, and expect to re-run it once the real file lands.
+
+**Edit the documents freely.** They're yours. Re-running the skill updates them around your
+notes rather than replacing them — anything you typed stays. It won't leave backup copies
+behind either; Google Docs version history already keeps those.
 
 **It never prices anything.** If a client asks for something outside the engagement — a tax
 return, board meetings — it flags it for your controller and the firm owner, and writes the
@@ -109,6 +151,9 @@ weren't there. The skill checks names against the file, but glance at them.
 | What you're seeing | What to do |
 |---|---|
 | It says a document is missing | Ask firm admin for it — the message names the exact file |
+| It stopped because there's no dossier | Ask firm admin for it. Don't fill it in yourself — that's her job, and hand-filling it means redoing the prep later |
+| Something changed before the call | Re-run it and say what changed; it updates what you have |
+| You prepped more than a week out | Re-run it right before the call — you don't have to tell it anything, it goes looking for what came in |
 | It stopped and asked about the folder | Check you picked the right client, then tell it to continue |
 | A figure looks wrong | Trust the signed engagement over anything else, and tell your controller |
 | It asked you to review QuickBooks but there's no file yet | Say so — for new QBO builds there's nothing to review, and it'll move on |
@@ -119,7 +164,12 @@ weren't there. The skill checks names against the file, but glance at them.
 ## The short version
 
 Before: point it at the folder, answer three questions, read the prep notes, look at
-QuickBooks, run the call off the agenda.
+QuickBooks, read the agenda in your own voice, run the call off it.
 
-After: download the transcript, upload it to a fresh Co-Work session or the same one, read
-the recap, send it yourself.
+If something changes: re-run it and say what changed. It updates what you already have.
+
+Right before the call: re-run it even with nothing to tell it — it sweeps for anything that
+came in since, so you don't ask the client for something they already sent.
+
+After: download the transcript, upload it to a fresh Co-Work session or the same one, tell it
+anything you found outside the call, read the recap, add a line of your own, send it yourself.

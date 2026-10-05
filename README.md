@@ -6,7 +6,7 @@ The model in one line: **skills are the engine, client data is the fuel.** Skill
 
 ## What's in the library
 
-- **`/onboard-client`** — bring a new client into your AI workflow. Creates a standard folder structure at `~/paxus-ai/clients/{client}/` with CLAUDE.md, STATUS.md, and project-ready subfolders. Optionally scaffolds your first project at the end.
+- **`/client-context`** — bring a new client into your AI workflow. Creates a standard folder structure at `~/paxus-ai/clients/{client}/` with CLAUDE.md, STATUS.md, and project-ready subfolders. Optionally scaffolds your first project at the end.
 - **`/onboard-project`** — scaffold a new project inside an existing client. Creates `projects/{project}/` with the project's own CLAUDE.md, STATUS.md, and standard subfolders (`inputs/`, `deliverables/`, `notes/`).
 
 More skills are added through the workflow-mapping process — see [`CONTRIBUTING.md`](CONTRIBUTING.md).
@@ -41,7 +41,7 @@ Claude will walk you through each step. You'll see what it's about to do before 
 
 The install is safe by default: Claude will only create or modify the following locations on your machine:
 
-- `~/.claude/skills/onboard-client/` (and its `templates/` folder)
+- `~/.claude/skills/client-context/` (and its `templates/` folder)
 - `~/.claude/skills/onboard-project/` (and its `templates/` folder)
 - `~/paxus-ai/clients/` (the workstation folder — empty until you onboard your first client)
 
@@ -51,7 +51,7 @@ Nothing else on your machine is touched.
 
 ### First client
 
-1. Run `/onboard-client`
+1. Run `/client-context`
 2. Answer Claude's questions about the client
 3. Optionally scaffold your first project at the end
 

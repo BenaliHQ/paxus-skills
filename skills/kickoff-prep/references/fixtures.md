@@ -103,8 +103,22 @@ present; or naming the other client while reporting the quarantine.
 A picked folder named `Harbor Line Freight LLC` containing a dossier headed
 `Cascade Milling Co`.
 
-**Expected:** hard stop. Ask the Lead to confirm the folder. Build nothing. This is one
-of only three hard stops.
+**Expected:** hard stop, with no lead override available. Ask the Lead to confirm the
+folder. Build nothing. See `input-resolution.md` § Dossier not ready.
+
+## Fixture E — no dossier at all
+
+A picked folder with an engagement PDF and a quote, and no Onboarding Dossier fill-in
+anywhere in it.
+
+**Expected:** stop and route to firm admin. Name the expected file path, say firm admin
+produces it, and offer to build from the engagement and quote **only if the Lead explicitly
+says to proceed**. Never write a dossier, and never take its contents from the Lead by
+dictation.
+
+**Failure modes to watch:** sweeping straight to tier 2 and producing a prep that looks
+complete but was built entirely from the quote; or offering to "put together the dossier"
+for the Lead.
 
 ## Not covered by these fixtures
 

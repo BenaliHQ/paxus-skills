@@ -52,8 +52,8 @@ Unless the operator says otherwise, a Paxus quote offers three levels with the s
 | Financial statements with notes & analysis | — | ✓ | ✓ |
 | 1099 preparation (filing fees separate) | add-on | ✓ | ✓ |
 | Collaboration with your tax preparer | — | ✓ | ✓ |
+| KPI tracking & benchmarking | — | ✓ | ✓ |
 | Monthly controller advisory call | — | — | ✓ |
-| KPI tracking & benchmarking | — | — | ✓ |
 | Budget / forecast | — | — | ✓ |
 | Workers' comp audit support † | — | — | ✓ |
 | General liability audit support | — | — | ✓ |
@@ -101,6 +101,7 @@ Never write a line like *"we keep your programs, grants, and restricted funds tr
 - **Adding a row is normal** when the engagement has a real element the default doesn't cover.
 - **Silently removing a default row is not.** If a standard element is coming out, say so and confirm — an omission the operator didn't intend becomes a scope gap in a signed engagement.
 - **The default table and the card wording are locked.** Render every row above, and use the standard card copy, unless the operator explicitly says otherwise. Do not condense two rows into one, reword a row into something narrower, or drop a row because it felt redundant — *"Monthly performance & KPI call"* in place of separate *KPI tracking* and *Budget / forecast* rows is a silent scope reduction, not a tidier table. **The deviation has to come from the operator, never from your own judgment about what this client needs.** Before Phase 2, count the rows against the default and name any difference out loud. The whole point is that nobody has to proofread the table on every quote to check whether something fell off.
+- **Keep each column's checkmarks contiguous.** When a row moves between levels, reposition it so every column's ✓ run is unbroken and the levels above it form a single block underneath. KPI tracking sits immediately **above** the monthly controller advisory call for exactly this reason. A checkmark column with a gap in the middle reads to the client as a mistake rather than a distinction. *(Operator instruction, 2026-08-21.)*
 - **A level where the client keeps their own bookkeeper** marks the coding and month-end rows as *Your team*, not as excluded. That distinction matters: it says who does the work, not whether it happens. This is a **deviation** from the default, not the default itself.
 
 ### What actually separates the three levels
@@ -110,8 +111,8 @@ Never write a line like *"we keep your programs, grants, and restricted funds tr
 | Level | What the client gets that the level below doesn't |
 |---|---|
 | **Basic** | Their monthly financial statements, delivered. |
-| **Full Service** | Notes and analysis on the statements · 1099 preparation · collaboration with the tax or 990 preparer · board reporting package *(non-profit)* |
-| **Premium** | A monthly advisory call · KPI tracking · budget and forecast support · workers' comp audit support *(when they run payroll)* · general liability audit support · annual audit support *(non-profit)* |
+| **Full Service** | Notes and analysis on the statements · 1099 preparation · collaboration with the tax or 990 preparer · KPI tracking · board reporting package *(non-profit)* |
+| **Premium** | A monthly advisory call · budget and forecast support · workers' comp audit support *(when they run payroll)* · general liability audit support · annual audit support *(non-profit)* |
 
 ### The card wording is a default too — use it verbatim
 
@@ -120,8 +121,8 @@ The three price cards have **standard names and standard descriptions.** They ar
 | Card name | Description |
 |---|---|
 | **Basic Service** | Your complete monthly accounting through close, with financial statements delivered each month. |
-| **Full Service** | Adds notes and analysis on your statements, 1099 preparation, and collaboration with your tax preparer. |
-| **Premium Service** | Adds a monthly advisory call with your controller, KPI tracking, budget and forecast, and workers' comp and general liability audit support. |
+| **Full Service** | Adds notes and analysis on your statements, 1099 preparation, collaboration with your tax preparer, and KPI tracking. |
+| **Premium Service** | Adds a monthly advisory call with your controller, budget and forecast, and workers' comp and general liability audit support. |
 
 On a **non-profit** quote, swap *tax preparer* → *990 preparer* in Full Service, and add the board reporting package and annual audit support to the relevant cards. Those are the only routine substitutions.
 
@@ -229,6 +230,8 @@ Lead and controller both budget well above the retired template's 0.7 and 0.25 h
 
 $10 per reconcilable account beyond the first · **$50/mo whenever the client has payroll, even when we don't run it** (it adds complexity either way) · 1099s at $30 each ÷ 12 · Dext at $35/mo if used.
 
+**Having payroll and payroll administration are two different things.** The $50 is for a client who *has* payroll, run by anyone, and it goes into the monthly fee. **Payroll administration** (Paxus actually running the payroll) is a separate service. It is never folded into the $50 or the tier price. List it under **Also available** on page 3, by name with no price, whenever the client has payroll and Paxus isn't running it. *(Operator instruction, 2026-10-04.)*
+
 ### Step 6 — Normalize bookkeeper-driven volume
 
 **Volume drawn from bank activity is trustworthy. Volume drawn from bookkeeper activity is not.** Bank-feed lines exist whether or not anyone codes them. Bills entered, invoices created, and journal entries posted exist only if somebody did the work.
@@ -252,6 +255,43 @@ So for every bookkeeper-driven count, **average only the months the process was 
 - **Estimating low is not a kindness.** Understated hours don't reduce the work — they misstate the capacity budget and hide an unprofitable engagement until someone burns out on it.
 - **Don't price efficiency straight through to the client.** As tooling takes work out of the process, hours fall. That doesn't become "this takes ten minutes now, so we'll charge $25." Price the outcome and the responsibility; the gain is the firm's margin and it funds the next improvement.
 
+### Step 9 — Show the breakdown (required, every quote)
+
+Before any fee goes to the operator, show the buildup **task by task under each role**. A total on its own can't be checked. The table shows where every hour came from. *(Operator instruction, 2026-10-04: "I want this built into the skill so you do this each time as part of the quoting process.")*
+
+**Table 1 — tasks by role.** One row per task, grouped Staff → Lead → Controller → Fixed, with a subtotal per role:
+
+| Role | Task | Basis | Hours/mo | Amount |
+|---|---|---|---|---|
+| Staff $90 | Bank-feed coding | [decisions/mo, by account] ÷ 50/hr | | |
+| Staff $90 | Reconciliation | [each account and its band: 20 / 10 / 5 min] | | |
+| Staff $90 | Bill entry | [bills entered/mo] × 2 min | | |
+| Staff $90 | AR invoices | [invoices/mo] × 2 min | | |
+| Lead $135 | Journal entries | [what they are: payroll, loans, accruals…] | | |
+| Lead $135 | FS review, incl. initial review of staff work | | | |
+| Lead $135 | Client communication | | | |
+| Lead $135 | Sales-tax filing | [filings/mo, or none] | | |
+| Lead $135 | Project / class tracking | 2.5 hrs, or none | | |
+| Controller $165 | Final review | | | |
+| Controller $165 | Client analysis | | | |
+| Controller $165 | Project / class tracking review | 1.0 hr, or none | | |
+| Fixed | Accounts beyond first | [count] × $10 | | |
+| Fixed | Payroll | $50 if the client has payroll | | |
+| Fixed | 1099s | [count] × $30 ÷ 12 | | |
+| Fixed | Dext | $35 if used | | |
+
+**Table 2 — packages.** Staff / Lead / Controller hours, total hours, and the raw fee for Basic Service, Full Service and Premium Service. Basic drops the controller's analysis hours. Premium shows Full + $750.
+
+Rules for the table:
+
+- **Show zero rows; don't drop them.** "Bill entry — none in QBO — 0" tells the reviewer it was checked. A missing row looks like it was forgotten.
+- **The Basis column names the actual count** and the source it came from: the GL script, the QBO file, or the operator.
+- **Mark every judgment hour as judgment.** Coding and reconciliation come from counts. FS review, client communication and analysis are estimates. Say which is which so the operator knows what to push on.
+- **Mark anything unconfirmed as assumed**, e.g. sales tax assumed none, and carry it into the open questions.
+- Close with the **effective rate** (raw ÷ hours) and the **1% reference**.
+
+The breakdown is **internal**. It goes to the operator in the session and into the prospect's internal notes. The Hours Budget file (Phase 4) gets it with the hours only. It never appears on the quote or the cover email.
+
 ### What Phase 0 does not price
 
 **Cleanup and setup are not covered here.** They are a separate method, built per defect from how many periods each spans and who fixes it — and the same coding hours must never be counted against both cleanup and monthly work. Take those figures from the operator until that method ships.
@@ -266,7 +306,7 @@ Then ask for everything else in a single message:
 2. **One-line positioning** — what this engagement is, in a phrase ("Monthly bookkeeping, financial reporting & advisory").
 3. **The fees** — from Phase 0 if you priced it, otherwise one per level from the operator. Names default to Basic Service / Full Service / Premium Service; ask whether this quote renames or drops any. Confirm the partner's final number before it reaches the page.
 4. **Deviations from the default table** — show it and ask what's different for this client. Rows to add, rows that don't apply, anything the client's own team keeps.
-5. **Add-ons** — name, fee, one-line scope, and **which levels each one attaches to**. Gating is per add-on, not one blanket rule: some attach to Full Service and Premium, others to Premium only. There is deliberately no standing list — add-ons come out of the discovery call, so they're specific to what surfaced with this client. Outsourced CFO, invoicing, bill pay, and payroll are all common, but none is assumed.
+5. **Add-ons** — name, fee, one-line scope, and **which levels each one attaches to**. Gating is per add-on, not one blanket rule: some attach to Full Service and Premium, others to Premium only. There is deliberately no standing list — add-ons come out of the discovery call, so they're specific to what surfaced with this client. Outsourced CFO, invoicing, bill pay, and payroll are all common, but none is assumed. **Services offered but not priced on this quote** go in the page 3 **Also available** list, by name only. Payroll administration always goes there when the client has payroll that Paxus isn't running.
 6. **Separately-quoted services** — anything with its own timing (payroll conversions, cleanups), plus the constraint that drives the date.
 7. **One-time fees** — onboarding, cleanup, and anything else. See § One-time fees below for how each is structured and billed; they are not all due at the same time.
 8. **Onboarding date — REQUIRED, and the quote does not ship without it.** A specific date, not a month ("September 20th," not "September"). Also ask for the first close month. If the operator doesn't have a date yet, say so plainly and hold the quote — do not fill a placeholder and move on, and do not soften it to a month to get past the question. The firm sets its onboarding capacity off these dates, and once a quote goes out without one nobody can reconstruct what the client was told.
@@ -406,7 +446,7 @@ When the client signs, `/onboard-client-admin` moves the whole folder to `Active
 
 Both go in the same prospective-client folder. Neither reaches the client.
 
-- **`{Client Name} Hours Budget.md`** — the quoted monthly fee per level, and the **budgeted hours per role per level** the operator gave you, with the date. Keep it to that: the fees and the hours are the *only* things the firm administrator needs out of pricing. No rates, no margin, no buildup. The old service-fee template existed to carry the hours across and isn't needed once this file exists. Without it the budget gets rebuilt from memory or guessed.
+- **`{Client Name} Hours Budget.md`** — the quoted monthly fee per level, and the **budgeted hours per role per level** the operator gave you, with the date. Keep it to that: the fees and the hours are the *only* things the firm administrator needs out of pricing. No rates, no margin, no buildup. The old service-fee template existed to carry the hours across and isn't needed once this file exists. Without it the budget gets rebuilt from memory or guessed. **Include the Step 9 task breakdown with the hours only.** Keep the Role, Task, Basis and Hours columns and drop the Amount column and the rate labels, so whoever plans capacity can see what each hour is for without the pricing math.
 - **The meeting minutes or a short call summary** from the discovery call. Working from the minutes in a terminal session and never saving them down is the common failure — the notes do the operator's job and then vanish before the team can use them. Save them.
 
 ## Phase 5 — Write the cover email
@@ -446,6 +486,8 @@ Two things worth offering the operator:
 - [ ] **Comparison table row count matches the default** — every row present, none condensed or reworded narrower
 - [ ] Premium carries **workers' comp and general liability** audit support — both client types
 - [ ] Workers' comp row **deleted** (not marked `—`) if the client has no payroll
+- [ ] **Task-by-role breakdown shown** to the operator (Step 9), zero rows included, judgment hours marked, and filed (hours only) in the Hours Budget file
+- [ ] Client with payroll: **$50 in the monthly fee**, and **payroll administration** listed under *Also available*, not priced
 - [ ] Non-profit Premium also carries **annual audit support** as its own row
 - [ ] "Total due at signing" reflects only at-signing items — cleanup is not rolled in
 - [ ] A separate **due at kickoff** bar appears whenever money is due at kickoff

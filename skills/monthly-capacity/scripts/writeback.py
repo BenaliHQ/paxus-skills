@@ -106,7 +106,12 @@ def write_month(sid, period, assignments, staff, new_clients=None, dry_run=True)
 
     # --- new clients approved in section 2 ---------------------------------
     cid = {str(c['name']).strip(): str(c['client_id']) for c in crows if c.get('name')}
-    gen = _next_id([c.get('client_id') for c in crows], 'C', 4)
+    # Width 3 to match the app: Code.gs mints client ids with
+    # nextId_(TAB.clients, 'client_id', 'C', 3). Writing 4 here produced C0139
+    # alongside 137 existing C###. Nothing collides — both parse to the same
+    # integer — but the ids stop being comparable by eye. Assignment ids stay at
+    # 4, which is what the app uses for those.
+    gen = _next_id([c.get('client_id') for c in crows], 'C', 3)
     add_rows = []
     for nc in (new_clients or []):
         nm = str(nc['name']).strip()

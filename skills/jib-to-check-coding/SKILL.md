@@ -22,7 +22,7 @@ Works for any operator, including ones the firm hasn't seen before.
 ## Load the client's fuel first
 
 Before coding anything, read from the client's `.agents/` context bundle (built by
-`/onboard-client`):
+`/client-context`):
 
 | Read this | For |
 |---|---|
