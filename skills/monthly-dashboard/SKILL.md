@@ -74,7 +74,7 @@ teammate who runs this skill, from Claude Code or from Cowork, finds the same sp
 
 | Client drive shape | Canonical spec location |
 |---|---|
-| Drive has a `.agents/` context bundle (built by `/paxus-skills:client-context`) | `.agents/b-engagement/dashboard-spec.md` |
+| Drive has a `.agents/` context bundle (built by `client-context-create` in Paxus Agent Base) | `.agents/b-engagement/dashboard-spec.md` |
 | Single-entity drive, no bundle | `Perm File/dashboard-spec.md` at the drive root |
 | Multi-entity drive (one folder per entity at the root, e.g. a group of LLCs) | `<Entity folder>/Perm File/dashboard-spec.md` — one spec per entity |
 

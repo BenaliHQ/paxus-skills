@@ -1,8 +1,8 @@
-# Context capture — what the kickoff should land for `/client-context`
+# Context capture — what the kickoff should land for `client-context-create` (Paxus Agent Base)
 
 The kickoff call is the richest single conversation the firm ever has with a new client,
-and most of it happens once. `/client-context` builds the client's context bundle from a
-question set (`skills/client-context/references/intake-questions.md`) whose ASK-mode items
+and most of it happens once. `client-context-create` (Paxus Agent Base) builds the client's context bundle from a
+question set (`references/intake-questions.md` in the `client-context-standard` skill in Paxus Agent Base) whose ASK-mode items
 "live in someone's head" — which means every one of them either gets answered at the kickoff
 or gets chased later, one email at a time.
 
@@ -104,8 +104,8 @@ like the call failed to get them.
 - **Debrief mode** fills that same section from the transcript, each item marked *answered* ·
   *partly answered* · *not reached* · *deferred by design*, with the client's own words where
   they're worth keeping.
-- `/client-context` then reads the prep notes as a source. It still cites and verifies for
+- `client-context-create` (Paxus Agent Base) then reads the prep notes as a source. It still cites and verifies for
   itself; this section is a well-organized input, not a bypass of its own rules.
 
-**Never write into the bundle from this skill.** The bundle is `/client-context`'s to build.
+**Never write into the bundle from this skill.** The bundle is `client-context-create` (Paxus Agent Base)'s to build.
 This skill's job is to make sure the answers exist somewhere it can find them.
