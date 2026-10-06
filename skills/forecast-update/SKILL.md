@@ -46,7 +46,7 @@ Cowork, finds the same spec.
 
 | Client drive shape | Canonical spec location |
 |---|---|
-| Drive has a `.agents/` context bundle (built by `/paxus-skills:client-context`) | `.agents/b-engagement/forecast-spec.md` |
+| Drive has a `.agents/` context bundle (built by `client-context-create` in Paxus Agent Base) | `.agents/b-engagement/forecast-spec.md` |
 | Single-entity drive, no bundle | `Perm File/forecast-spec.md` at the drive root |
 | Multi-entity drive (one folder per entity at the root) | `<Entity folder>/Perm File/forecast-spec.md` — one spec per entity |
 

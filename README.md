@@ -6,7 +6,7 @@ The model in one line: **skills are the engine, client data is the fuel.** Skill
 
 ## What's in the library
 
-- **`/client-context`** — bring a new client into your AI workflow. Creates a standard folder structure at `~/paxus-ai/clients/{client}/` with CLAUDE.md, STATUS.md, and project-ready subfolders. Optionally scaffolds your first project at the end.
+- **Client context** — retired from this repo. Client context bundles (the `.agents` folder in each client's shared drive) are built and maintained by the `client-context-create`, `client-context-update` and `client-context-review` skills in Paxus Agent Base, which is now the official version.
 - **`/onboard-project`** — scaffold a new project inside an existing client. Creates `projects/{project}/` with the project's own CLAUDE.md, STATUS.md, and standard subfolders (`inputs/`, `deliverables/`, `notes/`).
 
 More skills are added through the workflow-mapping process — see [`CONTRIBUTING.md`](CONTRIBUTING.md).
@@ -31,7 +31,7 @@ Everything flows through a Pull Request so a reviewer sees it before the team do
 
 ## Manual install (fallback — only if not using Cowork sync)
 
-If you're not yet on the Cowork marketplace sync, you can still install the two skills directly. Open Claude Code in your home folder and paste this single line:
+If you're not yet on the Cowork marketplace sync, you can still install `/onboard-project` directly. Open Claude Code in your home folder and paste this single line:
 
 ```
 Read https://raw.githubusercontent.com/BenaliHQ/paxus-skills/main/INSTALL.md and follow the instructions exactly.
@@ -41,7 +41,6 @@ Claude will walk you through each step. You'll see what it's about to do before 
 
 The install is safe by default: Claude will only create or modify the following locations on your machine:
 
-- `~/.claude/skills/client-context/` (and its `templates/` folder)
 - `~/.claude/skills/onboard-project/` (and its `templates/` folder)
 - `~/paxus-ai/clients/` (the workstation folder — empty until you onboard your first client)
 
@@ -51,9 +50,7 @@ Nothing else on your machine is touched.
 
 ### First client
 
-1. Run `/client-context`
-2. Answer Claude's questions about the client
-3. Optionally scaffold your first project at the end
+Build the client's context bundle with `client-context-create` in Paxus Agent Base.
 
 ### New project for an existing client
 

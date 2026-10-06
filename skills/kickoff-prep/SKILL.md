@@ -21,9 +21,9 @@ next; it is written for them, not for you.
 This skill does **not** do firm admin's work, and must not appear to. Do not create clients,
 touch Financial Cents, produce welcome packets, or reference the retired Onboarding Dossier
 dashboard. **Do not fill in the dossier** — that is `/onboard-client-admin` Phase 4B. Do not
-build the client context bundle — that is `/client-context`.
+build the client context bundle — that is `client-context-create` (Paxus Agent Base).
 
-What this skill *does* owe `/client-context` is a good input: the kickoff is the richest
+What this skill *does* owe `client-context-create` (Paxus Agent Base) is a good input: the kickoff is the richest
 conversation the firm ever has with a new client, so the prep notes carry a **Client context
 to capture** section that the call fills in. See `references/context-capture.md`.
 
@@ -101,7 +101,7 @@ the original ones… I really don't want all these extra."* Two reasons, both lo
 
 - The lead opens the folder to find what happened on the call and has to pick the right file
   out of a stack. A stack means they read none of them.
-- `/client-context` reads this folder later. Five overlapping versions of the same facts is
+- `client-context-create` (Paxus Agent Base) reads this folder later. Five overlapping versions of the same facts is
   more to read and more to get wrong.
 
 **No backup copies.** Google Docs keeps version history, and that is the safety net. Writing
@@ -186,7 +186,7 @@ autonomy rather than accounting is worth naming, so the lead doesn't propose tak
 ### The Client context to capture section
 
 Built from `references/context-capture.md`. Grouped the way the context bundle is grouped, so
-`/client-context` can read it later without translating. Each line is one thing the call
+`client-context-create` (Paxus Agent Base) can read it later without translating. Each line is one thing the call
 should land, in one of four states:
 
 - **already known** — the dossier answered it. Shown so the lead doesn't re-ask it, and *not*
@@ -428,7 +428,7 @@ Keep every prep section. Add beneath:
 **Fill in the Client context to capture section** rather than writing a new one. Each line
 moves to *answered* · *partly answered* · *not reached* · *deferred by design*, with the
 client's own words where they're worth keeping and a pointer to where in the transcript it
-came from. This section is what `/client-context` reads, so leaving it in its pre-call state
+came from. This section is what `client-context-create` (Paxus Agent Base) reads, so leaving it in its pre-call state
 wastes the whole call. Anything the call surfaced that the map didn't anticipate gets added
 under its bundle group.
 

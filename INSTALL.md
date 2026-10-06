@@ -39,23 +39,11 @@ Create `~/.claude/skills/` (or `%USERPROFILE%\.claude\skills\` on Windows) if it
 
 ---
 
-## Step 3 — Install `/client-context`
-
-**Tell the user:** "I'm going to install the `/client-context` skill. After this, you can run `/client-context` inside Claude Code to bring any Paxus client into your AI workflow."
-
-1. Check whether `~/.claude/skills/client-context/` already exists.
-   - **If yes**, ask the user: "The `/client-context` skill is already installed. Overwrite with the latest version, or skip?" Honor their answer.
-   - **If no, or if they approved overwrite**, copy the entire `skills/client-context/` folder from the cloned repo to `~/.claude/skills/client-context/`. Include the full `templates/` subfolder.
-2. Confirm the install by listing `~/.claude/skills/client-context/`. Expected: `SKILL.md` + `templates/` folder with 4 template files.
-3. If `learnings.md` doesn't exist in the skill folder, create it with a one-line header: `# /client-context — Learnings`. This is where the skill appends operator feedback after each run.
-
----
-
-## Step 4 — Install `/onboard-project`
+## Step 3 — Install `/onboard-project`
 
 **Tell the user:** "I'm going to install the `/onboard-project` skill. After this, you can run `/onboard-project` inside Claude Code to scaffold a new project under any existing client."
 
-Same pattern as Step 3:
+For this skill:
 
 1. Check whether `~/.claude/skills/onboard-project/` already exists. Ask before overwriting.
 2. Copy the entire `skills/onboard-project/` folder from the cloned repo to `~/.claude/skills/onboard-project/`. Include the `templates/` subfolder.
@@ -64,7 +52,7 @@ Same pattern as Step 3:
 
 ---
 
-## Step 5 — Create the Paxus workstation folder
+## Step 4 — Create the Paxus workstation folder
 
 **Tell the user:** "I'm creating your Paxus AI workstation folder at `~/paxus-ai/clients/`. This is where your client and project folders will live."
 
@@ -77,31 +65,28 @@ If the folder already exists, report that and continue without overwriting.
 
 ---
 
-## Step 6 — Clean up
+## Step 5 — Clean up
 
 Remove the temporary cloned repo folder created in Step 1.
 
 ---
 
-## Step 7 — Confirm
+## Step 6 — Confirm
 
 Run these checks and report each one to the user:
 
-1. `~/.claude/skills/client-context/SKILL.md` exists.
-2. `~/.claude/skills/client-context/templates/` contains 4 files.
-3. `~/.claude/skills/onboard-project/SKILL.md` exists.
-4. `~/.claude/skills/onboard-project/templates/` contains 2 files.
-5. `~/paxus-ai/clients/` exists.
+1. `~/.claude/skills/onboard-project/SKILL.md` exists.
+2. `~/.claude/skills/onboard-project/templates/` contains 2 files.
+3. `~/paxus-ai/clients/` exists.
 
-If all five check out, tell the user:
+If all three check out, tell the user:
 
 > Paxus Skills installed. You now have:
 >
-> - **`/client-context`** — bring a new client into your AI workflow
 > - **`/onboard-project`** — scaffold a project under an existing client
 > - Your Paxus workstation folder at `~/paxus-ai/`
 >
-> Try `/client-context` next to bring your first client in. Once that's done, run `/onboard-project` inside that client to start a specific piece of work.
+> Client context bundles are built with `client-context-create` in Paxus Agent Base. Run `/onboard-project` to start a specific piece of work for a client.
 
 If any check fails, stop and tell the user exactly what's missing.
 
@@ -109,7 +94,7 @@ If any check fails, stop and tell the user exactly what's missing.
 
 ## Rules
 
-- **Only touch the listed paths.** `~/.claude/skills/client-context/`, `~/.claude/skills/onboard-project/`, `~/paxus-ai/clients/`, and the temporary clone folder. Nothing else on the user's machine.
+- **Only touch the listed paths.** `~/.claude/skills/onboard-project/`, `~/paxus-ai/clients/`, and the temporary clone folder. Nothing else on the user's machine.
 - **Ask before overwriting.** Any existing file or folder gets explicit user confirmation before replacement.
 - **Report errors clearly.** If any step fails, stop the install and tell the user what broke. Don't silently continue.
 - **Don't modify `~/.claude/CLAUDE.md` or `~/.claude/settings.json`.** That's a separate install (the full `paxus-ai-workstation` repo). This install is skills-only.

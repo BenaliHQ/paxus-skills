@@ -49,7 +49,7 @@ the two meetings**. It is what makes month 2 fast and what lets any teammate run
 
 | Client drive shape | Canonical spec location |
 |---|---|
-| Drive has a `.agents/` context bundle (built by `/paxus-skills:client-context`) | `.agents/b-engagement/agenda-spec.md` |
+| Drive has a `.agents/` context bundle (built by `client-context-create` in Paxus Agent Base) | `.agents/b-engagement/agenda-spec.md` |
 | Single-entity drive, no bundle | `Perm File/agenda-spec.md` at the drive root |
 | Multi-entity drive (one folder per entity at the root) | `<Entity folder>/Perm File/agenda-spec.md` |
 
