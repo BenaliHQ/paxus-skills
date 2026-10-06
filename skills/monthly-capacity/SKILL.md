@@ -73,10 +73,11 @@ The old staff scope spreadsheet is **not** part of this loop. Do not read capaci
 
 ```python
 from review import render, coverage, save
-from checks import drift
+from checks import drift, leaving
 text = render('<YYYY-MM>', a, s, r, coverage('<timesheet.csv>', '<YYYY-MM>'))
 dr = drift('<YYYY-MM>', a, 'app.xlsx')
-path = save(render_checks(pre, dr) + text, '<YYYY-MM>')   # -> the runner's own ~/Downloads
+lv = leaving('<YYYY-MM>', a, 'app.xlsx')
+path = save(render_checks(pre, dr, lv) + text, '<YYYY-MM>')   # -> the runner's own ~/Downloads
 ```
 
 Print the section 0 checks followed by `text` verbatim to the operator, and tell them where the file was saved.
@@ -89,7 +90,9 @@ Print the section 0 checks followed by `text` verbatim to the operator, and tell
 
 ### Phase 4 — Stop and wait
 
-Sections 2, 3 and 5 are questions. Do not proceed until they are answered:
+Sections 2, 3 and 5 are questions, and so is the **Clients marked leaving** table in section 0 when it appears. Do not proceed until they are answered:
+
+- **§0 Clients marked leaving** — clients someone marked *Client leaving* on the app's Transitions page that are still not Inactive, with this month's hours. Ask, for each one, whether it has fully left. A client that still logged hours this month may simply be finishing up; that is the operator's call, not this skill's. Every **yes** goes to write-back as `inactivate`. A departed client left Active keeps producing budget nobody will deliver.
 
 - **§2 New clients** — hours logged against something with no entry in the app. Get the **team and the budgets**. The client is flagged, never silently ignored — but its **hours are not in the build**: they sit in `unresolved` in §1 until the client exists in the app. Phase 4b is what puts them in.
 - **§3 Hours short** — recorded less than a full month with no reason on file. If the operator knows why, record it in the Staff tab's `unpaid_off_hours`; if not, those are conversations for them to have, not something to resolve here.
@@ -131,6 +134,7 @@ Only after approval:
 from writeback import write_month
 plan = write_month(SHEET_ID, '<YYYY-MM>', a, s,
                    new_clients=[...],   # approved in §2, or omit
+                   inactivate=[...],    # leaving clients confirmed gone in §0, or omit
                    dry_run=True)        # review the plan first
 ```
 
@@ -138,7 +142,7 @@ plan = write_month(SHEET_ID, '<YYYY-MM>', a, s,
 
 Show the plan (rows to write, rows replaced, staff updated, anything unmatched). If `unmatched` is non-empty, resolve it before applying. Then re-run with `dry_run=False`.
 
-This replaces the Assignments tab wholesale with this month's rows and updates the numeric columns on Staff. It does **not** touch email, status, `client_pct`, `daily_rate` or `capacity_mode`.
+This replaces the Assignments tab wholesale with this month's rows and updates the numeric columns on Staff. It does **not** touch email, status, `client_pct`, `daily_rate` or `capacity_mode`. The only client status it changes is Inactive, for the clients passed in `inactivate`.
 
 ### Phase 6 — The operator captures the snapshot
 
@@ -165,4 +169,6 @@ Check the captured period landed as **text** — `2026-08`, not a date. In the S
 - **Three kinds of time off** all reduce availability: `pto_hours` (the benefit), `banked_off_hours` (overtime bank drawn down), `unpaid_off_hours` (recorded by the operator when a shortfall is explained).
 - **`capacity_mode = actual`** on the Staff tab means that person's availability tracks their real client work instead of a daily rate. It is set in the sheet, not in the app UI, and not in code.
 - **Per-cell writes are far too slow.** Staff updates go through one batched call; ~200 individual writes will time out.
+- **Capacity is split across roles by this month's actual hours.** For anyone holding more than one role, each role's share of their capacity is that month's client hours in the role over their total client hours. The person's total capacity does not change; only the split does. So a split-role person shows the same utilization in every role, and the role view says where their time went rather than which of their roles is "overloaded". With no client hours in any of their roles, the split already on the sheet is kept. `report['role_split']` records which happened for each person.
+- **Payroll is a role with no client budget.** Time coded to the `Payroll Admin` service item books to the **Payroll** role, but **only for people who hold a Payroll row on the Staff tab**. Anyone else's payroll time stays in their normal role, so a one-off payroll entry never creates a payroll seat. Payroll is assigned by service item, not by the roster: it never counts as anyone's highest or primary role, and a Payroll seat beside another role on the same client is not flagged as double-rostering. Adding someone to payroll means adding a `Payroll` row for them on the Staff tab. Nothing in code changes.
 - **A high judgement-call count in §6 is the signal.** It means the roster is drifting out of date, not that the run went badly.

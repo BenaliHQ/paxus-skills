@@ -262,7 +262,9 @@ def preflight(period, timesheet_path, app_path):
     pairs = collections.defaultdict(set)
     for r in read_by_header(wb['Assignments']):
         c, s, rl = pname(r.get('client_name')), pname(r.get('staff_name')), tidy(r.get('role'))
-        if c and s and rl:
+        # a Payroll seat alongside another role is by design: payroll books by
+        # service item, so it never collapses into the other role
+        if c and s and rl and rl != 'Payroll':
             pairs[(c, s)].add(rl)
     doubled = sorted(k for k, v in pairs.items() if len(v) > 1)
     if doubled:
@@ -368,7 +370,44 @@ def drift(period, assignments, app_path, quiet_months=3):
     return {'warn': warn, 'quiet_role_lines': len(warn)}
 
 
-def render(pre, dr=None):
+def leaving(period, assignments, app_path):
+    """Clients marked "Client leaving" on the app's Transitions tab that are
+    still not Inactive. Each one is a question for the operator: has it fully
+    left? If so it goes to write-back as `inactivate`, because a departed client
+    left Active keeps producing budget nobody will deliver.
+
+    Reads the Transitions tab when it exists; an older sheet without it simply
+    has nothing to ask.
+    """
+    wb = openpyxl.load_workbook(app_path, data_only=True)
+    if 'Transitions' not in wb.sheetnames:
+        return []
+    status = {tidy(r.get('name')): tidy(r.get('status')) or 'Active'
+              for r in read_by_header(wb['Clients']) if tidy(r.get('name'))}
+    hrs = collections.defaultdict(float)
+    for a in assignments:
+        hrs[tidy(a['client'])] += float(a['hours'] or 0)
+    by = {}
+    for r in read_by_header(wb['Transitions']):
+        if tidy(r.get('reason')) != 'Client leaving':
+            continue
+        if tidy(r.get('status')) == 'Cancelled':
+            continue
+        c = tidy(r.get('client_name'))
+        if not c or status.get(c) == 'Inactive':
+            continue
+        d = by.setdefault(c, {'client': c, 'status': status.get(c, 'Active'),
+                              'target': '', 'plans': 0,
+                              'hours_this_month': round(hrs.get(c, 0.0), 2)})
+        d['plans'] += 1
+        t = r.get('target_date')
+        t = t.strftime('%Y-%m-%d') if hasattr(t, 'strftime') else tidy(t)
+        if t and t > d['target']:
+            d['target'] = t
+    return sorted(by.values(), key=lambda d: d['client'])
+
+
+def render(pre, dr=None, lv=None):
     """Plain markdown for the operator. Halts first, in bold, because they stop
     the run."""
     out = ['## 0. Input checks', '']
@@ -397,5 +436,17 @@ def render(pre, dr=None):
     if not pre['halt'] and not warns:
         out.append('Nothing to flag — the export looks complete and the roster '
                    'looks current.')
+        out.append('')
+    if lv:
+        out.append('### Clients marked leaving — still not Inactive')
+        out.append('')
+        out.append('Each was marked *Client leaving* on Transitions. Has it fully '
+                   'left? A yes goes to write-back as `inactivate`.')
+        out.append('')
+        out.append('| Client | Status in the app | Target | Hours this month |')
+        out.append('|---|---|---|---:|')
+        for d in lv:
+            out.append(f"| {d['client']} | {d['status']} | {d['target'] or '—'} "
+                       f"| {d['hours_this_month']:g} |")
         out.append('')
     return '\n'.join(out)
