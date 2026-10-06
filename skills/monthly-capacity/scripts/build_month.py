@@ -20,7 +20,16 @@ Rules, all validated against May 2026 (293/304 rows reproduced exactly):
 import csv, collections, openpyxl, re, json, datetime, calendar
 import overrides as OV
 
-RANK = {'Controller': 3, 'Lead': 2, 'Staff': 1}
+RANK = {'Controller': 3, 'Lead': 2, 'Staff': 1, 'Payroll': 0}
+
+# Payroll is a role with capacity and hours but NO client budget. Time coded to
+# one of these service items books to the Payroll role, but only for people who
+# hold a Payroll row on the Staff tab. Anyone else's payroll time stays in their
+# normal role, so a one-off payroll entry never creates a payroll seat.
+# Payroll never wins "highest role" and is never anyone's primary role: it is
+# assigned by service item, not by the roster.
+PAYROLL_ROLE = 'Payroll'
+PAYROLL_ITEMS = ('payroll admin',)
 PTO_CODES = {'vacation', 'paid time off', 'holiday', 'pto', 'sick', 'sick leave',
              'bereavement', 'jury duty'}
 INTERNAL_PREFIX = ('paxus',)          # internal work, never client time, never PTO
@@ -295,8 +304,13 @@ def is_onboarding_item(si):
     return any(k in si for k in ONBOARDING_ITEMS)
 
 
-def load_timesheet(path, resolver):
+def is_payroll_item(si):
+    return tidy(si).lower() in PAYROLL_ITEMS
+
+
+def load_timesheet(path, resolver, payroll_people=()):
     client_hours = collections.defaultdict(float)   # (client, person) -> hrs
+    payroll_hours = collections.defaultdict(float)  # subset of the above
     pto = collections.defaultdict(float)            # person -> hrs
     internal = collections.defaultdict(float)
     internal_by_person = collections.defaultdict(float)
@@ -331,11 +345,13 @@ def load_timesheet(path, resolver):
                 unresolved[(miss, person)] += h
                 continue
             client_hours[(client, person)] += h
+            if person in payroll_people and is_payroll_item(r.get('service item')):
+                payroll_hours[(client, person)] += h
             phase[client]['total'] += h
             if is_onboarding_item(r.get('service item')):
                 phase[client]['onb'] += h
     return (client_hours, pto, internal, unresolved, logged, phase,
-            internal_by_person, banked)
+            internal_by_person, banked, payroll_hours)
 
 
 def canon(name):
@@ -392,8 +408,10 @@ def build(period, scope_path, timesheet_path, rate_table, unpaid_off=None,
     budget = {canon(k): v for k, v in budget.items() if canon(k) not in _DROP}
     for c in scope_clients: budget.setdefault(c, None)
     resolver = ClientResolver(scope_clients)
+    payroll_people = {p for p, d in staff.items() if PAYROLL_ROLE in d['roles']}
     (client_hours, pto, internal, unresolved, logged, phase,
-     internal_by_person, banked) = load_timesheet(timesheet_path, resolver)
+     internal_by_person, banked, payroll_hours) = load_timesheet(
+        timesheet_path, resolver, payroll_people)
 
     roster = [(canon(c), s, rl) for c, s, rl in roster
               if app_path or s not in OV.STAFF_DROP]
@@ -407,11 +425,17 @@ def build(period, scope_path, timesheet_path, rate_table, unpaid_off=None,
         seen_r.add((c, s, rl)); dedup.append((c, s, rl))
     roster = dedup
 
+    # Payroll seats are set by service item below, never by the roster, so they
+    # take no part in choosing a role or a primary role.
     roles_for = collections.defaultdict(list)
     for c, s, rl in roster:
-        roles_for[(c, s)].append(rl)
-    primary = {p: max(d['roles'], key=d['roles'].get)
-               for p, d in staff.items() if d['roles']}
+        if rl != PAYROLL_ROLE:
+            roles_for[(c, s)].append(rl)
+    primary = {}
+    for p, d in staff.items():
+        budgeted = {r: v for r, v in d['roles'].items() if r != PAYROLL_ROLE}
+        if budgeted:
+            primary[p] = max(budgeted, key=budgeted.get)
 
     report = {'period': period, 'workdays': wd, 'unresolved_clients': [],
               'unknown_person': [], 'not_rostered': [], 'multi_role': [],
@@ -448,8 +472,14 @@ def build(period, scope_path, timesheet_path, rate_table, unpaid_off=None,
                                if d['onb'] > 0.05}
 
     assignments = []
-    for (c, p), h in sorted(client_hours.items()):
-        h = round(h, 2)
+    for (c, p), h_all in sorted(client_hours.items()):
+        h_pay = round(payroll_hours.get((c, p), 0.0), 2)
+        if h_pay:
+            assignments.append({'client': c, 'staff': p, 'role': PAYROLL_ROLE,
+                                'hours': h_pay})
+        h = round(h_all - h_pay, 2)
+        if h_pay and h <= 0.004:
+            continue        # payroll-only on this client
         rs = roles_for.get((c, p))
         if rs:
             role = max(rs, key=lambda r: RANK[r])
@@ -469,6 +499,8 @@ def build(period, scope_path, timesheet_path, rate_table, unpaid_off=None,
     active = {a['client'] for a in assignments}
     have = {(a['client'], a['staff']) for a in assignments}
     for c, s, rl in roster:
+        if rl == PAYROLL_ROLE:
+            continue        # a payroll seat exists only when payroll was logged
         if c in active and (c, s) not in have:
             assignments.append({'client': c, 'staff': s, 'role': rl, 'hours': 0.0})
 
@@ -480,8 +512,11 @@ def build(period, scope_path, timesheet_path, rate_table, unpaid_off=None,
 
     # ---- capacity -----------------------------------------------------------
     actual_by_person = collections.defaultdict(float)
+    actual_by_role = collections.defaultdict(float)     # (person, role) -> hrs
     for a in assignments:
         actual_by_person[a['staff']] += a['hours']
+        actual_by_role[(a['staff'], a['role'])] += a['hours']
+    report['role_split'] = []
 
     staff_rows = []
     for nm, d in sorted(staff.items()):
@@ -544,9 +579,24 @@ def build(period, scope_path, timesheet_path, rate_table, unpaid_off=None,
         bank = round(banked.get(nm, 0.0), 2)
         net_total = round(max(0.0, base_total - ptoh - unpaid - bank), 2)
         logged_total = round(logged.get(nm, 0.0), 2)
-        # preserve the person's existing split across roles
-        split_base = sum(d['roles'].values()) or 1.0
-        for role, av in sorted(d['roles'].items(), key=lambda x: -RANK[x[0]]):
+        # Split capacity across roles by THIS month's actual client hours in each
+        # role, so the role view shows where the person's time really went. The
+        # person's total is unchanged; only the split moves. With no client
+        # hours in any of their roles, keep the split already on the sheet.
+        worked = {rl: actual_by_role.get((nm, rl), 0.0) for rl in d['roles']}
+        worked_total = sum(worked.values())
+        if len(d['roles']) > 1 and worked_total > 0.05:
+            weights = worked
+            report['role_split'].append(
+                {'staff': nm, 'source': 'actual',
+                 'split': {rl: round(v / worked_total * 100) for rl, v in worked.items()}})
+        else:
+            weights = dict(d['roles'])
+            if len(d['roles']) > 1:
+                report['role_split'].append(
+                    {'staff': nm, 'source': 'kept', 'split': {}})
+        split_base = sum(weights.values()) or 1.0
+        for role, av in sorted(weights.items(), key=lambda x: -RANK[x[0]]):
             share = av / split_base
             staff_rows.append({
                 'name': nm, 'role': role,

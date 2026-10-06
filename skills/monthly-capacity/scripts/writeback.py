@@ -91,10 +91,17 @@ def _next_id(existing, prefix, width):
         yield f'{prefix}{n:0{width}d}'
 
 
-def write_month(sid, period, assignments, staff, new_clients=None, dry_run=True):
-    """new_clients: [{'name':..., 'service_type':..., budgets...}] approved in §2."""
+def write_month(sid, period, assignments, staff, new_clients=None,
+                inactivate=None, remove=None, dry_run=True):
+    """new_clients: [{'name':..., 'service_type':..., budgets...}] approved in §2.
+    inactivate: client names the operator confirmed have fully left (the
+    leaving check in section 0). Sets their status to Inactive and nothing else.
+    remove: [(client, person, role)] the operator took off the roster from the
+    zero-hours check in section 0. Only a ZERO-hour row can be removed; a row
+    with hours is refused and reported, never dropped."""
     plan = {'period': period, 'dry_run': dry_run,
-            'clients_added': [], 'assignment_rows': 0,
+            'clients_added': [], 'clients_inactivated': [], 'roster_removed': [],
+            'assignment_rows': 0,
             'assignments_replaced': 0, 'staff_updated': 0, 'unmatched': []}
 
     chdr, crows = _rows(sid, 'Clients')
@@ -124,15 +131,47 @@ def write_month(sid, period, assignments, staff, new_clients=None, dry_run=True)
         add_rows.append([rec.get(h, '') for h in chdr])
         plan['clients_added'].append({'name': nm, 'client_id': new_id})
 
+    # --- clients confirmed gone ---------------------------------------------
+    status_updates = []
+    if inactivate:
+        if 'status' not in chdr:
+            raise RuntimeError('Clients tab has no status column.')
+        scol = _a1(chdr.index('status') + 1)
+        byname = {str(c.get('name', '')).strip(): c for c in crows}
+        for nm in inactivate:
+            c = byname.get(str(nm).strip())
+            if not c:
+                plan['unmatched'].append({'kind': 'inactivate', 'name': nm})
+                continue
+            status_updates.append((f'Clients!{scol}{c["_row"]}', 'Inactive'))
+            plan['clients_inactivated'].append(str(nm).strip())
+
     # --- staff ids keyed by (name, role) -----------------------------------
     sid_map = {(str(s.get('name', '')).strip(), str(s.get('role', '')).strip()):
                (str(s.get('staff_id', '')), s['_row']) for s in srows}
+
+    # --- roster removals approved in section 0 -------------------------------
+    drop = {tuple(str(x).strip() for x in k) for k in (remove or [])}
+    found = set()
+    for a in assignments:
+        k = (a['client'], a['staff'], a['role'])
+        if k in drop:
+            found.add(k)
+            if float(a['hours'] or 0) > 0:
+                plan['unmatched'].append({'kind': 'remove-has-hours', 'name': a['staff'],
+                                          'client': a['client'], 'hours': a['hours']})
+    for k in sorted(drop - found):
+        plan['unmatched'].append({'kind': 'remove-not-found', 'name': k[1],
+                                  'client': k[0], 'role': k[2]})
 
     # --- assignment rows ---------------------------------------------------
     gena = _next_id([], 'A', 4)
     lines = []
     for a in assignments:
         cn, sn, rl = a['client'], a['staff'], a['role']
+        if (cn, sn, rl) in drop and not float(a['hours'] or 0) > 0:
+            plan['roster_removed'].append({'client': cn, 'staff': sn, 'role': rl})
+            continue
         if cn not in cid:
             plan['unmatched'].append({'kind': 'client', 'name': cn,
                                       'hours': a['hours']})
@@ -176,6 +215,7 @@ def write_month(sid, period, assignments, staff, new_clients=None, dry_run=True)
     if lines:
         _put(sid, 'Assignments!A2', lines)
     _put_many(sid, updates)
+    _put_many(sid, status_updates)
     return plan
 
 
