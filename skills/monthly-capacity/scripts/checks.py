@@ -335,7 +335,7 @@ def drift(period, assignments, app_path, quiet_months=3):
     return {'warn': warn, 'quiet_role_lines': len(warn)}
 
 
-def zero_roster(period, assignments, app_path):
+def zero_roster(period, assignments, app_path, staff=None):
     """Everyone still on a client's roster who logged zero hours there this month.
 
     A zero-hour row exists only because the build keeps the roster visible for
@@ -349,14 +349,30 @@ def zero_roster(period, assignments, app_path):
     that person has logged nothing on that client, and the last month they did.
     Per-person history comes from the snapshot `staff_hours` column; a month
     where that split is missing falls back to the row's staff list and total.
+
+    Pass the build's `staff` rows to skip people who logged NO time at all this
+    month (an owner who does not keep a timesheet, say). Zero hours on a client
+    says nothing about someone who records nothing anywhere, and their seat is
+    usually deliberate, kept so the role is not shown as empty. They are left
+    out of the question and counted instead.
     """
     wb = openpyxl.load_workbook(app_path, data_only=True)
     zero = []
     total_now = collections.defaultdict(float)
     for a in assignments:
         total_now[pname(a.get('staff'))] += float(a.get('hours') or 0)
+    no_timesheet = set()
+    if staff is not None:
+        logged = collections.defaultdict(float)
+        for r in staff:
+            logged[pname(r.get('name'))] += float(r.get('logged_hours') or 0)
+        no_timesheet = {n for n, h in logged.items() if h <= 0}
+    zero_roster.skipped = 0
     for a in assignments:
         if float(a.get('hours') or 0) > 0:
+            continue
+        if pname(a.get('staff')) in no_timesheet:
+            zero_roster.skipped += 1
             continue
         zero.append((tidy(a.get('client')), pname(a.get('staff')), tidy(a.get('role'))))
     if not zero:
@@ -485,11 +501,19 @@ def render(pre, dr=None, lv=None, zr=None):
         # first pass found 144 zero-hour seats, most belonging to a handful of
         # people. One quiet month is usually just that, so those are a count
         # rather than a question until they repeat.
-        ask = [d for d in zr if d['zero_months'] >= 2]
+        # Asked when a seat first reaches two months at zero, then every six.
+        # Without that, every seat the operator decided to keep (a quarterly
+        # client, a controller who only reviews) would be asked about again
+        # every single month, and the question would become noise.
+        def due(n):
+            return n == 2 or (n >= 6 and n % 6 == 0)
+        ask = [d for d in zr if due(d['zero_months'])]
         once = [d for d in zr if d['zero_months'] < 2]
+        held = [d for d in zr if d['zero_months'] >= 2 and not due(d['zero_months'])]
         out.append('### On the roster with zero hours — keep or remove?')
         out.append('')
-        out.append(f"{len(ask)} seats have logged nothing for two months or more. "
+        out.append(f"{len(ask)} seats reached two months at zero this month, or "
+                   "another six since they were last asked about. "
                    "Some are genuinely quiet clients; others are people who are not "
                    "really on the client any more. Each **remove** goes to "
                    "write-back as `remove`; anything not answered stays on.")
@@ -510,6 +534,11 @@ def render(pre, dr=None, lv=None, zr=None):
         if once:
             out.append(f"{len(once)} more seats are at zero for the first month. Not "
                        "asked about yet; they come back here if it repeats.")
+            out.append('')
+        if held:
+            out.append(f"{len(held)} seats have been at zero longer and were already "
+                       "asked about. Not repeated; they come back at the next "
+                       "six-month mark.")
             out.append('')
     if lv:
         out.append('### Clients marked leaving — still not Inactive')

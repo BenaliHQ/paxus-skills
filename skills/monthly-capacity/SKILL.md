@@ -77,7 +77,7 @@ from checks import drift, leaving, zero_roster
 text = render('<YYYY-MM>', a, s, r, coverage('<timesheet.csv>', '<YYYY-MM>'))
 dr = drift('<YYYY-MM>', a, 'app.xlsx')
 lv = leaving('<YYYY-MM>', a, 'app.xlsx')
-zr = zero_roster('<YYYY-MM>', a, 'app.xlsx')
+zr = zero_roster('<YYYY-MM>', a, 'app.xlsx', s)
 path = save(render_checks(pre, dr, lv, zr) + text, '<YYYY-MM>')   # -> the runner's own ~/Downloads
 ```
 
@@ -94,7 +94,7 @@ Rostered people logging nothing are no longer a warning here. They are a questio
 
 Sections 2, 3 and 5 are questions, and so is the **Clients marked leaving** table in section 0 when it appears. Do not proceed until they are answered:
 
-- **§0 On the roster with zero hours** — every seat where someone logged nothing for two months or more, grouped by person, with how many months in a row and when they last logged hours. People who logged no client hours anywhere that month come first: someone who does no client work should not be on any roster. Ask person by person; it is the operator's call whether a quiet seat is a quiet client or someone who is not really on it. Every **remove** goes to write-back as `remove`. Seats at zero for the first month are only counted, and come back as a question if it repeats. A name that never carries hours makes the team list wrong and hides who actually owns the work.
+- **§0 On the roster with zero hours** — every seat that has just reached two months at zero (or another six months since it was last asked about), grouped by person, with how many months in a row and when they last logged hours. People who logged no client hours anywhere that month come first: someone who does no client work should not be on any roster. Ask person by person; it is the operator's call whether a quiet seat is a quiet client or someone who is not really on it. Every **remove** goes to write-back as `remove`. Seats at zero for the first month are only counted, and come back as a question if it repeats. A seat the operator kept is not asked about again until its next six-month mark, so a quarterly client or a reviewing controller does not become monthly noise. A name that never carries hours makes the team list wrong and hides who actually owns the work. People who logged **no time at all** that month are left out: someone who does not keep a timesheet (an owner in a controller seat, say) is on the roster deliberately so the role does not read as empty, and their zero says nothing.
 - **§0 Clients marked leaving** — clients someone marked *Client leaving* on the app's Transitions page that are still not Inactive, with this month's hours. Ask, for each one, whether it has fully left. A client that still logged hours this month may simply be finishing up; that is the operator's call, not this skill's. Every **yes** goes to write-back as `inactivate`. A departed client left Active keeps producing budget nobody will deliver.
 
 - **§2 New clients** — hours logged against something with no entry in the app. Get the **team and the budgets**. The client is flagged, never silently ignored — but its **hours are not in the build**: they sit in `unresolved` in §1 until the client exists in the app. Phase 4b is what puts them in.
