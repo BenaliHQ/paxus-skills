@@ -330,44 +330,87 @@ def drift(period, assignments, app_path, quiet_months=3):
                 "their hours are still booking to the role they left."
             )
 
-    # --- someone rostered on a client but logging nothing, month after month --
-    try:
-        rows = read_by_header(wb['SnapshotRows'])
-        idx = read_by_header(wb['SnapshotIndex'])
-    except KeyError:
-        return {'warn': warn}
-    periods = sorted({_pkey(r.get('period')) for r in idx} - {''})
-    recent = [p for p in periods if p < period][-(quiet_months - 1):]
-    stale = []
-    for (c, s), h in sorted(now_person.items()):
-        if h > 0:
-            continue
-        quiet = True
-        for r in rows:
-            if _pkey(r.get('period')) not in recent:
-                continue
-            if tidy(r.get('client')) != c:
-                continue
-            if s not in str(r.get('staff') or ''):
-                continue
-            try:
-                if float(r.get('actual') or 0) > 0:
-                    quiet = False
-            except (TypeError, ValueError):
-                pass
-        if quiet:
-            stale.append((c, s))
-    if stale:
-        warn.append(
-            f"{len(stale)} rostered people logged nothing on their client this "
-            f"month and nothing in the {quiet_months - 1} months before: " +
-            '; '.join(f'{s} on {c}' for c, s in stale[:6]) +
-            (' …' if len(stale) > 6 else '') +
-            ". Candidates for coming off the roster — a name that never carries "
-            "hours makes the team list wrong and hides who actually owns the work."
-        )
-
+    # Rostered people logging nothing are now a per-month question, not a
+    # three-month warning: see zero_roster().
     return {'warn': warn, 'quiet_role_lines': len(warn)}
+
+
+def zero_roster(period, assignments, app_path):
+    """Everyone still on a client's roster who logged zero hours there this month.
+
+    A zero-hour row exists only because the build keeps the roster visible for
+    clients that had activity, so each one is a question for the operator: is
+    this person still on the client? Some genuinely had a quiet month. Others
+    were never really on it: someone who does no client work, or a one-off month
+    of covering that left them rostered for good. A yes goes to write-back as
+    `remove`.
+
+    For context, each row carries how many months in a row (this one included)
+    that person has logged nothing on that client, and the last month they did.
+    Per-person history comes from the snapshot `staff_hours` column; a month
+    where that split is missing falls back to the row's staff list and total.
+    """
+    wb = openpyxl.load_workbook(app_path, data_only=True)
+    zero = []
+    total_now = collections.defaultdict(float)
+    for a in assignments:
+        total_now[pname(a.get('staff'))] += float(a.get('hours') or 0)
+    for a in assignments:
+        if float(a.get('hours') or 0) > 0:
+            continue
+        zero.append((tidy(a.get('client')), pname(a.get('staff')), tidy(a.get('role'))))
+    if not zero:
+        return []
+
+    # per (period, client, person) hours from saved snapshots
+    hist = collections.defaultdict(float)
+    known = set()
+    periods = []
+    if 'SnapshotRows' in wb.sheetnames and 'SnapshotIndex' in wb.sheetnames:
+        periods = sorted({_pkey(r.get('period')) for r in read_by_header(wb['SnapshotIndex'])}
+                         - {''})
+        for r in read_by_header(wb['SnapshotRows']):
+            pk, c = _pkey(r.get('period')), tidy(r.get('client'))
+            raw = str(r.get('staff_hours') or '').strip()
+            if raw:
+                for part in raw.split(','):
+                    if ':' not in part:
+                        continue
+                    k, v = part.rsplit(':', 1)
+                    try:
+                        hist[(pk, c, pname(k))] += float(v)
+                    except ValueError:
+                        pass
+                    known.add((pk, c, pname(k)))
+            else:
+                names = [pname(x) for x in str(r.get('staff') or '').split(',') if pname(x)]
+                try:
+                    act = float(r.get('actual') or 0)
+                except (TypeError, ValueError):
+                    act = 0.0
+                for n in names:
+                    if len(names) == 1:
+                        hist[(pk, c, n)] += act
+                    known.add((pk, c, n))
+    prior = [p for p in periods if p < period]
+
+    out = []
+    for c, s, rl in sorted(set(zero)):
+        streak, last = 1, ''
+        for pk in reversed(prior):
+            if (pk, c, s) not in known:
+                break           # not on that client then: the streak starts here
+            if hist.get((pk, c, s), 0.0) > 0:
+                last = pk
+                break
+            streak += 1
+        if not last:
+            last = next((pk for pk in reversed(prior) if hist.get((pk, c, s), 0.0) > 0), '')
+        out.append({'client': c, 'staff': s, 'role': rl, 'zero_months': streak,
+                    'last_hours': last or 'never',
+                    'client_hours_anywhere': round(total_now.get(s, 0.0), 2)})
+    out.sort(key=lambda d: (-d['zero_months'], d['staff'], d['client']))
+    return out
 
 
 def leaving(period, assignments, app_path):
@@ -407,7 +450,7 @@ def leaving(period, assignments, app_path):
     return sorted(by.values(), key=lambda d: d['client'])
 
 
-def render(pre, dr=None, lv=None):
+def render(pre, dr=None, lv=None, zr=None):
     """Plain markdown for the operator. Halts first, in bold, because they stop
     the run."""
     out = ['## 0. Input checks', '']
@@ -437,6 +480,37 @@ def render(pre, dr=None, lv=None):
         out.append('Nothing to flag — the export looks complete and the roster '
                    'looks current.')
         out.append('')
+    if zr:
+        # Grouped by person, because a roster goes stale person by person: a
+        # first pass found 144 zero-hour seats, most belonging to a handful of
+        # people. One quiet month is usually just that, so those are a count
+        # rather than a question until they repeat.
+        ask = [d for d in zr if d['zero_months'] >= 2]
+        once = [d for d in zr if d['zero_months'] < 2]
+        out.append('### On the roster with zero hours — keep or remove?')
+        out.append('')
+        out.append(f"{len(ask)} seats have logged nothing for two months or more. "
+                   "Some are genuinely quiet clients; others are people who are not "
+                   "really on the client any more. Each **remove** goes to "
+                   "write-back as `remove`; anything not answered stays on.")
+        out.append('')
+        by = collections.OrderedDict()
+        for d in sorted(ask, key=lambda d: (d['client_hours_anywhere'] > 0,
+                                            d['staff'], -d['zero_months'])):
+            by.setdefault(d['staff'], []).append(d)
+        for person, rows in by.items():
+            none = rows[0]['client_hours_anywhere'] == 0
+            out.append(f"- **{person}** — {len(rows)} seat{'s' if len(rows) != 1 else ''}"
+                       + (" · *logged no client hours anywhere this month*" if none else ''))
+            out.append('  ' + '; '.join(
+                f"{d['client']} ({d['role']}, {d['zero_months']} mo"
+                + (f", last {d['last_hours']}" if d['last_hours'] != 'never' else ', never')
+                + ')' for d in rows))
+        out.append('')
+        if once:
+            out.append(f"{len(once)} more seats are at zero for the first month. Not "
+                       "asked about yet; they come back here if it repeats.")
+            out.append('')
     if lv:
         out.append('### Clients marked leaving — still not Inactive')
         out.append('')

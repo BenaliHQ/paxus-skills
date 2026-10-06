@@ -73,25 +73,28 @@ The old staff scope spreadsheet is **not** part of this loop. Do not read capaci
 
 ```python
 from review import render, coverage, save
-from checks import drift, leaving
+from checks import drift, leaving, zero_roster
 text = render('<YYYY-MM>', a, s, r, coverage('<timesheet.csv>', '<YYYY-MM>'))
 dr = drift('<YYYY-MM>', a, 'app.xlsx')
 lv = leaving('<YYYY-MM>', a, 'app.xlsx')
-path = save(render_checks(pre, dr, lv) + text, '<YYYY-MM>')   # -> the runner's own ~/Downloads
+zr = zero_roster('<YYYY-MM>', a, 'app.xlsx')
+path = save(render_checks(pre, dr, lv, zr) + text, '<YYYY-MM>')   # -> the runner's own ~/Downloads
 ```
 
 Print the section 0 checks followed by `text` verbatim to the operator, and tell them where the file was saved.
 
-`drift()` only ever warns, and both of its checks are worth reading rather than clearing:
+`drift()` only ever warns, and its check is worth reading rather than clearing:
 
 - **A client/role line that carried hours last month and none this month.** Sometimes a client genuinely wound down. It is also exactly what an unflipped handoff looks like — someone changed role, nobody updated Assignments, and their hours are still booking to the role they left. Role comes from the roster, never from the timesheet, so this drifts silently and indefinitely.
   - Read the whole client before concluding a handoff. If the *other* roles still carry hours, the quiet line is the suspicious one. If **every** role went quiet, the client left — set its status to **Inactive** in the app. A departed client left on Active keeps producing budgeted role lines with no hours and nobody assigned, which reads every month as work the firm failed to deliver.
-- **Rostered people logging nothing, month after month.** A name that never carries hours makes the team list wrong and hides who actually owns the work. One person sat rostered on a client for ten months having logged 0.3 hours in total.
+
+Rostered people logging nothing are no longer a warning here. They are a question every month; see **§0 On the roster with zero hours** below.
 
 ### Phase 4 — Stop and wait
 
 Sections 2, 3 and 5 are questions, and so is the **Clients marked leaving** table in section 0 when it appears. Do not proceed until they are answered:
 
+- **§0 On the roster with zero hours** — every seat where someone logged nothing for two months or more, grouped by person, with how many months in a row and when they last logged hours. People who logged no client hours anywhere that month come first: someone who does no client work should not be on any roster. Ask person by person; it is the operator's call whether a quiet seat is a quiet client or someone who is not really on it. Every **remove** goes to write-back as `remove`. Seats at zero for the first month are only counted, and come back as a question if it repeats. A name that never carries hours makes the team list wrong and hides who actually owns the work.
 - **§0 Clients marked leaving** — clients someone marked *Client leaving* on the app's Transitions page that are still not Inactive, with this month's hours. Ask, for each one, whether it has fully left. A client that still logged hours this month may simply be finishing up; that is the operator's call, not this skill's. Every **yes** goes to write-back as `inactivate`. A departed client left Active keeps producing budget nobody will deliver.
 
 - **§2 New clients** — hours logged against something with no entry in the app. Get the **team and the budgets**. The client is flagged, never silently ignored — but its **hours are not in the build**: they sit in `unresolved` in §1 until the client exists in the app. Phase 4b is what puts them in.
@@ -135,6 +138,7 @@ from writeback import write_month
 plan = write_month(SHEET_ID, '<YYYY-MM>', a, s,
                    new_clients=[...],   # approved in §2, or omit
                    inactivate=[...],    # leaving clients confirmed gone in §0, or omit
+                   remove=[...],        # (client, person, role) taken off the roster in §0, or omit
                    dry_run=True)        # review the plan first
 ```
 
@@ -142,7 +146,7 @@ plan = write_month(SHEET_ID, '<YYYY-MM>', a, s,
 
 Show the plan (rows to write, rows replaced, staff updated, anything unmatched). If `unmatched` is non-empty, resolve it before applying. Then re-run with `dry_run=False`.
 
-This replaces the Assignments tab wholesale with this month's rows and updates the numeric columns on Staff. It does **not** touch email, status, `client_pct`, `daily_rate` or `capacity_mode`. The only client status it changes is Inactive, for the clients passed in `inactivate`.
+This replaces the Assignments tab wholesale with this month's rows and updates the numeric columns on Staff. It does **not** touch email, status, `client_pct`, `daily_rate` or `capacity_mode`. The only client status it changes is Inactive, for the clients passed in `inactivate`. A seat passed in `remove` is left out of the new Assignments rows, so it is off the roster from next month on. Only a **zero-hour** seat can be removed: one with hours is refused and shows in `unmatched`, so a removal can never drop real time from the month.
 
 ### Phase 6 — The operator captures the snapshot
 
