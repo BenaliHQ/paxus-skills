@@ -64,6 +64,11 @@ and ask first.
 `references/rules.md` holds the 1099 rules, exclusions and edge cases. The ones people have
 corrected before:
 
+- **Never clear the K or O formula columns** when removing the template's example rows.
+- **Goods-only sellers, garnishment payees, owner guaranteed payments and transfers between
+  the client's own accounts come off the list**, not onto it as CHECK rows.
+- **Write tracker rows into the first blank row, read right before the write.** Other runs
+  fill the tracker the same day.
 - **W-9 REQUESTED (date)** is only the date the Tax1099 request went to the vendor. Asking
   the client for emails goes in NOTES ("Asked <client contact> for email MM/DD/YYYY").
 - **Never flag a possible missed prior-year 1099.** The firm will not file late for past

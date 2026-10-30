@@ -75,7 +75,11 @@ missing, then `google.sheet.create` named `Tax1099 W-9 Request Tracker – <Cont
 sent | W-9 requested in Tax1099 | Status | W-9 received | Saved to Drive | QBO updated |
 Notes. Bold and freeze the header.
 
-Append (`google.sheet.append`) one row per vendor that will need a Tax1099 request: the
+Add one row per vendor that will need a Tax1099 request with `google.sheet.update` into the
+first blank rows, not `google.sheet.append`: the Saved to Drive and QBO updated checkboxes
+are pre-filled far down the sheet, so an append lands below them. Several runs write to the
+same tracker on the same day, so read column A **right before** the write, not at setup,
+and write into the first row where A is blank. Leave the checkbox columns alone. Each row: the
 client, the vendor name as it will be entered in Tax1099, its email if known, Status "Not
 requested", and a note with the 2026 amount and what's pending ("Email requested from
 <contact> — pending"; when the client email is confirmed sent, "Asked <contact> for email
