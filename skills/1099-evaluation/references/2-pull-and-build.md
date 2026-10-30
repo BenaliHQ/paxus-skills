@@ -1,7 +1,7 @@
 # Step 2: Pull QuickBooks and build the rows
 
 Entry: setup done. Exit: `rows.json`, `totals.json` and `summary.md` from the `build_1099.py`
-script, and the two extra checks in 2.4 done.
+script, and the three extra checks in 2.4 done.
 
 No saved-report export. One pull of every vendor transaction covers what the saved 1099
 report showed plus vendors coded to accounts outside its list (office supplies, utilities,
@@ -50,13 +50,23 @@ writes in 5,000-cell chunks; `totals.json` the Total row number and amount per v
 `summary.md` the $2,000+ list, the watch list ($1,500–$1,999.99), the excluded vendors and any
 negative totals. Read `summary.md`; do not paste the rows into the conversation.
 
-## 2.4 Two checks the vendor pull cannot see
+## 2.4 Three checks the vendor pull cannot see
 
 - **Bank payments with no payee.** `quickbooks.report.transaction_list` with
   `source_account_type` `Bank`, the same dates, `columns`
   `tx_date,txn_type,doc_num,name,memo,account_name,other_account,subt_nat_amount`. Keep
   outflows with a blank Name. Any over $600, or several to what the memo says is one payee,
   go on the flag list with date, amount and memo ("add the payee, then re-run").
+- **Bank payees that aren't set up as vendors.** `transactions_by_vendor` only lists
+  Vendor-type names, so a payee set up as a customer, employee or other name (a landlord
+  is a common one) never reaches the build, with no warning. From the same Bank
+  `transaction_list`, take every outflow (Expense, Check, Bill Payment) with a Name and
+  compare the names to the vendors in the saved pages. For each name missing from the
+  pages, write its rows to one more page file in the same table shape (a `**<Name>**`
+  header row, then one `· <date>` row per payment with the bank account, split account and
+  the amount as a negative number) and re-run 2.3, so it lands on the sheet like any other
+  vendor and the normal exclusions apply. Put "set up as a vendor and check Track 1099" on
+  the QBO fix list for each one that ends up needing a 1099.
 - **Journal entries and bulk-entered history.** `transaction_list` with `transaction_type`
   `JournalEntry` and the same columns. Lines to expense, COGS, CapEx or inventory accounts
   with no Name: read the memo for a payee. A payee named in a memo goes on the flag list

@@ -73,13 +73,17 @@ corrected before:
   commas, the first time (`references/4-outputs.md`).
 - **One list, alphabetical**, with full transaction detail; never a summary block below TOTAL.
 - A missing TaxIdentifier from the QBO API does not prove there is no TIN. Check the W-9.
+- **The vendor report misses payees that aren't set up as vendors.** Always run the third
+  check in step 2.4 (bank payees vs. vendor report).
+- **Trash the "(Agent Base text copy)" Doc** each PDF read leaves in Drive, right after reading it.
 
 ## Side effects and approval points
 
 Writes, each dry-run first and only after the okay the pace calls for: `google.folder.create`,
 `google.file.copy` (the template), `google.sheet.update` / `sheet.clear` / `sheet.tab.add` /
 `sheet.format` / `sheet.layout` (the evaluation file), `google.sheet.append` or `sheet.create`
-(the tracker). Never send email (Agent Base has no mail access; a Gmail draft only if this
+(the tracker), and `google.file.trash` for the "(Agent Base text copy)" Docs that reading
+a PDF leaves behind (only those the run itself created; see `references/3-evaluate.md`). Never send email (Agent Base has no mail access; a Gmail draft only if this
 session has the person's own Gmail tool); never write to Financial Cents or QuickBooks;
 never contact the client or a vendor.
 
