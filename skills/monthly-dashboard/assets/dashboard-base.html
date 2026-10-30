@@ -4,7 +4,7 @@
      This file contains NO client data. It is the single shared starting point
      for every cold-start build and the canonical source for the look/feel.
      NEVER start a build from another client's dashboard — copy THIS file, then
-     fill it from the client's own financials + spec file (~/paxus-ai/clients/<slug>/dashboard-spec.md).
+     fill it from the client's own financials + spec file (dashboard-spec.md in the client's shared drive).
      One Letter page. Navy/teal scheme (same for every client, NP and FP).
      Sections are modular: keep what the client's confirmed spec uses, delete
      the rest. The trend block is commented out — enable only for trend clients.
@@ -71,6 +71,16 @@
   .callout li { font-size: 9.5px; margin-bottom: 3px; line-height: 1.3; }
   .callout li:last-child { margin-bottom: 0; }
 
+  /* headliner banner — this month's story, picked by the controller. Optional. */
+  .headline { background: #eef6f6; border-left: 4px solid #1f8a8a; border-radius: 3px; padding: 7px 11px; margin-bottom: 12px; }
+  .headline .h-text { color: #1f3a5f; font-size: 14px; font-weight: 700; }
+  .headline .h-sub { font-size: 9.5px; color: #555; margin-top: 2px; }
+
+  /* suggested client action steps — tied to the headliner. Optional. */
+  .actions { background: #f7f8fa; border-left: 4px solid #1f3a5f; border-radius: 3px; padding: 8px 10px 8px 24px; margin-top: 8px; }
+  .actions li { font-size: 9.5px; margin-bottom: 3px; line-height: 1.3; }
+  .actions li:last-child { margin-bottom: 0; }
+
   .footer { text-align: center; font-size: 8px; color: #aaa; font-style: italic; margin-top: 10px; }
 </style>
 </head>
@@ -78,6 +88,16 @@
   <!-- TITLE: "<Client> — <Month Year> Dashboard" -->
   <div class="title">{{Client}} — {{Month Year}} Dashboard</div>
   <div class="subtitle">{{Period, e.g. YTD through MMM 31, YYYY}}&nbsp; |&nbsp; {{basis}}&nbsp; |&nbsp; Prepared by Paxus CPA</div>
+
+  <!-- HEADLINER — OPTIONAL BLOCK. The one story the controller picked for this month (Step 3b).
+       One sentence, plus an optional one-line supporting figure. If the controller chose
+       "no headliner this month," DELETE this block and reflow the space. -->
+  <!-- HEADLINER START -->
+  <div class="headline">
+    <div class="h-text">{{Headliner sentence}}</div>
+    <div class="h-sub">{{Supporting figure or context}}</div>
+  </div>
+  <!-- HEADLINER END -->
 
   <!-- HEADER TILES: 3–4 headline figures. Each: label, big value, one sub-line.
        Confirm per client whether the big value is YTD or current-month. -->
@@ -175,7 +195,20 @@
     </ul>
   </div>
 
-  <!-- FOOTER: footnotes for any flagged figure + basis + standard disclaimer. -->
-  <div class="footer">{{footnotes}} &nbsp;•&nbsp; {{basis}}. Disclaimer: No opinion, conclusion, or assurance is provided on these financial statements.</div>
+  <!-- SUGGESTED ACTION STEPS — OPTIONAL BLOCK. Only the 1–2 steps the controller picked (Step 3b).
+       Most months have none: if so, DELETE this block. Never fill it to fill space. -->
+  <!-- ACTIONS START -->
+  <div class="section-head">What We'd Suggest</div>
+  <div class="actions">
+    <ul>
+      <li><strong>{{action}}</strong> {{why it matters / what it changes}}</li>
+    </ul>
+  </div>
+  <!-- ACTIONS END -->
+
+  <!-- FOOTER: footnotes for any flagged figure + basis + the REQUIRED disclaimer.
+       The disclaimer sentence is mandatory on every dashboard, word for word. Never trim or
+       reword it, and never drop it to make the page fit. -->
+  <div class="footer">{{footnotes}} &nbsp;•&nbsp; {{basis}}. No Assurance Provided. Disclaimer: No opinion, conclusion or assurance is provided on these financial statements.</div>
 </body>
 </html>
