@@ -9,8 +9,12 @@ Usage:
             one file per call (any names; sorted by the first number in the
             name, so p0.md, p96.md ... works). Columns must be
             tx_date,txn_type,doc_num,account_name,split_acc,subt_nat_amount.
---accounts  JSON: {"bank": [...], "card": [...], "exclude_split": {"Name": "reason"}}
-            Account names may be full ("Parent:Child") or leaf names.
+--accounts  JSON: {"bank": [...], "card": [...], "exclude_split": {"Name": "reason"},
+            "exclude_vendor": {"Vendor name": "reason"}}
+            Account names may be full ("Parent:Child") or leaf names. A row whose split
+            account is one of the "bank" accounts is a transfer between the client's own
+            accounts and is always dropped. exclude_vendor takes vendors off the list
+            entirely (goods-only sellers, garnishment payees), named on "Not included".
 
 Writes to --out:
   rows.json     sheet writes for A1:A3 and A<start>:J..., each <= 5,000 cells
@@ -30,9 +34,12 @@ EXCLUDE_VENDOR = [
     (r"\b(capital one|american express|amex|discover card|card services|credit card)\b", "credit card payment"),
     (r"\btitle\b", "title company / closing"),
     (r"^intuit\b", "merchant / software fees"),
+    (r"^(square|toast|clover)\b", "merchant / POS fees"),
+    (r"^cash$", "register change / petty cash"),
 ]
 EXCLUDE_SPLIT_WORDS = [
     (r"\bowner", "owner pay / draws"), (r"\bdraw", "owner pay / draws"), (r"\bdistribution", "owner pay / draws"),
+    (r"\bguaranteed\b", "owner guaranteed payments"),
     (r"\bearnest money\b", "earnest money"), (r"\butilit", "utility"), (r"\binsurance\b", "insurance"),
     (r"\bbank (charges|fees|service)", "bank fees"), (r"\bwages\b|\bpayroll\b|\bsalar", "payroll"),
     (r"^(?!.*(prof|prep|servic|advis|account|planning)).*\btax(es)?\b", "taxes"),
@@ -77,6 +84,8 @@ def main():
     card = {leaf(x) for x in acc.get("card", [])} | set(acc.get("card", []))
     ex_split = {}
     for k, v in acc.get("exclude_split", {}).items(): ex_split[k] = v; ex_split[leaf(k)] = v
+    for b in bank: ex_split.setdefault(b, "transfer between own accounts")
+    ex_vendor = {k.lower(): v for k, v in acc.get("exclude_vendor", {}).items()}
     raw = parse_pages(a.pages)
     if not raw: sys.exit("no detail rows parsed — check the pages folder")
 
@@ -85,7 +94,7 @@ def main():
     for v, d, t, num_, acct, split, amt in raw:
         if t == "Bill": billsplit[v].add(split)
     for v, d, t, num_, acct, split, amt in raw:
-        reason = next((r for p, r in EXCLUDE_VENDOR if re.search(p, v, re.I)), None)
+        reason = ex_vendor.get(v.lower()) or next((r for p, r in EXCLUDE_VENDOR if re.search(p, v, re.I)), None)
         x = num(amt)
         if acct in card or leaf(acct) in card:
             if t != "Bill": card_paid[v] += abs(x)

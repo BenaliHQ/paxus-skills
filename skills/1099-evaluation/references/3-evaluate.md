@@ -60,8 +60,12 @@ labor); a payee called "Rent" or similar with no landlord named; government enti
 
 ## 3.3 Write the file
 
-1. Initial mode: `google.sheet.clear` A6:T (in 5,000-cell parts) to remove the template's
-   example rows. Then each write in `rows.json` with `google.sheet.update`.
+1. Initial mode: remove the template's example rows without touching the K and O formulas.
+   Read A6:T with `formulas: true` to find the example rows, then `google.sheet.clear`
+   A6:J for those rows and L:N and P:T on each example row that has typed answers. Never
+   clear a range that includes K or O. If one is cleared by mistake, write its formula back
+   from the "Before this change" block. Then each write in `rows.json` with
+   `google.sheet.update`.
 2. If the last row passes the rows that carry the K and O formulas, copy the formulas down
    with `sheet.update` (formulas, one per row) before anything else.
 3. For each $2,000+ vendor, write L:N, P, S:T on its Total row (`totals.json` gives the row).

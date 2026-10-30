@@ -17,7 +17,14 @@ Classify the paid-from account by type, never by name:
   (Utilities, BankCharges, Insurance, PayrollExpenses, TaxesPaid) — the script already
   catches the common names, so add these only when a client's names are unusual.
 
-Write `accounts.json`: `{"bank": [names], "card": [names], "exclude_split": {"Account name": "reason"}}`.
+Write `accounts.json`: `{"bank": [names], "card": [names], "exclude_split": {"Account name": "reason"}, "exclude_vendor": {"Vendor name": "reason"}}`.
+
+List every Bank-type account in `bank`, including petty cash and savings: a payment whose
+split is one of them is a transfer between the client's own accounts, and the script drops
+it. Put vendors that only sold goods, inventory or equipment, wage-garnishment payees, and
+the client paying itself in `exclude_vendor` so they come off the list entirely (see
+`rules.md`). Read `summary.md` after the first build: if a vendor at $2,000+ is plainly one of
+these, add it and build again rather than leaving it as a CHECK row.
 
 ## 2.2 The vendor pull
 

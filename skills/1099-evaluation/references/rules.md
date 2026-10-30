@@ -21,7 +21,9 @@
 
 Payroll providers (Gusto, ADP, Paychex, payroll services) and wages; tax agencies and tax
 payments; utilities; bank fees; insurance; owner pay, draws and distributions; credit card
-payments; title companies, closings and earnest money; merchant and QuickBooks fees.
+payments; title companies, closings and earnest money; merchant, POS and QuickBooks fees;
+owner guaranteed payments; transfers between the client's own bank accounts (any payment
+whose split is a Bank account); "Cash" as a payee for register change or petty cash.
 Contractors paid through a payroll provider get their 1099 from the provider: if a payroll
 provider's payments look like contractor payments, flag it.
 
@@ -43,7 +45,13 @@ provider's payments look like contractor payments, flag it.
 - **Foreign vendors** (W-8BEN), **trusts and estates**, **government entities**: flag for
   the controller.
 - **Rent**: MISC Box 1 when paid to an individual or non-corporate LLC; a payee called
-  "Rent" needs the landlord's real name from the client.
+  "Rent" needs the landlord's real name from the client. Property tax reimbursements paid
+  to the landlord are not part of the rent amount; the script leaves them out. Report rent
+  only, even if a prior year's form included them.
+- **Goods, equipment, garnishments**: a vendor that only sold goods, inventory or equipment,
+  and a wage-garnishment payee (a creditor's attorney, a child-support registry), come off
+  the list entirely through `exclude_vendor`; they never sit on the sheet as CHECK rows.
+  Mixed or unclear vendors keep a row and get a question to the client.
 - **Loans**: banks are exempt; a private lender with $600+ of interest gets a 1099-INT; the
   loan should be tied out at 12/31 before the INT goes out, but a missing statement doesn't
   hold up the client's other forms.
