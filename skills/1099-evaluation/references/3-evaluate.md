@@ -28,6 +28,10 @@ Sources in this order; record which one decided it in NOTES.
    handwritten mark the text can't show: say "W-9 box unreadable" and leave the answer
    blank. Inc, Corp or Co in the legal name and nothing else: a corporation, noted as
    "by name". Banks: corporations.
+   Reading a PDF with `google.file.get` leaves a Google Doc named
+   "<file name> (Agent Base text copy)" in the PDF's folder, and the result names it. Trash
+   it with `google.file.trash` as soon as you have read the PDF, every time (W-9s, prior-year
+   1099s, any PDF). It is the run's own leftover, so trashing it needs no separate okay.
 2. **Exceptions** for corporations: legal services (attorneys, law firms) and medical or
    health care. These get a 1099 even as corporations.
 3. **1099 type** (column S, the template's list): NEC for services; MISC - Rents for rent and
