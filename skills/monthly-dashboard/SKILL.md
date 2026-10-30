@@ -375,9 +375,33 @@ statements and the math must foot:
 
 ---
 
+## Step 3a — Print the numbers and stop for approval (numbers first, design second)
+
+**Before any HTML is written, show the controller every dashboard figure as a compact printed table.**
+Print it with `print` in Python (or a plain text table in chat). Never build a draft page just to show the
+numbers. Number problems caught here cost almost nothing to fix. Caught after the page is built, they mean
+rebuilding the page, which is the most expensive part of the run in both Claude Code and Cowork.
+
+Print one table with:
+- **Every figure that will appear on the page**: headline tiles, KPIs, snapshot figures, and any
+  revenue-mix or A/R figures. Show columns for **current month, prior month, and same month prior year**
+  (only the columns the client's layout uses; mark missing ones `n/a`). Use dashboard rounding (Step 3 rules).
+- **Each tie-out from the checklist above, one line each**, marked `OK` or `MISMATCH`. A mismatch shows both
+  values and the difference (e.g. `Cash ties to BS ... MISMATCH: dashboard $142,500 vs BS $138,500`).
+
+Keep it tight: one table, no prose around it beyond a line on any mismatch. When a tie-out has many detail
+lines, print only the mismatches plus a count of what passed.
+
+**Then stop and wait.** The controller confirms the numbers or corrects them in chat. Apply corrections to
+the figures, re-print **only the changed lines**, and get a clear okay. Do not offer headliners (Step 3b) or
+build HTML (Step 4) until the numbers are approved. Headliner options are built on these figures, so they
+have to be settled first.
+
+---
+
 ## Step 3b — Headliner, chart, and action-step options (the controller picks)
 
-Run this after the figures tie out and before building the HTML. The skill **offers**; the controller
+Run this after the controller approves the numbers (Step 3a) and before building the HTML. The skill **offers**; the controller
 **decides**. Present each round as a short numbered list, wait for the pick, then go to the next round.
 **Never more than three options per round.** Fewer is fine when fewer are worth offering.
 
@@ -434,6 +458,10 @@ headliner history in Step 7.
 ---
 
 ## Step 4 — Build the dashboard HTML
+
+**Build it once, using only the numbers approved in Step 3a** and the picks from Step 3b. Don't recompute
+or re-read figures from the statements while building. If something looks off mid-build, stop and raise
+it rather than quietly changing a figure on the page.
 
 **Never start a build from another client's dashboard.** Each client's dashboard is built only from the
 shared client-agnostic base template plus *that same client's* own prior dashboard and spec file. Opening
@@ -501,8 +529,11 @@ into context as an image is expensive. Do **not** render or read back a PDF unti
    to check: the headliner and action steps (if any) read right for this audience, the KPI values and
    benchmark colors (if the client has KPIs), the snapshot figures, the observations wording, the
    required footer disclaimer (Step 4), and that it reads as one page.
-2. **Iterate in HTML.** Apply requested changes as text edits to the HTML and re-show. Stay in HTML for all
-   content/layout/number corrections — never round-trip through PDF to make an edit.
+2. **Iterate in HTML with targeted edits.** Change only the lines the request touches (one tile, one
+   sentence, one style rule). **Never rewrite or regenerate the whole file** to make a change. Re-show by
+   reopening the same file. Stay in HTML for all content/layout/number corrections, and never round-trip
+   through PDF to make an edit. If a correction changes a *number*, update it in the Step 3a figures too, so
+   the approved table and the page stay in sync.
 3. **Only after the operator approves the HTML, render to PDF (one shot):**
 
 ```bash
@@ -697,6 +728,9 @@ Quick cheat-sheet; the steps above are authoritative.
   with months of evidence.
 - **Round dollars to the nearest hundred;** never estimate or fabricate a figure. Tie every number to the
   statements before building.
+- **Numbers first, design second.** Print the figures and tie-outs as a compact table and get the
+  controller's okay before any headliner options or HTML (Step 3a). Build the HTML once. Fix it with
+  targeted edits, never a full rewrite. Render the PDF last.
 - **Same method every month** for any class/ratio metric (NP Program Efficiency; FP margins/DSO/DPO) — the
   formula and day-count live in the spec so months stay comparable.
 - **Flag one-time/timing items** (pledges, front-loaded grants, one-time donations, one-off gains) — footnote
