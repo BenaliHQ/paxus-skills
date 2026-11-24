@@ -136,7 +136,7 @@ Drives how deep the discovery questions go and whether Dext comes up at item 09.
 | Credit card count | Service Fee template | Yes | 04, 06 |
 | Monthly transaction volume | Service Fee template | Yes | 04 |
 | 1099 count | Service Fee template | Yes | 06 |
-| Dext subscribed? | Service Fee template | No | 09 |
+| Dext subscribed? | `{Client} Hours Budget.md` (`Dext:` line); Service Fee template for older clients | No | 09 |
 | Payroll flag — are we running it | Service Fee template | No | 06, 07 |
 | Entity manifest — one row per entity | Engagement | No | 04, 06 |
 

@@ -72,6 +72,16 @@ Unless the operator says otherwise, a Paxus quote offers three levels with the s
 
 General liability audit support stays either way — GL exposure isn't payroll-dependent.
 
+### Dext — ask every time, and add the row when the answer is yes
+
+**Ask whether the client will use Dext on every quote.** It's one of the questions in Phase 1, not something left to come up later. When the answer is yes:
+
+- **Add a Dext row to the page 2 table, checked at every level:** *Dext for capturing receipts and bills, including training for your team.* The client should see that the firm provides Dext **and** trains them to use it.
+- **Never show a price for it.** The subscription is built into the monthly fee the operator gives you, so there's no Dext line on page 4 and no "pass-through" label. If the operator's fees look like they leave it out, ask. Don't add it yourself.
+- **Record it in the Hours Budget file** (Phase 4) so the firm administrator knows to schedule Dext training at onboarding.
+
+When the answer is no, leave the row off. It isn't part of the default table, so leaving it off doesn't count as removing a default row.
+
 ### Non-profit clients — add these rows
 
 Everything above still applies. A non-profit quote adds:
@@ -181,6 +191,7 @@ Then ask for everything else in a single message:
 7. **One-time fees** — onboarding, cleanup, and anything else. See § One-time fees below for how each is structured and billed; they are not all due at the same time.
 8. **Onboarding date — REQUIRED, and the quote does not ship without it.** A specific date, not a month ("September 20th," not "September"). Also ask for the first close month. If the operator doesn't have a date yet, say so plainly and hold the quote — do not fill a placeholder and move on, and do not soften it to a month to get past the question. The firm sets its onboarding capacity off these dates, and once a quote goes out without one nobody can reconstruct what the client was told.
 9. **Scope boundaries** — what's expressly out, or quoted later. This is the "Good to know" callout, and it should be short.
+10. **Dext — will the client use it? Yes or no, REQUIRED.** A yes adds the Dext row to page 2 and goes into the Hours Budget file. See § Dext above.
 
 Two judgment calls to raise if the operator hasn't:
 
@@ -316,7 +327,7 @@ When the client signs, `/onboard-client-admin` moves the whole folder to `Active
 
 Both go in the same prospective-client folder. Neither reaches the client.
 
-- **`{Client Name} Hours Budget.md`** — the quoted monthly fee per level, and the **budgeted hours per role per level** the operator gave you, with the date. Keep it to that: the fees and the hours are the *only* things the firm administrator needs out of pricing. No rates, no margin, no buildup. The old service-fee template existed to carry the hours across and isn't needed once this file exists. Without it the budget gets rebuilt from memory or guessed.
+- **`{Client Name} Hours Budget.md`** — the quoted monthly fee per level, and the **budgeted hours per role per level** the operator gave you, with the date. Keep it to that: the fees and the hours are the *only* things the firm administrator needs out of pricing, plus one line for **Dext: Yes / No**. When it's yes, add *"Client needs Dext training at onboarding."* No rates, no margin, no buildup. The old service-fee template existed to carry the hours across and isn't needed once this file exists. Without it the budget gets rebuilt from memory or guessed.
 - **The meeting minutes or a short call summary** from the discovery call. Working from the minutes in a terminal session and never saving them down is the common failure — the notes do the operator's job and then vanish before the team can use them. Save them.
 
 ## Phase 5 — Write the cover email
@@ -364,6 +375,7 @@ Two things worth offering the operator:
 - [ ] Card names and descriptions match the standard wording, unless the operator asked for a change
 - [ ] No third party named — "your tax preparer," never the person
 - [ ] No hours, rates, or margin figures in the client-facing file or email
+- [ ] Dext asked. If yes: the row is on page 2 at every level with training mentioned and no price, and the Hours Budget file says Dext: Yes with the training note
 - [ ] Hours budget and call minutes filed in the prospective-client folder
 - [ ] Cover email written to a `.txt` file for the operator to paste — nothing sent
 - [ ] Recipient address verified before the operator sends, not copied from an old note

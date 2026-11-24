@@ -74,7 +74,7 @@ Two locations, on two different shared drives:
 |---|---|---|
 | Billing: monthly amount, first draft date, onboarding fee, cleanup amounts | Engagement PDF | Authoritative. Read the **Services Summary**. |
 | Cleanup scope and window | Engagement PDF scope lines, then quote PDF | Engagement is thin here; the dossier usually has the detail. |
-| Volumes: account and card counts, transaction volume, 1099 count, Dext, payroll flag | Service Fee template `.xlsx` | |
+| Volumes: account and card counts, transaction volume, 1099 count, Dext, payroll flag | Service Fee template `.xlsx` | Dext: read the `Dext:` line in `{Client} Hours Budget.md` first. Newer quotes don't fill in the Service Fee template. |
 | Budgeted hours per role | Service Fee template `.xlsx`, tier-specific block | If that block is unpopulated, use tier defaults **and say so explicitly**. |
 | Entity manifest | Engagement PDF | The signed engagement names the legal client. |
 | Pain points, stakeholders, current setup | Consultation summary, memo to file | |

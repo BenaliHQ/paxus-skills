@@ -1131,7 +1131,7 @@ Write a clean, readable markdown handoff file to `/g/Shared drives/{Legal name}/
 - # bank & credit-card accounts
 - Monthly transaction volume — *usually missing from the Service Fee Template; mark `TBD — ask on call` if not found*
 - 1099 count — *usually missing; mark `TBD — ask on call` if not found*
-- Dext subscription: `Yes / No`
+- Dext subscription: `Yes / No`. Read it from the `Dext:` line in `{Client} Hours Budget.md` in the quote folder; when it says Yes, schedule Dext training. Older clients without that file: fall back to the Service Fee Template.
 - Payroll: `Yes ({vendor}) / No — out of scope`
 - Entities in scope: `{list}`
 
@@ -1428,7 +1428,7 @@ curl -s -A "Mozilla/5.0" -H "Authorization: Bearer $TOKEN" -H "Accept: applicati
 | Total Monthly Draft | The **full** recurring invoice total — base + every add-on line (QBO subscription, sales-tax filing, payroll admin, etc.). Equals Monthly account fees only when there are no add-ons. |
 | Wholesaled QB? | If the invoice has a **QBO subscription** line, put its price here as a bare dollar amount (e.g., `$119`, `$73`) — this is the firm-wide convention. It does **not** go in Extras. Blank if there's no wholesaled QBO line. |
 | Extras | Non-QBO add-ons only (sales-tax filing, payroll admin, etc.); blank if none elected. |
-| Payroll / Dext / Cash or Accrual | Onboarding Dossier / discovery-call notes in Perm File — fill only if clearly stated, else leave blank. |
+| Payroll / Dext / Cash or Accrual | Dext: the `Dext:` line in `{Client} Hours Budget.md` (filed with the quote) first. Otherwise, and for Payroll / Cash or Accrual, the Onboarding Dossier / discovery-call notes in Perm File. Fill only if clearly stated, else leave blank. |
 | Staff / Lead / Controller - Budgeted Hours | `{Client} Service Fee.xlsx` pink block (Full pkg B60/B61/B62; Basic B68/B69/B70) if present, else the budgeted-hours client tracker. **If neither exists or the block is blank, leave blank — do not write TBD and do not block onboarding on it.** |
 | Tax Accountant / Tax Accountant Email | Taxes folder or discovery notes → else `TBD`. |
 
