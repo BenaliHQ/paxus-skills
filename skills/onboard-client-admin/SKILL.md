@@ -1085,6 +1085,7 @@ Read these in parallel from `/g/Shared drives/00 - Paxus CPA/Admin/Client Onboar
 
 - `Engagement - {Legal name}.pdf` (authoritative billing)
 - `Quote - *.pdf` (package + scope reference)
+- `{Client} Hours Budget.md` — filed with the quote by `/paxus-quote` and moved here with it. Holds the quoted fee and hours per level, plus the `Dext:` line (the Dext answer for newer clients). Older clients won't have it.
 - `{Legal name} Service Fee.xlsx` — **authoritative per-client budgeted hours** (pink block on the Monthly Accounting Services tab) plus a lot of consultation-shaped data: gross revenue estimate, bank/CC count, transaction volume, 1099 count, Dext subscription, payroll flag. Read this before drafting the team email so hours and volumes are correct.
 - `{Legal name} Potential New Client Review.docx` — the PNCR. **Note:** the source in Prospective is often a Google Doc (`.gdoc`); those pointer files are unreadable through the Drive-for-Desktop mount on Windows (byte-level reads return "Invalid request code"). If you only see a `.gdoc`, ask Jennifer to open the Google Doc → File → Download → Microsoft Word (.docx) → drop it into the Active Clients folder next to the other files. Then read the `.docx` (unzip → `word/document.xml` → strip `<w:t>` runs).
 - `*Consultation*.pdf` (pain points, stakeholders, current setup — if present)
@@ -1131,7 +1132,7 @@ Write a clean, readable markdown handoff file to `/g/Shared drives/{Legal name}/
 - # bank & credit-card accounts
 - Monthly transaction volume — *usually missing from the Service Fee Template; mark `TBD — ask on call` if not found*
 - 1099 count — *usually missing; mark `TBD — ask on call` if not found*
-- Dext subscription: `Yes / No`. Read it from the `Dext:` line in `{Client} Hours Budget.md` in the quote folder; when it says Yes, schedule Dext training. Older clients without that file: fall back to the Service Fee Template.
+- Dext subscription: `Yes / No`. Read it from the `Dext:` line in `{Client} Hours Budget.md` in the Active Clients folder; when it says Yes, schedule Dext training. Older clients without that file: fall back to the Service Fee Template.
 - Payroll: `Yes ({vendor}) / No — out of scope`
 - Entities in scope: `{list}`
 

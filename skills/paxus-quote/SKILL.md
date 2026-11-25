@@ -77,7 +77,7 @@ General liability audit support stays either way — GL exposure isn't payroll-d
 **Ask whether the client will use Dext on every quote.** It's one of the questions in Phase 1, not something left to come up later. When the answer is yes:
 
 - **Add a Dext row to the page 2 table, checked at every level:** *Dext for capturing receipts and bills, including training for your team.* The client should see that the firm provides Dext **and** trains them to use it.
-- **Never show a price for it.** The subscription is built into the monthly fee the operator gives you, so there's no Dext line on page 4 and no "pass-through" label. If the operator's fees look like they leave it out, ask. Don't add it yourself.
+- **Never show a price for it.** The $35/mo subscription is built into the monthly fee the operator gives you, so there's no Dext line on page 4 and no "pass-through" label. If the operator's fees look like they leave it out, ask. Don't add it yourself.
 - **Record it in the Hours Budget file** (Phase 4) so the firm administrator knows to schedule Dext training at onboarding.
 
 When the answer is no, leave the row off. It isn't part of the default table, so leaving it off doesn't count as removing a default row.
