@@ -1085,6 +1085,7 @@ Read these in parallel from `/g/Shared drives/00 - Paxus CPA/Admin/Client Onboar
 
 - `Engagement - {Legal name}.pdf` (authoritative billing)
 - `Quote - *.pdf` (package + scope reference)
+- `{Client} Hours Budget.md` — filed with the quote by `/paxus-quote` and moved here with it. Holds the quoted fee and hours per level, plus the `Dext:` line (the Dext answer for newer clients). Older clients won't have it.
 - `{Legal name} Service Fee.xlsx` — **authoritative per-client budgeted hours** (pink block on the Monthly Accounting Services tab) plus a lot of consultation-shaped data: gross revenue estimate, bank/CC count, transaction volume, 1099 count, Dext subscription, payroll flag. Read this before drafting the team email so hours and volumes are correct.
 - `{Legal name} Potential New Client Review.docx` — the PNCR. **Note:** the source in Prospective is often a Google Doc (`.gdoc`); those pointer files are unreadable through the Drive-for-Desktop mount on Windows (byte-level reads return "Invalid request code"). If you only see a `.gdoc`, ask Jennifer to open the Google Doc → File → Download → Microsoft Word (.docx) → drop it into the Active Clients folder next to the other files. Then read the `.docx` (unzip → `word/document.xml` → strip `<w:t>` runs).
 - `*Consultation*.pdf` (pain points, stakeholders, current setup — if present)
@@ -1131,7 +1132,7 @@ Write a clean, readable markdown handoff file to `/g/Shared drives/{Legal name}/
 - # bank & credit-card accounts
 - Monthly transaction volume — *usually missing from the Service Fee Template; mark `TBD — ask on call` if not found*
 - 1099 count — *usually missing; mark `TBD — ask on call` if not found*
-- Dext subscription: `Yes / No`
+- Dext subscription: `Yes / No`. Read it from the `Dext:` line in `{Client} Hours Budget.md` in the Active Clients folder; when it says Yes, schedule Dext training. Older clients without that file: fall back to the Service Fee Template.
 - Payroll: `Yes ({vendor}) / No — out of scope`
 - Entities in scope: `{list}`
 
@@ -1428,7 +1429,7 @@ curl -s -A "Mozilla/5.0" -H "Authorization: Bearer $TOKEN" -H "Accept: applicati
 | Total Monthly Draft | The **full** recurring invoice total — base + every add-on line (QBO subscription, sales-tax filing, payroll admin, etc.). Equals Monthly account fees only when there are no add-ons. |
 | Wholesaled QB? | If the invoice has a **QBO subscription** line, put its price here as a bare dollar amount (e.g., `$119`, `$73`) — this is the firm-wide convention. It does **not** go in Extras. Blank if there's no wholesaled QBO line. |
 | Extras | Non-QBO add-ons only (sales-tax filing, payroll admin, etc.); blank if none elected. |
-| Payroll / Dext / Cash or Accrual | Onboarding Dossier / discovery-call notes in Perm File — fill only if clearly stated, else leave blank. |
+| Payroll / Dext / Cash or Accrual | Dext: the `Dext:` line in `{Client} Hours Budget.md` (filed with the quote) first. Otherwise, and for Payroll / Cash or Accrual, the Onboarding Dossier / discovery-call notes in Perm File. Fill only if clearly stated, else leave blank. |
 | Staff / Lead / Controller - Budgeted Hours | `{Client} Service Fee.xlsx` pink block (Full pkg B60/B61/B62; Basic B68/B69/B70) if present, else the budgeted-hours client tracker. **If neither exists or the block is blank, leave blank — do not write TBD and do not block onboarding on it.** |
 | Tax Accountant / Tax Accountant Email | Taxes folder or discovery notes → else `TBD`. |
 
